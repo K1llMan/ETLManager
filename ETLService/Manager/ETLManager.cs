@@ -29,16 +29,10 @@ namespace ETLService.Manager
             Console.Write("olololo!");
         }
 
-        #endregion Вспомогательные функции
-
-
-        #region Основные функции
-
-        public ELTManager(FileInfo settings)
+        private void InitWatcher()
         {
-            Settings = new ETLManagerSettings(settings);
-
-            watcher = new FileSystemWatcher {
+            watcher = new FileSystemWatcher
+            {
                 Path = Settings.Registry.UpdatesPath.FullName,
                 NotifyFilter = NotifyFilters.Size | NotifyFilters.FileName,
                 Filter = "*.*",
@@ -49,6 +43,20 @@ namespace ETLService.Manager
 
             // Включение слежения за директорией
             watcher.EnableRaisingEvents = true;
+        }
+
+        #endregion Вспомогательные функции
+
+
+        #region Основные функции
+
+        public ELTManager(FileInfo settings)
+        {
+            // Инициализация настроек
+            Settings = new ETLManagerSettings(settings);
+
+            // Включение слежения за обновлениями
+            InitWatcher();
         }
 
         #endregion Основные функции
