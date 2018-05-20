@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 
 using Newtonsoft.Json.Linq;
-using ETLService.Extensions;
+using ETLCommon;
 
 namespace ETLService.Manager
 {
@@ -103,6 +103,8 @@ namespace ETLService.Manager
         /// </summary>
         public ELTManager(FileInfo settings)
         {
+            //Logger.Initialize(Path.Combine(AppContext.BaseDirectory), false);
+
             // Инициализация настроек
             Settings = new ETLManagerSettings(settings);
 

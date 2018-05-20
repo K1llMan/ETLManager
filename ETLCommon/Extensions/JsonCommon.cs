@@ -1,9 +1,8 @@
 ﻿using System;
 using System.IO;
-
 using Newtonsoft.Json.Linq;
 
-namespace ETLService.Extensions
+namespace ETLCommon
 {
     /// <summary>
     /// Предоставляет набор методов расширения для работы с JSON
