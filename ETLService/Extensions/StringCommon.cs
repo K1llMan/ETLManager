@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace ETLEngineCore.Extensions
+namespace ETLService.Extensions
 {
     /// <summary>
     /// Свой тип, чтобы не привязывать дополнительно класс регулярных выражений

@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.WindowsAzure.Storage;
+using ETLService.Extensions;
 using Newtonsoft.Json.Linq;
 
 namespace ETLService.Manager
@@ -50,27 +47,8 @@ namespace ETLService.Manager
         {
             RegistryPath = new DirectoryInfo(path);
 
-            FileStream fs = null;
-            StreamReader sr = null;
-
-            try
-            {
-                string registry = Path.Combine(RegistryPath.FullName, "registry.json");
-                fs = new FileStream(registry, FileMode.Open);
-                sr = new StreamReader(fs);
-
-                UpdateSettings(JObject.Parse(sr.ReadToEnd()));
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                throw;
-            }
-            finally
-            {
-                sr?.Close();
-                fs?.Close();
-            }
+            string registry = Path.Combine(RegistryPath.FullName, "registry.json");
+            UpdateSettings(JsonCommon.Load(registry));
         }
 
         #endregion Основные функции        
@@ -94,32 +72,13 @@ namespace ETLService.Manager
 
         public ETLManagerSettings(FileInfo settings)
         {
-            FileStream fs = null;
-            StreamReader sr = null;
+            JObject data = JsonCommon.Load(settings.FullName);
+            string path = data["RegistryPath"].ToString();
+            path = string.IsNullOrEmpty(path) || !Directory.Exists(path)
+                ? Path.Combine(AppContext.BaseDirectory, "Registry")
+                : path;
 
-            try
-            {
-                fs = new FileStream(settings.FullName, FileMode.Open);
-                sr = new StreamReader(fs);
-                JObject data = JObject.Parse(sr.ReadToEnd());
-
-                string path = data["RegistryPath"].ToString();
-                path = string.IsNullOrEmpty(path) || !Directory.Exists(path) 
-                        ? Path.Combine(AppContext.BaseDirectory, "Registry")
-                        : path;
-
-                Registry = new ETLRegistrySettings(path);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                throw;
-            }
-            finally
-            {
-                sr?.Close();
-                fs?.Close();
-            }
+            Registry = new ETLRegistrySettings(path);
         }
 
         #endregion Основные функции

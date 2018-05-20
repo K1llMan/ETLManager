@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using ETLEngineCore.Extensions;
+using ETLService.Extensions;
 using Newtonsoft.Json.Linq;
 
 namespace ETLService.Manager
@@ -15,7 +16,11 @@ namespace ETLService.Manager
 
         #region Свойства
 
-        public ETLManagerSettings Settings;
+        public ETLManagerSettings Settings { get; set; }
+
+        public Dictionary<string, string> Pumps { get; set; }
+
+        public Dictionary<string, string> ExecutingPumps { get; set; }
 
         #endregion Свойства
 
@@ -45,15 +50,53 @@ namespace ETLService.Manager
             watcher.EnableRaisingEvents = true;
         }
 
-        #endregion Вспомогательные функции
+        private void InitPumpsList()
+        {
+            Pumps = new Dictionary<string, string>();
 
+            FileInfo[] pumpConfigs = Settings.Registry.ProgramsPath.GetFiles();
+            foreach (FileInfo pumpConfig in pumpConfigs)
+                try
+                {
+                    JObject data = JsonCommon.Load(pumpConfig.FullName);
+                    // Если уже существует закачка с таким ID
+                    if (Pumps.ContainsKey(data["id"].ToString()))
+                    {
+                        continue;
+                    }
+
+                    // Сохраняется конфиг закачки с описанием
+                    Pumps.Add(data["id"].ToString(), string.Empty);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+        }
+
+        #endregion Вспомогательные функции
 
         #region Основные функции
 
+        /// <summary>
+        /// Функция запуска закачки
+        /// </summary>
+        public void Execute(string id)
+        {
+            if (!Pumps.ContainsKey(id))
+                return;
+        }
+
+        /// <summary>
+        /// Конструктор
+        /// </summary>
         public ELTManager(FileInfo settings)
         {
             // Инициализация настроек
             Settings = new ETLManagerSettings(settings);
+
+            // Формирование списка закачек
+            InitPumpsList();
 
             // Включение слежения за обновлениями
             InitWatcher();
