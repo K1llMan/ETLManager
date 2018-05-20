@@ -1,7 +1,8 @@
 ﻿using System;
 using System.IO;
-using ETLService.Extensions;
+
 using Newtonsoft.Json.Linq;
+using ETLService.Extensions;
 
 namespace ETLService.Manager
 {

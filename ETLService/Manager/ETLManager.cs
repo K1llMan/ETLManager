@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using ETLService.Extensions;
+
 using Newtonsoft.Json.Linq;
+using ETLService.Extensions;
 
 namespace ETLService.Manager
 {
@@ -62,7 +63,8 @@ namespace ETLService.Manager
                     // Если уже существует закачка с таким ID
                     if (Pumps.ContainsKey(data["id"].ToString()))
                     {
-                        continue;
+
+                        continue;                        
                     }
 
                     // Сохраняется конфиг закачки с описанием
@@ -83,8 +85,17 @@ namespace ETLService.Manager
         /// </summary>
         public void Execute(string id)
         {
+            // Проверка наличия в реестре
             if (!Pumps.ContainsKey(id))
                 return;
+
+            // Проверка среди запущенных
+            if (ExecutingPumps.ContainsKey(id))
+            {
+                return;
+            }
+
+            ExecutingPumps.Add(id, string.Empty);
         }
 
         /// <summary>
