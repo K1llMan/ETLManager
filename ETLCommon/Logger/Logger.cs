@@ -114,7 +114,7 @@ namespace ETLCommon
                         .Select(s =>
                         {
                             TraceMessageKind k = (TraceMessageKind)Enum.Parse(typeof(TraceMessageKind), s.Trim());
-                            return k != null ? k : TraceMessageKind.All;
+                            return k;
                         })
                         .ToArray();
 
@@ -145,7 +145,7 @@ namespace ETLCommon
             }
             catch (Exception ex)
             {                
-                throw new Exception("Ошибка при разборе конфигурации логгеров");
+                throw new Exception("Ошибка при разборе конфигурации логгеров", ex);
             }
 
         }

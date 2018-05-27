@@ -73,6 +73,8 @@ namespace ETLService.Manager
 
         public ETLManagerSettings(FileInfo settings)
         {
+            Logger.WriteToTrace("Инициализация настроек.");
+
             JObject data = JsonCommon.Load(settings.FullName);
             string path = data["RegistryPath"].ToString();
             path = string.IsNullOrEmpty(path) || !Directory.Exists(path)

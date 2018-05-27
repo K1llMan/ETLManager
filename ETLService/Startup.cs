@@ -26,7 +26,6 @@ namespace ETLService
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime)
         {
-            applicationLifetime.ApplicationStarted.Register(OnStarted);
             applicationLifetime.ApplicationStopped.Register(OnStopped);
 
             if (env.IsDevelopment())
@@ -38,11 +37,6 @@ namespace ETLService
         }
 
         #region Lifetime events
-
-        private void OnStarted()
-        {
-            Logger.Initialize("ETLManager.log", AppDomain.CurrentDomain.BaseDirectory, true);
-        }
 
         private void OnStopped()
         {

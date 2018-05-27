@@ -1,6 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+
+using ETLCommon;
 using ETLService.Manager;
 
 namespace ETLService
@@ -11,6 +15,8 @@ namespace ETLService
 
         public static void Main(string[] args)
         {
+            Logger.Initialize("ETLManager.log", AppDomain.CurrentDomain.BaseDirectory, true);
+
             FileInfo settings = new FileInfo("appsettings.json");
             Manager = new ELTManager(settings);
 

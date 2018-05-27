@@ -37,6 +37,8 @@ namespace ETLService.Manager
 
         private void InitWatcher()
         {
+            Logger.WriteToTrace($"Включение слежения за обновлениями в директории \"{Settings.Registry.UpdatesPath}\"...");
+
             watcher = new FileSystemWatcher
             {
                 Path = Settings.Registry.UpdatesPath.FullName,
@@ -53,6 +55,8 @@ namespace ETLService.Manager
 
         private void InitPumpsList()
         {
+            Logger.WriteToTrace("Формирование списка закачек.");
+
             Pumps = new Dictionary<string, string>();
 
             FileInfo[] pumpConfigs = Settings.Registry.ProgramsPath.GetFiles();
@@ -103,13 +107,10 @@ namespace ETLService.Manager
         /// </summary>
         public ELTManager(FileInfo settings)
         {
-            // Инициализация настроек
             Settings = new ETLManagerSettings(settings);
 
-            // Формирование списка закачек
             InitPumpsList();
 
-            // Включение слежения за обновлениями
             InitWatcher();
         }
 
