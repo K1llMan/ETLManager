@@ -1,5 +1,10 @@
 ﻿using System.Collections.Generic;
+
+using ETLService.Manager;
+
 using Microsoft.AspNetCore.Mvc;
+
+using Newtonsoft.Json.Linq;
 
 namespace ETLService.Controllers
 {
@@ -8,23 +13,28 @@ namespace ETLService.Controllers
     {
         // GET api/pumps/registry
         [HttpGet("registry")]
-        public IEnumerable<string> GetRegistry()
+        public object GetRegistry()
         {
-            return new string[] { "pump1", "pump2" };
+            return WebAPI.OK(Program.Manager.Pumps.Values);
         }
 
         // GET api/pumps/registry/pump1
         [HttpGet("registry/{id}")]
-        public IEnumerable<string> GetRegistry(string id)
+        public object GetRegistry(string id)
         {
-            return new string[] { "pump1", "pump2" };
+            if (Program.Manager.Pumps.ContainsKey(id))
+                WebAPI.OK(Program.Manager.Pumps[id]);
+
+            return WebAPI.Error("Отсутствует закачка с заданным идентификатором.");
         }
 
         // GET api/pumps/registry/pump1
         [HttpGet("execute/{id}")]
-        public void Execute(string id)
+        public object Execute(string id)
         {
-           Program.Manager.Execute(id);
+            Program.Manager.Execute(id);
+
+            return WebAPI.OK("-1");
         }
     }
 }

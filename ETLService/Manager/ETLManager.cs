@@ -19,7 +19,7 @@ namespace ETLService.Manager
 
         public ETLManagerSettings Settings { get; set; }
 
-        public Dictionary<string, string> Pumps { get; set; }
+        public Dictionary<string, JObject> Pumps { get; set; }
 
         public Dictionary<string, string> ExecutingPumps { get; set; }
 
@@ -32,7 +32,7 @@ namespace ETLService.Manager
             if (!Path.GetExtension(e.Name).IsMatch("json|dll"))
                 return;
 
-            Console.Write("olololo!");
+            Logger.WriteToTrace("Доступны обновления реестра.");
         }
 
         private void InitWatcher()
@@ -57,26 +57,28 @@ namespace ETLService.Manager
         {
             Logger.WriteToTrace("Формирование списка закачек.");
 
-            Pumps = new Dictionary<string, string>();
+            Pumps = new Dictionary<string, JObject>();
 
             FileInfo[] pumpConfigs = Settings.Registry.ProgramsPath.GetFiles();
             foreach (FileInfo pumpConfig in pumpConfigs)
                 try
                 {
                     JObject data = JsonCommon.Load(pumpConfig.FullName);
-                    // Если уже существует закачка с таким ID
-                    if (Pumps.ContainsKey(data["id"].ToString()))
-                    {
+                    string id = data["id"].ToString();
 
+                    // Если уже существует закачка с таким ID
+                    if (Pumps.ContainsKey(id))
+                    {
+                        Logger.WriteToTrace($"Закачка с ID = \"{id}\" (\"{pumpConfig.Name}\") уже существует.", TraceMessageKind.Warning);
                         continue;                        
                     }
 
                     // Сохраняется конфиг закачки с описанием
-                    Pumps.Add(data["id"].ToString(), string.Empty);
+                    Pumps.Add(id, data);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex);
+                    Logger.WriteToTrace($"Ошибка при формировании реестра закачек: {ex}.", TraceMessageKind.Error);
                 }
         }
 
