@@ -1,7 +1,9 @@
 ﻿using System.Reflection;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Xml;
+using Newtonsoft.Json.Linq;
 
 namespace ETLCommon
 {
@@ -16,20 +18,19 @@ namespace ETLCommon
         {
             resources = new Dictionary<string, Dictionary<string, string>>();
 
-            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("ETLCommon.Logger.StringResources.xml");
-
-            XmlDocument doc = new XmlDocument();
-            doc.Load(stream);
-
-            foreach (XmlNode node in doc.SelectSingleNode("NewDataSet").ChildNodes)
+            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("ETLCommon.Logger.StringResources.json");
+            StreamReader sr = new StreamReader(stream, Encoding.GetEncoding(1251));
+            JObject data = JObject.Parse(sr.ReadToEnd());
+            foreach (JProperty type in data.Children())
             {
-                if (!resources.ContainsKey(node.Name))
-                    resources[node.Name] = new Dictionary<string, string>();
+                if (!resources.ContainsKey(type.Name))
+                    resources[type.Name] = new Dictionary<string, string>();
 
-                string key = node.SelectSingleNode("Value").InnerText;
-                string value = node.SelectSingleNode("String").InnerText;
-                if (!resources[node.Name].ContainsKey(key))
-                    resources[node.Name][key] = value;
+                foreach (JProperty value in type.Value.Children())
+                {
+                    if (!resources[type.Name].ContainsKey(value.Name))
+                        resources[type.Name][value.Name] = value.Value.ToString();
+                }
             }
         }
 

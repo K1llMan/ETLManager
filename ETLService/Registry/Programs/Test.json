@@ -1,3 +1,41 @@
 {
-    "id": "testPump"
+  "id": "testPump",
+  "module": "test.dll",
+  "desc": {
+    "name": "Test program",
+    "comment": "Test program for testing tests"
+  },
+  "commonParams": {
+    "deleteData": {
+      "desc": "Delete earlier pumpped data",
+      "value": true,
+      "default": true,
+      "type": "check"
+    }
+  },
+
+  "stages": {
+    "pump": {
+      "desc": "stage desc",
+      "params": {
+
+      }
+    },
+
+    "processData": {
+      "desc": "stage desc",
+      "params": {
+
+      }
+    }
+  }
 }
+
+/*
+  "paramName": {
+    "desc": "param desc",
+    "value": "12",
+    "default: ""
+    "type": "label"
+  }
+*/

@@ -1,0 +1,12 @@
+{
+  "Constants": {
+    "LogsPath": "Logs",
+    "StartupMessage": "Процесс запущен."
+  },
+  "TraceMessageKind": {
+    "CriticalError": "Критическая ошибка: ",
+    "Error": "Ошибка: ",
+    "Information": "Информация: ",
+    "Warning": "Предупреждение: "
+  }
+}

@@ -54,7 +54,7 @@ namespace ETLCommon
             // В файл
             writers.Add(new Writer(new Dictionary<string, object> {
                 { "Type", WriterType.File },
-                { "File", logsDir + fileName + ".txt" },
+                { "File", logsDir + fileName },
             }));
 
             // В консоль
@@ -157,12 +157,13 @@ namespace ETLCommon
         /// <summary>
         /// Инициализация
         /// </summary>
-        public static void Initialize(string fileName, bool useConsole)
+        public static void Initialize(string fileName, string logsPath, bool useConsole)
         {
-            string logsPath = string.Empty;
             string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            logsDir = string.Format("{0}\\{1}\\", baseDir,
-                string.IsNullOrEmpty(logsPath) ? StringResources.GetLine("LogsPath") : logsPath);
+            logsDir = string.IsNullOrEmpty(logsPath)
+                ? Path.Combine(baseDir, StringResources.GetLine("LogsPath"))
+                : logsPath;
+
             if (!Directory.Exists(logsDir))
                 Directory.CreateDirectory(logsDir);
 
