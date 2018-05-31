@@ -54,7 +54,7 @@ namespace ETLCommon
             // В файл
             writers.Add(new Writer(new Dictionary<string, object> {
                 { "Type", WriterType.File },
-                { "File", logsDir + fileName },
+                { "File", Path.Combine(logsDir, fileName) },
             }));
 
             // В консоль
@@ -82,7 +82,7 @@ namespace ETLCommon
                             return null;
                         break;
                     case "File":
-                        outDict.Add(key, logsDir + dict[key].ToString().Replace("{filename}", fileName));
+                        outDict.Add(key, Path.Combine(logsDir, dict[key].ToString().Replace("{filename}", fileName)));
                         break;
                     case "Levels":
                         outDict.Add(key, dict[key].ToString().Split('|').Select(s => (TraceMessageKind)Enum.Parse(typeof(TraceMessageKind), s.Trim())).ToArray());
@@ -159,6 +159,8 @@ namespace ETLCommon
         /// </summary>
         public static void Initialize(string fileName, string logsPath, bool useConsole)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
             string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             logsDir = string.IsNullOrEmpty(logsPath)
                 ? Path.Combine(baseDir, StringResources.GetLine("LogsPath"))
@@ -193,8 +195,6 @@ namespace ETLCommon
                     fs.Close();
                 }
             }
-
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
             InitWriters(configData, fileName, useConsole);
 

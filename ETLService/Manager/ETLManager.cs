@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 
 using Newtonsoft.Json.Linq;
@@ -21,7 +22,7 @@ namespace ETLService.Manager
 
         public Dictionary<string, JObject> Pumps { get; set; }
 
-        public Dictionary<string, string> ExecutingPumps { get; set; }
+        public Dictionary<string, Process> ExecutingPumps { get; set; }
 
         #endregion Свойства
 
@@ -58,6 +59,7 @@ namespace ETLService.Manager
             Logger.WriteToTrace("Формирование списка закачек.");
 
             Pumps = new Dictionary<string, JObject>();
+            ExecutingPumps = new Dictionary<string, Process>();
 
             FileInfo[] pumpConfigs = Settings.Registry.ProgramsPath.GetFiles();
             foreach (FileInfo pumpConfig in pumpConfigs)
@@ -92,16 +94,34 @@ namespace ETLService.Manager
         public void Execute(string id)
         {
             // Проверка наличия в реестре
-            if (!Pumps.ContainsKey(id))
-                return;
+            //if (!Pumps.ContainsKey(id))
+            //    return;
 
             // Проверка среди запущенных
-            if (ExecutingPumps.ContainsKey(id))
+            if (!ExecutingPumps.ContainsKey(id))
             {
+
+                ProcessStartInfo psi = new ProcessStartInfo
+                {
+                    Arguments = $"ETLApp.dll \"{id}\"",
+                    FileName = "dotnet",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory
+                };
+                Process prc = Process.Start(psi);
+                prc.EnableRaisingEvents = true;
+
+                // При закрытии процесса удаляем его из запущенных
+                prc.Exited += (s, a) => {
+                    Logger.WriteToTrace($"Процесс закачки \"{id}\" ({prc.Id}) завершён.");
+                    ExecutingPumps.Remove(id);
+                };
+
+                ExecutingPumps.Add(id, prc);
+
                 return;
             }
-
-            ExecutingPumps.Add(id, string.Empty);
         }
 
         /// <summary>

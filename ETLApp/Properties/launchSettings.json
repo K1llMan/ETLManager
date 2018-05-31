@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ETLApp": {
+      "commandName": "Project",
+      "commandLineArgs": "\"ololo\""
+    }
+  }
+}
