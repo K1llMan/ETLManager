@@ -1,5 +1,7 @@
 ﻿{
   "Libs": "Libs",
   "Programs": "Programs",
-  "Updates": "Updates"
+  "Updates": "Updates",
+  "Input": "in",
+  "Output": "out" 
 }

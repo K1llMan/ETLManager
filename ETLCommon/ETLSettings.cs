@@ -1,10 +1,9 @@
 ﻿using System;
 using System.IO;
 
-using ETLCommon;
 using Newtonsoft.Json.Linq;
 
-namespace ETLService.Manager
+namespace ETLCommon
 {
     #region Настройки реестра
 
@@ -19,6 +18,10 @@ namespace ETLService.Manager
         public DirectoryInfo ProgramsPath { get; set; }
 
         public DirectoryInfo UpdatesPath { get; set; }
+
+        public DirectoryInfo InputPath { get; set; }
+
+        public DirectoryInfo OutputPath { get; set; }
 
         #endregion Свойства
 
@@ -38,6 +41,8 @@ namespace ETLService.Manager
             LibsPath = GetRelativePath(data["Libs"].ToString());
             ProgramsPath = GetRelativePath(data["Programs"].ToString());
             UpdatesPath = GetRelativePath(data["Updates"].ToString());
+            InputPath = GetRelativePath(data["Input"].ToString());
+            OutputPath = GetRelativePath(data["Output"].ToString());
         }
 
         #endregion Вспомогательные функции
@@ -59,7 +64,7 @@ namespace ETLService.Manager
 
     #region Настройки
 
-    public class ETLManagerSettings
+    public class ETLSettings
     {
         #region Свойства
 
@@ -71,16 +76,17 @@ namespace ETLService.Manager
 
         #region Основные функции
 
-        public ETLManagerSettings(FileInfo settings)
+        public ETLSettings(string settings)
         {
             Logger.WriteToTrace("Инициализация настроек.");
 
-            JObject data = JsonCommon.Load(settings.FullName);
+            JObject data = JsonCommon.Load(settings);
             string path = data["RegistryPath"].ToString();
             path = string.IsNullOrEmpty(path) || !Directory.Exists(path)
                 ? Path.Combine(AppContext.BaseDirectory, "Registry")
                 : path;
 
+            RegistryPath = new DirectoryInfo(path);
             Registry = new ETLRegistrySettings(path);
         }
 

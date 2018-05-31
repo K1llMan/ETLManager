@@ -18,7 +18,7 @@ namespace ETLService.Manager
 
         #region Свойства
 
-        public ETLManagerSettings Settings { get; set; }
+        public ETLSettings Settings { get; set; }
 
         public Dictionary<string, JObject> Pumps { get; set; }
 
@@ -127,9 +127,12 @@ namespace ETLService.Manager
         /// <summary>
         /// Конструктор
         /// </summary>
-        public ELTManager(FileInfo settings)
+        public ELTManager()
         {
-            Settings = new ETLManagerSettings(settings);
+            string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            Logger.Initialize("ETLManager.log", baseDir, true);
+
+            Settings = new ETLSettings(Path.Combine(baseDir, "ETLSettings.json"));
 
             InitPumpsList();
 

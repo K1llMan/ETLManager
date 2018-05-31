@@ -15,10 +15,7 @@ namespace ETLService
 
         public static void Main(string[] args)
         {
-            Logger.Initialize("ETLManager.log", AppDomain.CurrentDomain.BaseDirectory, true);
-
-            FileInfo settings = new FileInfo("appsettings.json");
-            Manager = new ELTManager(settings);
+            Manager = new ELTManager();
 
             BuildWebHost(args).Run();
         }
