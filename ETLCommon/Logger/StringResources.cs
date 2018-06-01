@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Xml;
+
 using Newtonsoft.Json.Linq;
 
 namespace ETLCommon

@@ -15,6 +15,8 @@ namespace ETLCommon
 
         public DirectoryInfo LibsPath { get; set; }
 
+        public DirectoryInfo LogsPath { get; set; }
+
         public DirectoryInfo ProgramsPath { get; set; }
 
         public DirectoryInfo UpdatesPath { get; set; }
@@ -27,9 +29,9 @@ namespace ETLCommon
 
         #region Вспомогательные функции
 
-        private DirectoryInfo GetRelativePath(string path)
+        private DirectoryInfo GetRelativePath(JToken path)
         {
-            DirectoryInfo dir = new DirectoryInfo(Path.Combine(RegistryPath.FullName, path));
+            DirectoryInfo dir = new DirectoryInfo(Path.Combine(RegistryPath.FullName, path.ToString()));
             if (!dir.Exists)
                 dir.Create();
 
@@ -38,11 +40,12 @@ namespace ETLCommon
 
         private void UpdateSettings(JObject data)
         {
-            LibsPath = GetRelativePath(data["Libs"].ToString());
-            ProgramsPath = GetRelativePath(data["Programs"].ToString());
-            UpdatesPath = GetRelativePath(data["Updates"].ToString());
-            InputPath = GetRelativePath(data["Input"].ToString());
-            OutputPath = GetRelativePath(data["Output"].ToString());
+            LibsPath = GetRelativePath(data["libs"]);
+            LogsPath = GetRelativePath(data["logs"]);
+            ProgramsPath = GetRelativePath(data["programs"]);
+            UpdatesPath = GetRelativePath(data["updates"]);
+            InputPath = GetRelativePath(data["in"]);
+            OutputPath = GetRelativePath(data["out"]);
         }
 
         #endregion Вспомогательные функции
@@ -70,23 +73,18 @@ namespace ETLCommon
 
         public ETLRegistrySettings Registry { get; set; }
 
-        public DirectoryInfo RegistryPath { get; set; }
-
         #endregion Свойства
 
         #region Основные функции
 
         public ETLSettings(string settings)
         {
-            Logger.WriteToTrace("Инициализация настроек.");
-
             JObject data = JsonCommon.Load(settings);
             string path = data["RegistryPath"].ToString();
             path = string.IsNullOrEmpty(path) || !Directory.Exists(path)
                 ? Path.Combine(AppContext.BaseDirectory, "Registry")
                 : path;
 
-            RegistryPath = new DirectoryInfo(path);
             Registry = new ETLRegistrySettings(path);
         }
 

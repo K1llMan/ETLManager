@@ -1,7 +1,8 @@
 ﻿{
-  "Libs": "Libs",
-  "Programs": "Programs",
-  "Updates": "Updates",
-  "Input": "in",
-  "Output": "out" 
+  "libs": "Libs",
+  "programs": "Programs",
+  "updates": "Updates",
+  "in": "in",
+  "out": "out",
+  "logs": "Logs" 
 }

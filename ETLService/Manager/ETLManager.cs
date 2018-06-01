@@ -91,7 +91,7 @@ namespace ETLService.Manager
         /// <summary>
         /// Функция запуска закачки
         /// </summary>
-        public void Execute(string id)
+        public int Execute(string id)
         {
             // Проверка наличия в реестре
             //if (!Pumps.ContainsKey(id))
@@ -119,9 +119,10 @@ namespace ETLService.Manager
                 };
 
                 ExecutingPumps.Add(id, prc);
-
-                return;
+                return 0;
             }
+
+            return -1;
         }
 
         /// <summary>

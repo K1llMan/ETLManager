@@ -1,10 +1,6 @@
-﻿using System.Collections.Generic;
-
-using ETLService.Manager;
+﻿using ETLService.Manager;
 
 using Microsoft.AspNetCore.Mvc;
-
-using Newtonsoft.Json.Linq;
 
 namespace ETLService.Controllers
 {
@@ -23,7 +19,7 @@ namespace ETLService.Controllers
         public object GetRegistry(string id)
         {
             if (Program.Manager.Pumps.ContainsKey(id))
-                WebAPI.OK(Program.Manager.Pumps[id]);
+                return WebAPI.OK(Program.Manager.Pumps[id]);
 
             return WebAPI.Error("Отсутствует закачка с заданным идентификатором.");
         }
@@ -32,9 +28,11 @@ namespace ETLService.Controllers
         [HttpGet("execute/{id}")]
         public object Execute(string id)
         {
-            Program.Manager.Execute(id);
+            int pumpID = Program.Manager.Execute(id);
 
-            return WebAPI.OK("-1");
+            return pumpID == -1 
+                ? WebAPI.Error($"Ошибка при запуске закачки \"{id}\".") 
+                : WebAPI.OK(pumpID);
         }
     }
 }

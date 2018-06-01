@@ -1,10 +1,6 @@
-﻿using System;
-using System.IO;
-
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
-using ETLCommon;
 using ETLService.Manager;
 
 namespace ETLService

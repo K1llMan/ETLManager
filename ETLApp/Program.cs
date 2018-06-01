@@ -1,9 +1,6 @@
 ﻿using System;
-using System.IO;
 
 using ETLCommon;
-
-using Newtonsoft.Json.Linq;
 
 namespace ETLApp
 {
@@ -13,18 +10,20 @@ namespace ETLApp
 
         static void Main(string[] args)
         {
-            string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-
-            Logger.Initialize($"{args[0]}.txt", string.Empty, false);
-
-            Settings = new ETLSettings(Path.Combine(baseDir, "ETLSettings.json"));
-
-            Logger.WriteToTrace($"Запущена закачка {args[0]}.");
-            while (true)
+            ETLProgram program = null;
+            try
             {
-                
+                program = new ETLProgram(args[0]);
+                program.Exec();
             }
-            Logger.CloseLogFile();
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            finally
+            {
+                program?.Dispose();
+            }
         }
     }
 }
