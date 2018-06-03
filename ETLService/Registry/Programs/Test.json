@@ -16,7 +16,10 @@
 
   "stages": {
     "pump": {
+	    "enabled": true,
+	    "name": "Pump data",
       "desc": "stage desc",
+	    "func": "PumpData",
       "params": {
 
       }
