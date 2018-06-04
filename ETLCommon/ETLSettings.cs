@@ -11,29 +11,29 @@ namespace ETLCommon
     {
         #region Свойства
 
-        public DirectoryInfo RegistryPath { get; set; }
+        public string RegistryPath { get; set; }
 
-        public DirectoryInfo LibsPath { get; set; }
+        public string LibsPath { get; set; }
 
-        public DirectoryInfo LogsPath { get; set; }
+        public string LogsPath { get; set; }
 
-        public DirectoryInfo ProgramsPath { get; set; }
+        public string ProgramsPath { get; set; }
 
-        public DirectoryInfo UpdatesPath { get; set; }
+        public string UpdatesPath { get; set; }
 
-        public DirectoryInfo InputPath { get; set; }
+        public string InputPath { get; set; }
 
-        public DirectoryInfo OutputPath { get; set; }
+        public string OutputPath { get; set; }
 
         #endregion Свойства
 
         #region Вспомогательные функции
 
-        private DirectoryInfo GetRelativePath(JToken path)
+        private string GetRelativePath(JToken path)
         {
-            DirectoryInfo dir = new DirectoryInfo(Path.Combine(RegistryPath.FullName, path.ToString()));
-            if (!dir.Exists)
-                dir.Create();
+            string dir = Path.Combine(RegistryPath, path.ToString());
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
 
             return dir;
         }
@@ -54,9 +54,9 @@ namespace ETLCommon
 
         public ETLRegistrySettings(string path)
         {
-            RegistryPath = new DirectoryInfo(path);
+            RegistryPath = path;
 
-            string registry = Path.Combine(RegistryPath.FullName, "registry.json");
+            string registry = Path.Combine(RegistryPath, "registry.json");
             UpdateSettings(JsonCommon.Load(registry));
         }
 

@@ -13,6 +13,7 @@ namespace ETLService.Manager
         #region Поля
 
         private FileSystemWatcher watcher;
+        private Dictionary<string, string> pumpsFiles;
 
         #endregion Поля
 
@@ -42,7 +43,7 @@ namespace ETLService.Manager
 
             watcher = new FileSystemWatcher
             {
-                Path = Settings.Registry.UpdatesPath.FullName,
+                Path = Settings.Registry.UpdatesPath,
                 NotifyFilter = NotifyFilters.Size | NotifyFilters.FileName,
                 Filter = "*.*",
             };
@@ -58,10 +59,13 @@ namespace ETLService.Manager
         {
             Logger.WriteToTrace("Формирование списка закачек.");
 
-            Pumps = new Dictionary<string, JObject>();
+            // Словарь соответствия ID закачки файлу, его содержащего
+            pumpsFiles = new Dictionary<string, string>();
+
+            Pumps = new Dictionary<string, JObject>();            
             ExecutingPumps = new Dictionary<string, Process>();
 
-            FileInfo[] pumpConfigs = Settings.Registry.ProgramsPath.GetFiles();
+            FileInfo[] pumpConfigs = new DirectoryInfo(Settings.Registry.ProgramsPath).GetFiles();
             foreach (FileInfo pumpConfig in pumpConfigs)
                 try
                 {
@@ -77,6 +81,7 @@ namespace ETLService.Manager
 
                     // Сохраняется конфиг закачки с описанием
                     Pumps.Add(id, data);
+                    pumpsFiles.Add(id, pumpConfig.Name);
                 }
                 catch (Exception ex)
                 {
@@ -103,7 +108,7 @@ namespace ETLService.Manager
 
                 ProcessStartInfo psi = new ProcessStartInfo
                 {
-                    Arguments = $"ETLApp.dll \"{id}\"",
+                    Arguments = $"ETLApp.dll \"{pumpsFiles[id]}\"",
                     FileName = "dotnet",
                     RedirectStandardOutput = true,
                     UseShellExecute = false,

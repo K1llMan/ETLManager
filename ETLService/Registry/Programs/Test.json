@@ -1,6 +1,6 @@
 {
   "id": "testPump",
-  "module": "test.dll",
+  "module": "TestPump.dll",
   "desc": {
     "name": "Test program",
     "comment": "Test program for testing tests"
@@ -16,29 +16,39 @@
 
   "stages": {
     "pump": {
-	    "enabled": true,
-	    "name": "Pump data",
+      "enabled": true,
+      "name": "Pump data",
       "desc": "stage desc",
-	    "func": "PumpData",
+      "func": "PumpData",
       "params": {
-
       }
     },
 
     "processData": {
+      "enabled": true,
+      "name": "Process data",
       "desc": "stage desc",
+      "func": "ProcessData",
       "params": {
+      }
+    },
 
+    "clone": {
+      "enabled": true,
+      "name": "Cloning data",
+      "desc": "stage desc",
+      "func": "ProcessData",
+      "params": {
       }
     }
   }
 }
 
 /*
-  "paramName": {
-    "desc": "param desc",
-    "value": "12",
-    "default: ""
-    "type": "label"
-  }
+"paramName": {
+  "desc": "param desc",
+  "value": "12",
+  "default: ""
+  "type": "label"
+}
 */
