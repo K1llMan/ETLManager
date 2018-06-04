@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 using ETLCommon;
@@ -13,7 +12,7 @@ namespace ETLApp
     {
         #region Свойства
 
-        public string ID { get; }
+        public string ID { get; private set; }
 
         public ETLSettings Settings { get; set; }
 
@@ -30,29 +29,35 @@ namespace ETLApp
         {
             Logger.WriteToTrace($"Запуск закачки \"{ID}\".", TraceMessageKind.Information);
 
-            // Обход всех этапов закачки
-            foreach (Stage stage in Stages.Where(s => s.Enabled))
-                stage.Exec();
+            try
+            {
+                // Обход всех этапов закачки
+                foreach (Stage stage in Stages.Where(s => s.Enabled))
+                    stage.Exec();
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteToTrace($"Ошибка при выполнении закачки: {ex}", TraceMessageKind.Error);
+            }
         }
 
         /// <summary>
         /// Инициализация программы
         /// </summary>
-        public ETLProgram(ETLSettings settings, JObject data)
+        public void Initialize(JObject data)
         {
             try
             {
-                Settings = settings;
                 ID = data["id"].ToString();
 
                 // Инициализация списка этапов
                 Stages = new List<Stage>();
                 foreach (JProperty stage in data["stages"])
-                    Stages.Add(new Stage(stage));
+                    Stages.Add(new Stage(stage, this));
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Logger.WriteToTrace($"Ошибка при инициализации закачки: {ex}", TraceMessageKind.Error);
             }
         }
 

@@ -37,7 +37,7 @@
       "enabled": true,
       "name": "Cloning data",
       "desc": "stage desc",
-      "func": "ProcessData",
+      "func": "CloneData",
       "params": {
       }
     }

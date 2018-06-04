@@ -21,25 +21,37 @@ namespace ETLApp
 
                 string id = data["id"].ToString();
 
-                Logger.Initialize($"{id}.txt", settings.Registry.LogsPath, false);
+                Logger.Initialize($"{id}", settings.Registry.LogsPath, false);
                 Logger.WriteToTrace($"Инициализация закачки \"{id}\".", TraceMessageKind.Information);
             
                 // Получаем описание закачки и загружаем модуль с кодом
-                string module = Path.Combine(settings.Registry.LibsPath, data["module"].ToString());
-                if (File.Exists(module))
+                string moduleName = data["module"].ToString();
+                string module = Path.Combine(settings.Registry.LibsPath, moduleName);
+                if (!File.Exists(module))
                 {
-                    Assembly assembly = Assembly.LoadFile(module);
-                    Type type = assembly.GetTypes().FirstOrDefault(t => typeof(ETLProgram).IsAssignableFrom(t));
-                    ETLProgram program = (ETLProgram)assembly.CreateInstance(type.FullName, false, BindingFlags.CreateInstance, null, 
-                        new object[] { settings, data }, CultureInfo.CurrentCulture, null);
-
-                    program?.Exec();
+                    Logger.WriteToTrace($"Не обнаружен программный модуль \"{moduleName}\".", TraceMessageKind.Error);
+                    return;
                 }
+
+                Assembly assembly = Assembly.LoadFile(module);
+                Type type = assembly.GetTypes().FirstOrDefault(t => typeof(ETLProgram).IsAssignableFrom(t));
+
+                if (type == null)
+                {
+                    Logger.WriteToTrace($"В модуле \"{moduleName}\" отсутствуют типы, реализующие программу закачки.", TraceMessageKind.Error);
+                    return;
+                }
+
+                ETLProgram program = (ETLProgram)assembly.CreateInstance(type.FullName, false, BindingFlags.CreateInstance, null, 
+                    null, CultureInfo.CurrentCulture, null);
+
+                program.Settings = settings;
+                program.Initialize(data);
+                program.Exec();
             }
             catch (Exception ex)
             {
-                Logger.WriteToTrace($"Ошибка при инициализации закачки: {ex}", TraceMessageKind.Error);
-                Console.WriteLine(ex);
+                Logger.WriteToTrace($"Критическая ошибка загрузки закачки: {ex}", TraceMessageKind.CriticalError);
             }
             finally
             {

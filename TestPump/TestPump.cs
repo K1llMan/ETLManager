@@ -1,14 +1,24 @@
 ﻿using ETLApp;
-using ETLCommon;
 
-using Newtonsoft.Json.Linq;
+using ETLCommon;
 
 namespace TestPump
 {
     public class TestPump: ETLProgram
     {
-        public TestPump(ETLSettings settings, JObject data) : base(settings, data)
+        public void PumpData()
         {
+            Logger.WriteToTrace("Тестирование метода закачки 1");
+        }
+
+        public void ProcessData()
+        {
+            Logger.WriteToTrace("Тестирование метода закачки 2");
+        }
+
+        public void CloneData()
+        {
+            Logger.WriteToTrace("Тестирование метода закачки 3");
         }
     }
 }

@@ -42,8 +42,7 @@ namespace ETLCommon
             foreach (Writer writer in writers)
                 writer.Write(message, traceMessageKind, category);
 
-            if (WriteEvent != null)
-                WriteEvent(new WriteEventArgs { Message = message });
+            WriteEvent?.Invoke(new WriteEventArgs { Message = message });
         }
 
         /// <summary>
