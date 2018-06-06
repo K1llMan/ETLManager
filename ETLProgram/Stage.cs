@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 using ETLCommon;
@@ -25,7 +26,33 @@ namespace ETLApp
 
         public StageFunc Method { get; }
 
+        public Dictionary<string, object> Parameters { get; }
+
         #endregion Свойства
+
+        #region Вспомогательные функции
+
+        private Dictionary<string, object> FormParamsList(JToken list)
+        {
+            Dictionary<string, object> paramDict = new Dictionary<string, object>();
+
+            foreach (JProperty param in list.Children())
+                try
+                {
+                    if (paramDict.ContainsKey(param.Name))
+                        continue;
+
+                    paramDict.Add(param.Name, ((JValue)param.Value["value"]).Value);
+                }
+                catch (Exception ex)
+                {
+                    Logger.WriteToTrace($"Ошибка при формировании общих параметров: {ex}", TraceMessageKind.Error);
+                }
+
+            return paramDict;
+        }
+
+        #endregion Вспомогательные функции
 
         #region Основные функции
 
@@ -53,6 +80,9 @@ namespace ETLApp
             JToken stageDesc = stage.Value;
             Enabled = Convert.ToBoolean(stageDesc["enabled"]);
             Name = stageDesc["name"].ToString();
+
+            // Формирование списка параметров этапа
+            Parameters = FormParamsList(stageDesc["params"]);
 
             // Привязка метода объекта программы к этапу
             string functName = stageDesc["func"].ToString();

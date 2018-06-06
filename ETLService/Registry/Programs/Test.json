@@ -21,6 +21,12 @@
       "desc": "stage desc",
       "func": "PumpData",
       "params": {
+        "testPumpedData": {
+          "desc": "Test param for testing data.",
+          "value": true,
+          "default": true,
+          "type": "check"
+        }
       }
     },
 

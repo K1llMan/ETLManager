@@ -21,7 +21,7 @@ namespace ETLApp
 
                 string id = data["id"].ToString();
 
-                Logger.Initialize($"{id}", settings.Registry.LogsPath, false);
+                Logger.Initialize($"{id}", settings.Registry.LogsPath, true);
                 Logger.WriteToTrace($"Инициализация закачки \"{id}\".", TraceMessageKind.Information);
             
                 // Получаем описание закачки и загружаем модуль с кодом
