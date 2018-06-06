@@ -224,7 +224,7 @@ namespace ETLCommon
         /// </summary>
         public static void WriteToTrace(string message)
         {
-            WriteToTrace(message, TraceMessageKind.Debug);
+            WriteToTrace(message, TraceMessageKind.Debug, Assembly.GetCallingAssembly().GetName().Name);
         }
 
         /// <summary>

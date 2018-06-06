@@ -126,8 +126,6 @@ namespace ETLService.Manager
         public ELTManager()
         {
             string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            Logger.Initialize("ETLManager.log", baseDir, true);
-
             Settings = new ETLSettings(Path.Combine(baseDir, "ETLSettings.json"));
 
             InitPumpsList();

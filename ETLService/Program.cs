@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore;
+﻿using System;
+
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
+using ETLCommon;
 using ETLService.Manager;
 
 namespace ETLService
@@ -11,6 +14,9 @@ namespace ETLService
 
         public static void Main(string[] args)
         {
+            string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            Logger.Initialize("ETLManager", baseDir, true);
+
             Manager = new ELTManager();
 
             BuildWebHost(args).Run();
