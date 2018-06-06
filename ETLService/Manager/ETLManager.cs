@@ -23,7 +23,7 @@ namespace ETLService.Manager
 
         public Dictionary<string, JObject> Pumps { get; set; }
 
-        public Dictionary<string, Process> ExecutingPumps { get; set; }
+        public Dictionary<string, PumpProcess> ExecutingPumps { get; set; }
 
         #endregion Свойства
 
@@ -63,7 +63,7 @@ namespace ETLService.Manager
             pumpsFiles = new Dictionary<string, string>();
 
             Pumps = new Dictionary<string, JObject>();            
-            ExecutingPumps = new Dictionary<string, Process>();
+            ExecutingPumps = new Dictionary<string, PumpProcess>();
 
             FileInfo[] pumpConfigs = new DirectoryInfo(Settings.Registry.ProgramsPath).GetFiles();
             foreach (FileInfo pumpConfig in pumpConfigs)
@@ -99,31 +99,21 @@ namespace ETLService.Manager
         public int Execute(string id)
         {
             // Проверка наличия в реестре
-            //if (!Pumps.ContainsKey(id))
-            //    return;
+            if (!Pumps.ContainsKey(id))
+                return -1;
 
             // Проверка среди запущенных
             if (!ExecutingPumps.ContainsKey(id))
             {
-
-                ProcessStartInfo psi = new ProcessStartInfo
-                {
-                    Arguments = $"ETLApp.dll \"{pumpsFiles[id]}\"",
-                    FileName = "dotnet",
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory
-                };
-                Process prc = Process.Start(psi);
-                prc.EnableRaisingEvents = true;
+                PumpProcess prc = new PumpProcess();
+                ExecutingPumps.Add(id, prc);
 
                 // При закрытии процесса удаляем его из запущенных
-                prc.Exited += (s, a) => {
-                    Logger.WriteToTrace($"Процесс закачки \"{id}\" ({prc.Id}) завершён.");
+                prc.Exit += (s, a) => {
                     ExecutingPumps.Remove(id);
                 };
 
-                ExecutingPumps.Add(id, prc);
+                prc.Start(id, pumpsFiles[id]);
                 return 0;
             }
 

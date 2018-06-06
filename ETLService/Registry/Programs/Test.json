@@ -8,7 +8,7 @@
   "commonParams": {
     "deleteData": {
       "desc": "Delete earlier pumpped data",
-      "value": true,
+      "value": false,
       "default": true,
       "type": "check"
     }

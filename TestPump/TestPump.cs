@@ -1,5 +1,6 @@
-﻿using ETLApp;
+﻿using System;
 
+using ETLApp;
 using ETLCommon;
 
 namespace TestPump
@@ -9,6 +10,8 @@ namespace TestPump
         public void PumpData()
         {
             Logger.WriteToTrace("Тестирование метода закачки 1");
+            if (Convert.ToBoolean(UserParams["deleteData"]))
+                Logger.WriteToTrace(UserParams["deleteData"].ToString());
         }
 
         public void ProcessData()
