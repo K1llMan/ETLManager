@@ -40,7 +40,7 @@
     },
 
     "clone": {
-      "enabled": true,
+      "enabled": false,
       "name": "Cloning data",
       "desc": "stage desc",
       "func": "CloneData",

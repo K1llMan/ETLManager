@@ -21,6 +21,7 @@ namespace ETLCommon
         public class WriteEventArgs
         {
             public string Message { get; internal set; }
+            public TraceMessageKind Kind { get; internal set; }
         }
 
         public delegate void WriteEventHandler(WriteEventArgs e);
@@ -42,7 +43,7 @@ namespace ETLCommon
             foreach (Writer writer in writers)
                 writer.Write(message, traceMessageKind, category);
 
-            WriteEvent?.Invoke(new WriteEventArgs { Message = message });
+            WriteEvent?.Invoke(new WriteEventArgs { Message = message, Kind = traceMessageKind });
         }
 
         /// <summary>

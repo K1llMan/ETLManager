@@ -75,6 +75,9 @@ namespace ETLApp
                         .ToDictionary(p => p.Key, p => p.Value);
                     stage.Exec();
                 }
+
+                Logger.WriteToTrace($"Результат выполнения этапов: \n\t{ string.Join("\n\t", Stages.Select(s => $"{s.Name}: {s.Status.GetDescription()}")) }", 
+                    TraceMessageKind.Information);
             }
             catch (Exception ex)
             {

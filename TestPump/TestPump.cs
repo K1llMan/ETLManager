@@ -17,6 +17,7 @@ namespace TestPump
         public void ProcessData()
         {
             Logger.WriteToTrace("Тестирование метода закачки 2");
+            throw new Exception("Ошибка насяльника!");
         }
 
         public void CloneData()

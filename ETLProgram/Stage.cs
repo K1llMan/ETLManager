@@ -28,6 +28,8 @@ namespace ETLApp
 
         public Dictionary<string, object> Parameters { get; }
 
+        public StageStatus Status { get; private set; }
+
         #endregion Свойства
 
         #region Вспомогательные функции
@@ -52,6 +54,20 @@ namespace ETLApp
             return paramDict;
         }
 
+        private void WriteTraceHandler(Logger.WriteEventArgs e)
+        {
+            switch (e.Kind)
+            {
+                case TraceMessageKind.Warning:
+                    if (Status != StageStatus.Errors)
+                        Status = StageStatus.Warnings;
+                    break;
+                case TraceMessageKind.Error:
+                    Status = StageStatus.Errors;
+                    break;
+            }                
+        }
+
         #endregion Вспомогательные функции
 
         #region Основные функции
@@ -61,6 +77,9 @@ namespace ETLApp
         /// </summary>
         public void Exec()
         {
+            // Добавление контроллера записи в лог для установки статуса в зависимости от сообщений лога
+            Logger.WriteEvent += WriteTraceHandler;
+
             try
             {
                 Logger.WriteToTrace($"Запуск этапа закачки \"{Name}\".");
@@ -71,6 +90,8 @@ namespace ETLApp
                 Logger.WriteToTrace($"Произошла ошибка: {ex}.", TraceMessageKind.Error);
             }
 
+            // Отключение контроллера
+            Logger.WriteEvent -= WriteTraceHandler;
         }
 
         public Stage(JProperty stage, ETLProgram program)
@@ -79,6 +100,9 @@ namespace ETLApp
 
             JToken stageDesc = stage.Value;
             Enabled = Convert.ToBoolean(stageDesc["enabled"]);
+            // Устанавка статусов по умолчанию
+            Status = Enabled ? StageStatus.Successful : StageStatus.Skipped;
+
             Name = stageDesc["name"].ToString();
 
             // Формирование списка параметров этапа
