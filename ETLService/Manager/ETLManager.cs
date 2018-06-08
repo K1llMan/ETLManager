@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 
 using Newtonsoft.Json.Linq;
@@ -8,7 +7,7 @@ using ETLCommon;
 
 namespace ETLService.Manager
 {
-    public class ELTManager
+    public class ELTManager: IDisposable
     {
         #region Поля
 
@@ -134,5 +133,10 @@ namespace ETLService.Manager
         }
 
         #endregion Основные функции
+
+        public void Dispose()
+        {
+            Settings?.Dispose();
+        }
     }
 }

@@ -1,5 +1,5 @@
 ﻿{
   "RegistryPath": "",
   "Proxy": {},
-  "Database": {} 
+  "Database": "postgresql://fm-pg1:5432/dv41pg;User ID=dv41pg;Password=dv;"
 }

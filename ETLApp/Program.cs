@@ -14,6 +14,7 @@ namespace ETLApp
     {
         static void Main(string[] args)
         {
+            ETLProgram program = null;
             try
             {
                 ETLSettings settings = new ETLSettings(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ETLSettings.json"));
@@ -42,7 +43,7 @@ namespace ETLApp
                     return;
                 }
 
-                ETLProgram program = (ETLProgram)assembly.CreateInstance(type.FullName, false, BindingFlags.CreateInstance, null, 
+                program = (ETLProgram)assembly.CreateInstance(type.FullName, false, BindingFlags.CreateInstance, null, 
                     null, CultureInfo.CurrentCulture, null);
 
                 program.Settings = settings;
@@ -55,6 +56,7 @@ namespace ETLApp
             }
             finally
             {
+                program?.Dispose();
                 Logger.CloseLogFile();
             }
         }

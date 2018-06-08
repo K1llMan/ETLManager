@@ -67,9 +67,11 @@ namespace ETLCommon
 
     #region Настройки
 
-    public class ETLSettings
+    public class ETLSettings: IDisposable
     {
         #region Свойства
+
+        public Database DB { get; }
 
         public ETLRegistrySettings Registry { get; set; }
 
@@ -85,10 +87,18 @@ namespace ETLCommon
                 ? Path.Combine(AppContext.BaseDirectory, "Registry")
                 : path;
 
+            DB = new Database();
+            DB.Connect(data["Database"].ToString());
+
             Registry = new ETLRegistrySettings(path);
         }
 
         #endregion Основные функции
+
+        public void Dispose()
+        {
+            DB?.Disconnect();
+        }
     }
 
     #endregion Настройки

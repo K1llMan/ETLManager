@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ETLApp
 {
-    public class ETLProgram
+    public class ETLProgram: IDisposable
     {
         #region Поля
 
@@ -109,5 +109,10 @@ namespace ETLApp
         }
 
         #endregion Основные функции
+
+        public void Dispose()
+        {
+            Settings?.Dispose();
+        }
     }
 }

@@ -54,6 +54,8 @@ namespace ETLService
 
         private void OnStopped()
         {
+            // Корректное уничтожение объекта
+            Program.Manager?.Dispose();
             Logger.CloseLogFile();
         }
 
