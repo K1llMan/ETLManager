@@ -7,7 +7,7 @@ namespace ETLCommon
     /// </summary>
     public enum StageStatus
     {
-        //[Description("Успешно")]
+        [Description("Успешно")]
         Successful,
 
         [Description("С предупреждениями")]

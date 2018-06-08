@@ -29,6 +29,8 @@ namespace ETLService
                     options.Limits.MaxConcurrentConnections = 100;
                     options.Limits.MaxConcurrentUpgradedConnections = 100;
                 })
+                // Установка папки с сайтом
+                //.UseWebRoot("static")
                 .Build();
     }
 }

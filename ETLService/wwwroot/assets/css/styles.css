@@ -1,0 +1,1132 @@
+* {
+	margin:0;
+	padding:0;
+}
+
+body{
+	background-color: #edeef0;
+	font: normal 16px Arial, Helvetica, sans-serif;
+}
+
+h1, h3{
+	font: normal 24px 'Open Sans', Arial, Helvetica, sans-serif;
+}
+
+/*-----------------
+    Basic
+-----------------*/
+
+.flow-down {
+    display: flex;
+    flex-flow: column;
+}
+
+.flow-right {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+/*-----------------
+	The Header
+------------------*/
+
+header {
+	position: fixed;
+	top: 0;
+	left:0;
+	right:0;
+
+	height: 40px;
+	z-index: 100;
+
+	background-color: #282b2c;
+	padding: 20px 40px;
+	color: #fff;
+	box-shadow: 0px 3px 2px rgba(0, 0, 0, 0.1);
+}
+
+header a {
+	color: #ffffff;
+	text-decoration: none;
+}
+
+header h2.tzine{
+	float: right;
+	opacity:0.9;
+}
+
+header h2.tzine:hover{
+	opacity:1;
+}
+
+header h2.tzine a{
+	font-size: 13px;
+	text-transform: uppercase;
+	display: inline-block;
+	padding: 12px 18px;
+	border-radius: 3px;
+	background-color: #5895DB;
+}
+
+
+@media (max-width: 500px){
+
+	header {
+		padding: 20px 15px;
+	}
+
+	header h1{
+		font-size: 24px;
+		margin: 0;
+	}
+
+}
+
+td, th {
+	//word-break: break-word;
+}
+
+.topBar .col {
+	padding: 0.75rem;
+}
+
+.main {
+	//max-width: 1200px;
+
+    flex: 1 0 auto;
+}
+
+footer.page-footer {
+    margin-top: 0;
+}
+
+.loading-container {
+    display: flex;
+    position: absolute;
+    
+    width: 100%;
+    height: 100%;
+    
+    align-items: center;
+    
+    background-color: #607d8b;
+    text-align: center;
+    
+    opacity: 0;
+
+    transition-property: opacity;
+    transition-timing-function: ease-in-out;
+    transition-duration: 0.3s;
+    
+    pointer-events:none;
+ 
+    color: white;
+    font-size: 24px;
+    line-height: 30px;
+ 
+    z-index: 1000;
+}
+
+.loading-container  * {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.loading-container.visible {
+    opacity: 1;
+}
+/*-----------------
+	Navigation
+------------------*/
+
+#nav li {
+    height: 100%;
+}
+
+#nav li img {
+    margin: 3px;
+}
+
+.navigationWrapper {
+	//position: fixed;
+
+    top: 50px;
+    left: 200px;
+
+	padding: 10px 0 10px 0;    
+}
+
+.navRow {
+    height: 32px;
+
+	text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 31px;
+    padding: 0 5px 0 20px;
+    color: #2a5885;
+}
+
+
+.navRow.selected {
+	border-left: 3px solid #6285af;
+	background-color: #f5f7fa;
+	color: #000;
+}
+
+.navRow:hover {
+	background-color: #f5f7fa;
+}
+
+/*-----------------
+	Ability
+------------------*/
+.ability {
+    width: 64px;
+    height: 64px;
+    
+    margin: 2px;
+}
+
+.ability img {
+    width: 100%;
+    height: 100%;
+
+    position: relative;
+}
+
+.ability img.responsive-img  {
+    padding: 2px;
+}
+
+/*-----------------
+	Main Content
+------------------*/
+.main-content {
+    visibility: collapse;
+}
+
+.main-content.visible {
+    visibility: visible;
+}
+
+.main-content h3{
+	font-size: 28px;
+	color:  #5a96b9;
+	padding-bottom: 20px;
+}
+
+@media (max-width: 600px){
+	.main-content{
+		margin: 45px auto;
+		padding: 0 25px;
+	}
+
+}
+
+/*--------------------
+    Pages
+--------------------*/
+.DotaFont {
+    font-family: "Radiance",Verdana
+}
+
+.main-page .container {
+    height: 100%;
+}
+
+.main-page nav {
+    background-color: transparent;
+}
+
+/*--------------------
+    .main-page 
+--------------------*/
+/* Gradients */
+#section-heroes {
+    background: -moz-linear-gradient(top, #37474f 0%, #607d8b 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, #37474f 0%,#607d8b 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, #37474f 0%,#607d8b 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+}
+
+.main-page .section {
+    padding: 0px;
+}
+
+.backgroundVideo {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background-size: 100% 100%;
+    background-color: black; /* in case the video doesn't fit the whole page*/
+    background-position: center center;
+    background-size: contain;
+    object-fit: cover; /*cover video background */
+    z-index: 0;
+}
+
+/* Layer with position absolute in order to have it over the video */
+.layer{
+    display: flex;
+    align-items: center;
+
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+
+    /* 
+    * Preventing flicker on some browsers 
+    * See http://stackoverflow.com/a/36671466/1081396  or issue #183
+    */
+    -webkit-transform: translate3d(0,0,0);
+    -ms-transform: translate3d(0,0,0);
+    transform: translate3d(0,0,0);
+}
+
+/* Headers */
+.main-page h1 {
+    margin: 50px 0 0 0;
+    font-size: 150px;
+    line-height: 150px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: white;
+    text-align: center;
+    font-family: "OpenSansBlack", sans-serif;
+}
+
+.horizontal-line {
+    height: 2px;
+    width: 0;
+    background-color: white;
+    margin: 0 auto 50px auto;
+    text-align: left;
+}
+
+.main-page .header-box {
+    position: absolute;
+    left: 50%;
+    top: 10%;
+    
+    z-index: 2;
+}
+
+.main-page .header-content.left {
+    margin-right: auto;
+}
+
+.main-page .header-content.left .horizontal-line {
+    margin: 0 auto 50px 0;
+}
+
+.main-page .header-content.right .horizontal-line {
+    margin: 0 0 50px auto;
+}
+
+.main-page .header-box .header-content {
+    position: relative;
+    left: -50%;
+}
+
+#section-heroes .header-box {
+    left: 20%;
+    top: 2%;
+    z-index: 2;
+}
+
+/* Page scrolls */
+.main-page .scroll-up {
+    width: 100%;
+    top: 70px;
+
+    position: absolute;
+    z-index: 10;    
+}
+
+.main-page .scroll-down {
+    width: 100%;
+    bottom: 15px;
+
+    position: absolute;
+    z-index: 10;
+}
+
+.arrow-up,
+.arrow-down,
+.arrow-left,
+.arrow-right {
+    cursor: pointer;
+    background-image: url('../images/arrow.png');
+    width: 32px;
+    height: 32px;
+    
+    margin: 0 auto;
+}
+
+.main-page .arrow-up {
+    -webkit-animation: blinkUp 1.6s ease-in-out 0s infinite normal both;
+    animation: blinkUp 1.6s ease-in-out 0s infinite normal both;   
+}
+
+.main-page .arrow-down {
+    -webkit-animation: blinkDown 1.6s ease-in-out 0s infinite normal both;
+    animation: blinkDown 1.6s ease-in-out 0s infinite normal both;       
+}
+
+.arrow-left {
+    transform: rotate(-90deg);
+}
+
+.arrow-right {
+    transform: rotate(90deg);
+}
+
+@-webkit-keyframes blinkUp {
+    0% {
+        opacity: 1;
+        -webkit-transform: translateY(10px);
+        transform: translateY(10px);
+    }
+
+    25% {
+        opacity: 1;
+    }
+
+    75% {
+        opacity: 0;
+        -webkit-transform: translateY(0);
+        transform: translateY(0);
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+@-webkit-keyframes blinkDown {
+    0% {
+        opacity: 1;
+        -webkit-transform: translateY(0px) rotate(180deg);
+        transform: translateY(0px) rotate(180deg);
+    }
+
+    25% {
+        opacity: 1;
+    }
+
+    75% {
+        opacity: 0;
+        -webkit-transform: translateY(10px) rotate(180deg);
+        transform: translateY(10px) rotate(180deg);
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.main-page .fp-controlArrow {
+    visibility: collapse;
+}
+
+.main-page .slides-controls {
+    display: flex;
+    align-items: center;
+    
+    width: 300px;
+    
+    z-index: 4;    
+}
+
+/*solves problem with overflowing video in Mac with Chrome */
+#section-intro{
+    overflow: hidden;
+}
+
+/* Hiding video controls 
+* See: https://css-tricks.com/custom-controls-in-html5-video-full-screen/
+* --------------------------------------- */
+video::-webkit-media-controls {
+    display:none !important;
+}
+
+.intro {
+    margin: 0 auto;
+    max-width: 1280px;
+    width: 90%;
+
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+}
+
+#fp-nav ul li a span {
+    background-color: white;
+}
+
+.main-logo {
+    display: flex;
+    flex-flow: column;
+    
+    position: absolute;
+    
+    left: 50%;
+    margin-left: -195px;
+    top: 50%;
+    margin-top: -239px;
+    
+    z-index: 2;
+}
+
+.main-logo .btn {
+    margin-top: 30px;
+    max-width: 150px;
+    
+    margin: 30px auto 0 auto;
+}
+
+/* Hero sliders */
+#section-heroes .slides-controls {
+    position: absolute;
+    bottom: 300px;
+    left: 50%;
+}
+
+.hero-data {
+    display: flex;
+    flex-flow: row;
+    flex-grow: 1;
+
+    height: 100%;    
+    margin-top: 70px;
+}
+
+.hero-data h3 {
+    margin: 20px 0 0 0;
+    padding: 0;
+
+    color: white;
+    
+    line-height: 90px;
+    font-size: 80px;
+    font-weight: 900;
+}
+
+.hero-data p {
+    color: white;
+    
+    font-size: 16px;
+    line-height: 22px;
+    
+    padding: 50px;
+}
+
+.hero-intro {
+    width: 40%;
+    height: 100%;
+    
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-intro img {
+    width: 100%;
+    height: auto;
+    
+    position: absolute;
+    bottom: 0px;
+    
+    z-index: -1;
+    
+    left: -100%;
+    opacity: 0;
+}
+
+#section-heroes .hero-info {
+    display: flex;
+    flex-flow: column;
+
+    width: 60%;
+    height: 100%;
+}
+
+#section-heroes .hero-info .header-content {
+    margin: 40px auto 0 40px;
+}
+
+/* Maps slides */
+#section-maps .slide {
+    background-size: cover;
+}
+
+#section-maps .slides-controls {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    margin-left: -150px;    
+}
+
+#section-maps h3 {
+    margin: 20px 0 0 0;
+    padding: 0;
+
+    color: white;
+    
+    line-height: 90px;
+    font-size: 80px;
+    font-weight: 900;
+}
+
+.map-data {
+    display: flex;
+    flex-flow: column;
+    
+    max-width: 40%;
+    margin-left: 30px;
+    height: 100%;    
+}
+
+.map-data p {
+    color: white;
+    
+    font-size: 16px;
+    line-height: 22px;
+    
+    padding: 0 50px;
+}
+
+.map-data .header-content {
+    margin: 70px auto 0 0;
+}
+
+/*--------------------
+    .heroes-page 
+--------------------*/
+.heroes-page {
+}
+
+.heroes-page  .heroes-table {
+    width: 100%;
+    margin: auto;
+    
+    display: flex;    
+    flex-flow: column;
+    
+    //background: -webkit-gradient(linear, left top, left bottom, from(#242728), to(#111313));
+    //margin-bottom: 30px;
+}
+
+.heroes-page .nobrain,
+.heroes-page .hitnrun,
+.heroes-page .summoner {
+    display: flex;    
+    flex-flow: row wrap;
+    
+    margin: auto;
+}
+
+.heroes-page .nobrain-back,
+.heroes-page .hitnrun-back,
+.heroes-page .summoner-back {
+    display: flex;
+    align-items: center;
+}
+
+.heroes-page .playstyle-label {
+    width: 100px;
+    
+    margin-left: 10px;
+
+    color: rgba(0,0,0,0.6);
+    
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 21px;    
+}
+
+.heroes-page .hero-icon {
+    margin: 5px;
+    border: 2px solid black;
+}
+
+.heroes-page .hero-icon:hover {
+    border: 2px solid green;
+}
+
+.heroes-page .vertical-divider {
+    width: 1px;
+    height: 100%;
+    
+    background-color: rgba(255,255,255,0.1);    
+}
+
+.heroes-page  .card-title {
+    height: 50px;
+}
+
+.heroes-page  .card-body {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    
+    height: 500px;
+}
+
+.heroes-page  .bio-container {
+    width: 33%;
+}
+
+.heroes-page  .bio {
+    height: 100%;
+    
+    padding: 20px;
+    overflow-y: auto;
+}
+
+::-webkit-scrollbar-track
+{
+}
+
+::-webkit-scrollbar
+{
+    width: 5px;
+}
+
+::-webkit-scrollbar:horizontal
+{
+    height: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: transparent;
+}
+
+*:hover::-webkit-scrollbar-thumb
+{
+    background-color: rgba(128,128,128,0.3);
+}
+::-webkit-scrollbar-thumb:hover
+{
+    background-color: rgba(128,128,128,0.5);
+}
+
+::-webkit-scrollbar-corner {
+    opacity: 0.2;
+}
+
+.heroes-page .portrait-container {
+    height: 100%;
+    
+    display: flex;
+    flex-grow: 1;
+    
+    flex-flow: column;
+}
+
+.heroes-page .portrait {
+    flex-grow: 1;
+}
+
+.heroes-page .attributes {
+    height: 100%;
+    width: 33%;
+    
+    padding: 20px;
+
+    margin-left: auto;
+}
+
+.heroes-page .attrib {
+    width: 110px;
+
+    margin-right: 10px;
+
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    
+    font-weight: bold;
+    color: #c0c0c0;
+    font-size: 14px;
+    line-height: 21px;
+    text-align: center;
+}
+
+.heroes-page .attrib .desc {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.heroes-page .attrib img {
+    margin-left: auto;
+    margin-right: auto;
+
+    border: 3px solid rgba(0, 0, 0, 0);
+}
+
+.heroes-page .primary-attrib img {
+    border-color: #ffbb37;
+    border-radius: 50%;
+}
+
+.heroes-page .abilities {
+    margin-left: auto;
+    margin-right: auto;
+
+    display: flex;
+    flex-flow: row;
+}
+
+.heroes-page .choice-container {
+    display: flex;
+    flex-flow: column;
+}
+
+.heroes-page .hero-name {
+}
+
+.heroes-page .title {
+    width: 200px;
+    margin-left: 4px;
+
+    color: #f0f0f0;
+    
+    font-size: 18px;
+    font-family: KoreanFont,georgia,serif;
+    text-transform: uppercase;
+}
+
+.heroes-page .desc {
+    font-weight: bold;
+    color: #c0c0c0;
+    font-size: 14px;
+    line-height: 21px;
+}
+
+/*--------------------
+    .items-page 
+--------------------*/
+.items-page  {
+}
+
+.item-container {
+    margin: 4px;
+
+    width: 90px;
+    height: 64px;
+    
+    overflow: hidden;
+}
+
+.item-image {
+    width: 90px;
+    height: 64px;
+    
+    overflow: hidden;
+}
+
+/*--------------------
+    .profiles-page 
+--------------------*/
+.profiles-page {
+}
+
+.profiles-page .profile-table {
+    margin-top: 10px;
+}
+
+.profiles-page .card-ziv {
+    border: 2px solid #AEA998;
+    box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    display: flex;
+}
+
+.profiles-page .card-ziv-content {
+    padding: 10px;
+    align-items: center;
+	
+    border: 3px solid #41626E;
+
+	background-color: #101D21;
+
+    -webkit-box-shadow: inset 0px 0px 8px 4px rgba(0,0,0,0.75);
+    -moz-box-shadow: inset 0px 0px 8px 4px rgba(0,0,0,0.75);
+    box-shadow: inset 0px 0px 8px 4px rgba(0,0,0,0.75);
+    
+    color: white;
+}
+
+.profiles-page .CBR {
+    margin-left: auto;
+    margin-right: auto;
+    
+	width: 90%;
+	height: 2px;
+
+    background: -moz-linear-gradient(left, rgba(47,91,84,0) 0%, rgba(47,91,84,1) 40%, rgba(47,91,84,1) 60%, rgba(47,91,84,0) 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(left, rgba(47,91,84,0) 0%,rgba(47,91,84,1) 40%,rgba(47,91,84,1) 60%,rgba(47,91,84,0) 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to right, rgba(47,91,84,0) 0%,rgba(47,91,84,1) 40%,rgba(47,91,84,1) 60%,rgba(47,91,84,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+
+	margin-bottom: 10px;
+	margin-top: 6px;
+}
+
+.profiles-page .player-card {
+    width: 250px;
+    padding: 8px;
+}
+
+.profiles-page .heroes-slider {
+    align-items: center;
+}
+
+.profiles-page .heroes-container {
+    width: 310px;
+    overflow: hidden;
+}
+
+.profiles-page .heroes-card {
+    display: flex;
+    flex-flow: row;
+    transition-property: transform;
+    transition-duration: 1.0s;
+}
+
+.profiles-page .hero-card {
+    width: 310px;
+    padding: 8px;
+}
+
+.profiles-page .player-name {
+    margin: 4px 0;
+    text-align: center;
+}
+
+.profiles-page .player-avatar {
+    width: 128px;
+    height: 128px;
+
+    display: flex;    
+    align-items: center;
+    flex-flow: column;    
+}
+
+.profiles-page .player-avatar img {
+    width: 100%;
+    height: 100%;
+
+    position: relative;
+    z-index: 1;
+}
+
+.profiles-page .player-avatar .avatar {
+    width: 77%;
+    height: 77%;
+    
+    border-radius: 50%;
+    top: -108px;
+    
+    z-index: 0;
+}
+
+.profiles-page .hero-info {
+    display: flex;
+    align-items: center;
+}
+
+.profiles-page .hero-info img {
+    width: 59px;
+    height: 33px;
+}
+
+.profiles-page .ability {
+    width: 48px;
+    height: 48px;
+}
+
+.profiles-page .hero-name {
+    margin-top: 4px;
+}
+
+.profiles-page .item {
+    width: 48px;
+    height: 48px;
+}
+
+.equipment .item-container {
+    width: 70px;
+    height: 50px;
+    margin: 0px;
+}
+
+.equipment   .item-image {
+    width: 100px;
+    height: 50px;
+}
+
+.equipment {
+    height: 260px;
+}
+
+.equipment  .equip-bg {
+    z-index: 0;
+}
+
+.equipment .slot {
+    width: 68px;
+    height: 50px;
+    
+    position: relative;
+    z-index: 1;
+}
+
+.equipment .slot0 {
+    left: 100px;
+    top: -252px;
+}
+
+.equipment .slot1 {
+    left: 10px;
+    top: -238px;
+}
+
+.equipment .slot2 {
+    left: 100px;
+    top: -288px;
+}
+
+.equipment .slot3 {
+    left: 189px;
+    top: -338px;
+}
+
+.equipment .slot4 {
+    left: 100px;
+    top: -324px;
+}
+
+.equipment .slot5 {
+    left: 100px;
+    top: -310px;
+}
+
+/*----------------------
+    Statuses
+----------------------*/
+.status {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.status-dev {
+    color: crimson;
+}
+
+.status-tester {
+    color: orange;
+}
+
+.status-friend {
+    color: deepskyblue;
+}
+
+.status-sup {
+    color: darkmagenta;
+}
+
+/*----------------------
+    Tooltip
+----------------------*/
+#ability_icon {
+    margin-left: auto;
+    margin-right: auto;
+
+	width: 80px;
+	height: 80px;
+}
+
+#ability_name,
+#ability_desc ,
+.attribVal {
+	color: white;
+}
+
+#ability_name {
+	font-weight: bold;
+}
+
+.attribValText {
+    color: #c0c0c0;
+}
+
+#cd,
+#mana,
+#castPoint {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#cd a,
+#mana a,
+#castPoint a {
+    margin-left: 5px;
+}
+
+#cd .value,
+#castPoint .value {
+    color: white;
+}
+
+#mana .value {
+    color: #258dc8;
+}
+
+#item_icon {
+	width: 128px;
+	height: 64px;
+}
+
+#item_name {
+	font-weight: bold;
+}
+
+#item_slot {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#item_name,
+.attribVal,
+#item_slot .value {
+	color: white;
+}
+
+#item_slot a {
+    margin-left: 5px;
+}
+
+/*---------------------------
+	Error Page
+----------------------------*/
+
+.error{
+	opacity: 0;
+	transition: 0.6s;
+	pointer-events: none;
+	position: absolute;
+	left: 0;
+	top: 100px;
+	width: 100%;
+}
+
+.error.visible{
+	opacity: 1;
+}
+
+.error h3{
+	font-size: 40px;
+}
+

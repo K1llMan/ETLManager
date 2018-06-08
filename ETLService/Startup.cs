@@ -11,7 +11,7 @@ namespace ETLService
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            Configuration = configuration;            
         }
 
         public IConfiguration Configuration { get; }
@@ -32,6 +32,10 @@ namespace ETLService
                 app.UseDeveloperExceptionPage();
             }
 
+            // Статический контент
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+            
             app.UseMvc();
         }
 

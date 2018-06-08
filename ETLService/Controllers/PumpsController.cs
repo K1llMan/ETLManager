@@ -1,6 +1,6 @@
-﻿using ETLService.Manager;
+﻿using Microsoft.AspNetCore.Mvc;
 
-using Microsoft.AspNetCore.Mvc;
+using ETLService.Manager;
 
 namespace ETLService.Controllers
 {
