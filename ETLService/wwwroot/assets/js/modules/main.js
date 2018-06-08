@@ -3,7 +3,7 @@ $(function () {
     function generateHeroSlides(){
         var heroesData = Object.keys(zivDB.heroes).map(function(key){
             return {
-                'assetsPath': updatePath(''),
+                'assetsPath': '',
                 'hero': key,
                 'name': zivDB.heroes[key].u,
                 'bio': zivDB.heroes[key].bio,
@@ -15,11 +15,11 @@ $(function () {
     }
 
     function heroSlideLoad( panel ) {
-        if ($(panel)[0].id != 'section-heroes' && $(panel).parents('#section-heroes').length == 0)
+        if ($(panel)[0].id !== 'section-heroes' && $(panel).parents('#section-heroes').length === 0)
             return;
     
         var curPanel = $(panel)
-        if ($(panel)[0].id == 'section-heroes')
+        if ($(panel)[0].id === 'section-heroes')
             curPanel = curPanel.find('.active');
             
         curPanel.find('.horizontal-line').css({ width: '0%' });
@@ -34,7 +34,7 @@ $(function () {
     }
     
     function heroSlideLeave( panel ) {
-        if ($(panel)[0].id != 'section-heroes' && $(panel).parents('#section-heroes').length == 0)
+        if ($(panel)[0].id !== 'section-heroes' && $(panel).parents('#section-heroes').length === 0)
             return;
 
         $(panel).find('.horizontal-line').css({ width: '0%' });
@@ -45,7 +45,7 @@ $(function () {
     function generateMapSlides(){
         var mapsData = Object.keys(zivDB.maps).map(function(key){
             return {
-                'assetsPath': updatePath(''),
+                'assetsPath': '',
                 'map': key,
                 'caption': zivDB.maps[key].story.match('<b>.*</b>')[0].replace(/<.+?>/g, ''),
                 'story': zivDB.maps[key].story.match('</font>.*')[0].replace(/(<.+\s-\s)?/, ''),
@@ -57,11 +57,11 @@ $(function () {
     }
     
     function mapSlideLoad( panel ) {
-        if ($(panel)[0].id != 'section-maps' && $(panel).parents('#section-maps').length == 0)
+        if ($(panel)[0].id !== 'section-maps' && $(panel).parents('#section-maps').length === 0)
             return;
     
         var curPanel = $(panel)
-        if ($(panel)[0].id == 'section-maps')
+        if ($(panel)[0].id === 'section-maps')
             curPanel = curPanel.find('.active');
             
         curPanel.find('.horizontal-line').css({ width: '0%' });
@@ -69,7 +69,7 @@ $(function () {
     }
     
     function mapSlideLeave( panel ) {
-        if ($(panel)[0].id != 'section-maps' && $(panel).parents('#section-maps').length == 0)
+        if ($(panel)[0].id !== 'section-maps' && $(panel).parents('#section-maps').length === 0)
             return;
 
         $(panel).find('.horizontal-line').css({ width: '0%' });
@@ -80,11 +80,11 @@ $(function () {
             var page = $('<div class="main-page"></div>');
 
             var fullPage = $(Templater.useTemplate('main-page', [{
-                'assetsPath': updatePath('')
+                'assetsPath': ''
             }]));
             
-            fullPage.find('#section-heroes').append(generateHeroSlides());
-            fullPage.find('#section-maps').append(generateMapSlides());
+            //fullPage.find('#section-heroes').append(generateHeroSlides());
+            //fullPage.find('#section-maps').append(generateMapSlides());
             page.append(fullPage);
             
             $('.main-content').append(page);
@@ -104,8 +104,8 @@ $(function () {
 
                 afterLoad: function(anchorLink, index) {
                     // Hide scrollers
-                    $('.scroll-up').css({ visibility: $(this)[0].id == 'section-intro' ? 'collapse' : 'visible' });
-                    $('.scroll-down').css({ visibility: $(this)[0].id == 'section-maps' ? 'collapse' : 'visible' });
+                    $('.scroll-up').css({ visibility: $(this)[0].id === 'section-intro' ? 'collapse' : 'visible' });
+                    $('.scroll-down').css({ visibility: $(this)[0].id === 'section-maps' ? 'collapse' : 'visible' });
 
                     // Call afterSlideLoad for heroes
                     if ($(this).find('.slide').length > 0){

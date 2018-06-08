@@ -5,19 +5,19 @@ Templater = (function() {
     return {
         // Create html element from template
         'useTemplate': function(templateName, data) {
-            if (templates == null)
+            if (templates === null)
                 return;
             
             var template = templates.filter(function(k, v){
-                return v.id == templateName;
+                return v.id === templateName;
             });
             
-            if (template.length == 0)
+            if (template.length === 0)
                 return
             
             template = template[0].innerHTML;
 
-            if (data == null)
+            if (data === null)
                 return template;
             
             var i = 0,

@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 using ETLCommon;
 
+using Microsoft.AspNetCore.StaticFiles;
+
 namespace ETLService
 {
     public class Startup
@@ -22,6 +24,15 @@ namespace ETLService
             services.AddMvc();
         }
 
+        /// <summary>
+        /// Разрешение отдавать файлы указанных типов
+        /// </summary>
+        private StaticFileOptions GetStaticFileConfiguration()
+        {
+            var provider = new FileExtensionContentTypeProvider { Mappings = { [".tmp"] = "text/html" } };
+            return new StaticFileOptions { ContentTypeProvider = provider };
+        }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime)
         {
@@ -34,7 +45,7 @@ namespace ETLService
 
             // Статический контент
             app.UseDefaultFiles();
-            app.UseStaticFiles();
+            app.UseStaticFiles(GetStaticFileConfiguration());
             
             app.UseMvc();
         }

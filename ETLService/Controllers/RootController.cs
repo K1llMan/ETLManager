@@ -9,8 +9,11 @@ namespace ETLService.Controllers
     public class RootController : Controller
     {
         // GET api/modules
-        [HttpGet("")]
-        public object GetModules(string id)
+        /// <summary>
+        /// Возвращает доступные для отображения модули
+        /// </summary>
+        [HttpGet("")]      
+        public object GetModules()
         {
             return new Dictionary<string, Dictionary<string, string>> {
                 { string.Empty, new Dictionary<string, string> {

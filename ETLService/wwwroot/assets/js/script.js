@@ -20,8 +20,8 @@ var context = {
 String.prototype.format = String.prototype.f = function () {
     var args = arguments;
     return this.replace(/\{\{|\}\}|\{(\d+)\}/g, function (m, n) {
-        if (m == "{{") { return "{"; }
-        if (m == "}}") { return "}"; }
+        if (m === "{{") { return "{"; }
+        if (m === "}}") { return "}"; }
         return args[n];
     });
 };
@@ -100,7 +100,7 @@ $(function () {
                     var displayName = value.displayName;
                     var displayImage = value.displayImage;
 
-                    if (displayName == undefined && displayImage == undefined)
+                    if (displayName === undefined && displayImage === undefined)
                         return;
 
                     var li = $('<li class="waves-effect waves-light"></li>');
@@ -155,12 +155,12 @@ $(function () {
 		}
         else if(/#[\d]+$/.test(temp)){
             var steamID = temp.match(/#[\d]+$/);
-            if (steamID.length != 0)
+            if (steamID.length !== 0)
                 loadModule(modules['#profiles'], steamID[0].replace('#', ''));
         }
 		// If the keyword isn't listed in the above - render the error page.
 		else {
-            if ($('[href = "{0}"]'.format(temp)).length == 0)
+            if ($('[href = "{0}"]'.format(temp)).length === 0)
                 loadModule(modules[Object.keys(modules)[0]]);
                 //renderErrorPage();
 		}
