@@ -91,32 +91,39 @@ namespace ETLCommon
         /// </summary>
         public void Connect(string connStr)
         {
-            connection?.Close();
-            connection?.Dispose();
-
-            string connectionString = GetConnectionString(connStr);
-
-            if (string.IsNullOrEmpty(connectionString))
-                return;
-
-            switch (DatabaseType)
+            try
             {
-                case DBType.PostgreSql:
-                    connection = new NpgsqlConnection(connectionString);
-                    break;
+                connection?.Close();
+                connection?.Dispose();
 
-                case DBType.SqlServer:
-                    connection = new SqlConnection(connectionString);
-                    break;
-
-                case DBType.Oracle:
-                    connection = new OracleConnection(connectionString);
-                    break;
-                default:
+                if (string.IsNullOrEmpty(connStr))
                     return;
-            }
 
-            connection.Open();
+                string connectionString = GetConnectionString(connStr);
+
+                switch (DatabaseType)
+                {
+                    case DBType.PostgreSql:
+                        connection = new NpgsqlConnection(connectionString);
+                        break;
+
+                    case DBType.SqlServer:
+                        connection = new SqlConnection(connectionString);
+                        break;
+
+                    case DBType.Oracle:
+                        connection = new OracleConnection(connectionString);
+                        break;
+                    default:
+                        return;
+                }
+
+                connection.Open();
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteToTrace($"Ошибка при подключении к базе: {ex}", TraceMessageKind.Error);
+            }
         }
 
         /// <summary>
@@ -124,7 +131,7 @@ namespace ETLCommon
         /// </summary>
         public void Disconnect()
         {
-            connection.Close();
+            connection?.Close();
         }
 
         /// <summary>
@@ -132,6 +139,9 @@ namespace ETLCommon
         /// </summary>
         public void BeginTransaction()
         {
+            if (connection == null)
+                return;
+
             transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted);
         }
 
@@ -140,6 +150,9 @@ namespace ETLCommon
         /// </summary>
         public int Execute(string query, object param = null)
         {
+            if (connection == null)
+                return -1;
+
             return connection.Execute(query, param);
         }
 
@@ -148,7 +161,7 @@ namespace ETLCommon
         /// </summary>
         public object ExecuteScalar(string query, object param = null)
         {
-            return connection.ExecuteScalar(query, param);
+            return connection?.ExecuteScalar(query, param);
         }
 
         /// <summary>
@@ -156,7 +169,7 @@ namespace ETLCommon
         /// </summary>
         public IEnumerable<dynamic> Query(string query, object param = null)
         {
-            return connection.Query<dynamic>(query, param);
+            return connection?.Query<dynamic>(query, param);
         }
 
         /// <summary>
@@ -209,7 +222,7 @@ namespace ETLCommon
         /// </summary>
         public void Commit()
         {
-            transaction.Commit();
+            transaction?.Commit();
         }
 
         /// <summary>
@@ -217,7 +230,7 @@ namespace ETLCommon
         /// </summary>
         public void Rollback()
         {
-            transaction.Rollback();
+            transaction?.Rollback();
         }
 
         #endregion Основные функции

@@ -88,7 +88,7 @@ $(function () {
             page.append(fullPage);
             
             $('.main-content').append(page);
-
+            
             if ($('html').hasClass('fp-enabled'))
                 $.fn.fullpage.destroy('all');
 

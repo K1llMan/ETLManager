@@ -73,7 +73,7 @@ $(function () {
         renderErrorPage();
     });
     
-    $(window).error(function() {
+    $(window).on('error', function() {
         renderErrorPage();     
     });    
     
