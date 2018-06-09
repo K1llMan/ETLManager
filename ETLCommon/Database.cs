@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.OracleClient;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 
 using Dapper;
@@ -44,15 +46,26 @@ namespace ETLCommon
             DatabaseType = (DBType)type;
 
             Dictionary<string, string> paramDict = new Dictionary<string, string> {
-                { "Host", uri.Host },
-                { "Port", uri.Port.ToString() }
+                { "User ID", uri.UserInfo.Split(':')[0] },
+                { "Password", uri.UserInfo.Split(':')[1] },
             };
 
             List<string> segments = uri.Segments.ToList();
             segments.Remove("/");
 
-            if (segments.Count > 0 && !paramDict.ContainsKey("Database"))
-                paramDict.Add("Database", segments.Last());
+            // У Postgre другой набор параметров подключения
+            if (DatabaseType == DBType.PostgreSql)
+            {
+                paramDict.Add("Host", uri.Host);
+                paramDict.Add("Port", uri.Port.ToString());
+
+                if (segments.Count > 0 && !paramDict.ContainsKey("Database"))
+                    paramDict.Add("Database", segments.Last());
+            }
+            else
+                paramDict.Add("Data Source", DatabaseType == DBType.Oracle 
+                    ? uri.Host
+                    : uri.Host + "\\" + uri.Segments.Last());
 
             foreach (string property in properties.Skip(1))
             {
@@ -73,8 +86,8 @@ namespace ETLCommon
         #region Основные функции
 
         /// <summary>
-        /// Соединения с базой (формат [dbType]://[serverName[:portNumber][/instanceName]][;property=value[;property=value]])
-        /// postgresql://localhost:5432/db;User ID=sysdba;Password=masterkey;
+        /// Соединения с базой (формат [dbType]://[user]:[password]@[serverName[:portNumber][/instanceName]][;property=value[;property=value]])
+        /// postgresql://sysdba:masterkey@localhost:5432/db
         /// </summary>
         public void Connect(string connStr)
         {
@@ -93,14 +106,15 @@ namespace ETLCommon
                     break;
 
                 case DBType.SqlServer:
-                    connection = new SqlConnection();
+                    connection = new SqlConnection(connectionString);
                     break;
 
                 case DBType.Oracle:
+                    connection = new OracleConnection(connectionString);
+                    break;
                 default:
                     return;
             }
-
 
             connection.Open();
         }

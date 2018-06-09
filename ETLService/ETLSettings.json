@@ -1,5 +1,7 @@
 ﻿{
   "RegistryPath": "",
   "Proxy": {},
-  "Database": "postgresql://fm-pg1:5432/dv41pg;User ID=dv41pg;Password=dv;"
+  "Database": "sqlserver://sysdba:masterkey@localhost/mssql2005;Persist Security Info=True;"
+  //"Database": "oracle://sysdba:masterkey@DV;Persist Security Info=True;"
+  //"Database": "postgresql://sysdba:masterkey@localhost:5432/dv"
 }

@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.5" />
+    <PackageReference Include="dotNetCore.Data.OracleClient" Version="1.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="Npgsql" Version="3.1.8" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="4.4.0" />
