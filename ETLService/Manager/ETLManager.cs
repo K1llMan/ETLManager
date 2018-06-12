@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 using Newtonsoft.Json.Linq;
 using ETLCommon;
@@ -12,7 +13,6 @@ namespace ETLService.Manager
         #region Поля
 
         private FileSystemWatcher watcher;
-        private Dictionary<string, string> pumpsFiles;
 
         #endregion Поля
 
@@ -20,9 +20,9 @@ namespace ETLService.Manager
 
         public ETLSettings Settings { get; set; }
 
-        public Dictionary<string, JObject> Pumps { get; set; }
+        public List<ETLProcess> Pumps { get; set; }
 
-        public Dictionary<string, PumpProcess> ExecutingPumps { get; set; }
+        public Dictionary<string, ETLProcess> ExecutingPumps { get; set; }
 
         #endregion Свойства
 
@@ -58,13 +58,11 @@ namespace ETLService.Manager
         {
             Logger.WriteToTrace("Формирование списка закачек.");
 
-            // Словарь соответствия ID закачки файлу, его содержащего
-            pumpsFiles = new Dictionary<string, string>();
-
-            Pumps = new Dictionary<string, JObject>();            
-            ExecutingPumps = new Dictionary<string, PumpProcess>();
+            Pumps = new List<ETLProcess>();            
+            ExecutingPumps = new Dictionary<string, ETLProcess>();
 
             FileInfo[] pumpConfigs = new DirectoryInfo(Settings.Registry.ProgramsPath).GetFiles();
+            List<string> ids = new List<string>();
             foreach (FileInfo pumpConfig in pumpConfigs)
                 try
                 {
@@ -72,15 +70,17 @@ namespace ETLService.Manager
                     string id = data["id"].ToString();
 
                     // Если уже существует закачка с таким ID
-                    if (Pumps.ContainsKey(id))
+                    if (ids.Contains(id))
                     {
                         Logger.WriteToTrace($"Закачка с ID = \"{id}\" (\"{pumpConfig.Name}\") уже существует.", TraceMessageKind.Warning);
                         continue;                        
                     }
 
+                    // Процесс инициализируется данными конфигурации
+                    ETLProcess prc = new ETLProcess(pumpConfig.Name, data);
+
                     // Сохраняется конфиг закачки с описанием
-                    Pumps.Add(id, data);
-                    pumpsFiles.Add(id, pumpConfig.Name);
+                    Pumps.Add(prc);
                 }
                 catch (Exception ex)
                 {
@@ -97,14 +97,15 @@ namespace ETLService.Manager
         /// </summary>
         public int Execute(string id)
         {
+            ETLProcess prc = Pumps.FirstOrDefault(p => p.ProgramID == id);
+
             // Проверка наличия в реестре
-            if (!Pumps.ContainsKey(id))
+            if (prc == null)
                 return -1;
 
             // Проверка среди запущенных
             if (!ExecutingPumps.ContainsKey(id))
             {
-                PumpProcess prc = new PumpProcess();
                 ExecutingPumps.Add(id, prc);
 
                 // При закрытии процесса удаляем его из запущенных
@@ -112,7 +113,7 @@ namespace ETLService.Manager
                     ExecutingPumps.Remove(id);
                 };
 
-                prc.Start(id, pumpsFiles[id]);
+                prc.Start();
                 return 0;
             }
 

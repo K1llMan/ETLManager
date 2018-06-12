@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Linq;
+
+using Microsoft.AspNetCore.Mvc;
 
 using ETLService.Manager;
 
@@ -11,15 +13,16 @@ namespace ETLService.Controllers
         [HttpGet("registry")]
         public object GetRegistry()
         {
-            return WebAPI.OK(Program.Manager.Pumps.Values);
+            return WebAPI.OK(Program.Manager.Pumps.Select(p => p.ConfigData));
         }
 
         // GET api/pumps/registry/pump1
         [HttpGet("registry/{id}")]
         public object GetRegistry(string id)
         {
-            if (Program.Manager.Pumps.ContainsKey(id))
-                return WebAPI.OK(Program.Manager.Pumps[id]);
+            ETLProcess prc = Program.Manager.Pumps.FirstOrDefault(p => p.ProgramID == id);
+            if (prc != null)
+                return WebAPI.OK(prc.ConfigData);
 
             return WebAPI.Error("Отсутствует закачка с заданным идентификатором.");
         }
