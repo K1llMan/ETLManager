@@ -54,6 +54,9 @@ namespace ETLService.Manager
             watcher.EnableRaisingEvents = true;
         }
 
+        /// <summary>
+        /// Инициализация списка закачек
+        /// </summary>
         private void InitPumpsList()
         {
             Logger.WriteToTrace("Формирование списка закачек.");
@@ -86,6 +89,14 @@ namespace ETLService.Manager
                 {
                     Logger.WriteToTrace($"Ошибка при формировании реестра закачек: {ex}.", TraceMessageKind.Error);
                 }
+        }
+
+        /// <summary>
+        /// Проверка обновлений при запуске сервиса
+        /// </summary>
+        private void CheckUpdates()
+        {
+            Logger.WriteToTrace("Проверка наличия обновлений.");
         }
 
         #endregion Вспомогательные функции
@@ -129,7 +140,7 @@ namespace ETLService.Manager
             Settings = new ETLSettings(Path.Combine(baseDir, "ETLSettings.json"));
 
             InitPumpsList();
-
+            CheckUpdates();
             InitWatcher();
         }
 
