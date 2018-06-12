@@ -26,6 +26,8 @@ String.prototype.format = String.prototype.f = function () {
     });
 };
 
+var pumpsRegistry = null;
+
 // These are called on page load
 $(function () {
     var modules = {};
@@ -83,10 +85,20 @@ $(function () {
         render(decodeURI(window.location.hash));
     });
 
-    // ZiV database must be used everywhere
     context.readyForDisplay(false);
 
-    function GetModules() {
+    function getRegistry() {
+        // Send the data using post 
+        $.get("api/pumps/registry")
+            .done(function (data) {
+                pumpsRegistry = data["data"];
+
+                // Manually trigger a hashchange to start the app.
+                $(window).trigger('hashchange');
+            });
+    }
+
+    function getModules() {
         // Send the data using post 
         $.get("api/modules")
             .done(function (data) {
@@ -120,12 +132,11 @@ $(function () {
                     nav.append(li);
                 });
 
-                // Manually trigger a hashchange to start the app.
-                $(window).trigger('hashchange');
+                getRegistry();
             });
     };
 
-    GetModules();
+    getModules();
 
 	// Navigation
 	function render(url) {

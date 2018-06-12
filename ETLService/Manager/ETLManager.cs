@@ -97,6 +97,16 @@ namespace ETLService.Manager
         private void CheckUpdates()
         {
             Logger.WriteToTrace("Проверка наличия обновлений.");
+
+            string[] files = Directory.GetFiles(Settings.Registry.UpdatesPath);
+            if (files.Length == 0)
+                return;
+
+            Dictionary<string, object[]> updates = new Dictionary<string, object[]>();
+            foreach (string file in files)
+            {
+                
+            }
         }
 
         #endregion Вспомогательные функции

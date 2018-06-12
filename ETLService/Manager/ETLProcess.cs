@@ -23,7 +23,7 @@ namespace ETLService.Manager
 
         public JObject ConfigData { get; }
 
-        public string Module { get; private set; }
+        public string Module { get; }
 
         #endregion Свойства
 
