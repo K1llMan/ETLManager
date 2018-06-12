@@ -17,9 +17,9 @@ namespace ETLService.Controllers
         {
             return new Dictionary<string, Dictionary<string, string>> {
                 { string.Empty, new Dictionary<string, string> {
-                        { "displayImage", "logo.png" },
-                        { "script", "main.js" },
-                        { "template", "main.tmp" }
+                        { "displayName", "Scenarios" },
+                        { "script", "scenarios.js" },
+                        { "template", "scenarios.tmp" }
                     } 
                 }
             };

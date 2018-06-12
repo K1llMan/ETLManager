@@ -28,6 +28,8 @@ namespace ETLApp
 
         public Dictionary<string, object> Parameters { get; }
 
+        public ETLProgram RootProgram { get; }
+
         public StageStatus Status { get; private set; }
 
         #endregion Свойства
@@ -107,6 +109,8 @@ namespace ETLApp
 
             // Формирование списка параметров этапа
             Parameters = FormParamsList(stageDesc["params"]);
+
+            RootProgram = program;
 
             // Привязка метода объекта программы к этапу
             string functName = stageDesc["func"].ToString();

@@ -95,7 +95,6 @@ $(function () {
                 // Generate navigation
                 $.each(modules, function (key, value) {
                     var nav = $('#nav');
-                    var mobileNav = $('#mobile-nav');
 
                     var displayName = value.displayName;
                     var displayImage = value.displayImage;
@@ -119,23 +118,7 @@ $(function () {
                     });
 
                     nav.append(li);
-
-                    // Mobile navigation
-                    var mobLi = li.clone();
-
-                    // Replace home image to text
-                    mobLi.find('img').replaceWith($('<a>Home</a>'));
-                    mobLi.find('a').addClass('white-text');
-
-                    mobLi.click(function () {
-                        window.location.hash = key;
-                        mobileNav.sideNav('hide');
-                    });
-
-                    mobileNav.append(mobLi);
-                })
-
-                $(".button-collapse").sideNav();
+                });
 
                 // Manually trigger a hashchange to start the app.
                 $(window).trigger('hashchange');
@@ -153,11 +136,6 @@ $(function () {
 		if(modules[temp]){
             loadModule(modules[temp]);
 		}
-        else if(/#[\d]+$/.test(temp)){
-            var steamID = temp.match(/#[\d]+$/);
-            if (steamID.length !== 0)
-                loadModule(modules['#profiles'], steamID[0].replace('#', ''));
-        }
 		// If the keyword isn't listed in the above - render the error page.
 		else {
             if ($('[href = "{0}"]'.format(temp)).length === 0)
