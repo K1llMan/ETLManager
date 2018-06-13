@@ -2,6 +2,8 @@
   "id": "testPump",
   "module": "TestPump.dll",
   "desc": {
+    "supplierCode": "TEST",
+    "dataCode": "0001",
     "name": "Test program",
     "comment": "Test program for testing tests"
   },

@@ -11,9 +11,9 @@ Templater = (function() {
             var template = templates.filter(function(k, v){
                 return v.id === templateName;
             });
-            
+
             if (template.length === 0)
-                return
+                return;
             
             template = template[0].innerHTML;
 
