@@ -27,7 +27,7 @@ namespace ETLApp
             
                 // Получаем описание закачки и загружаем модуль с кодом
                 string moduleName = data["module"].ToString();
-                string module = Path.Combine(settings.Registry.LibsPath, moduleName);
+                string module = Path.Combine(settings.Registry.ModulesPath, moduleName);
                 if (!File.Exists(module))
                 {
                     Logger.WriteToTrace($"Не обнаружен программный модуль \"{moduleName}\".", TraceMessageKind.Error);

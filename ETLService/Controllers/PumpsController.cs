@@ -27,7 +27,15 @@ namespace ETLService.Controllers
             return WebAPI.Error("Отсутствует закачка с заданным идентификатором.");
         }
 
-        // GET api/pumps/registry/pump1
+        // PUT api/pumps/registry
+        [HttpPut("registry")]
+        public object UpdateRegistry()
+        {
+            int count = Program.Manager.Updates.Count;
+            return WebAPI.OK($"Применено {Program.Manager.ApplyUpdates()} из {count}");
+        }
+
+        // GET api/pumps/execute/pump1
         [HttpGet("execute/{id}")]
         public object Execute(string id)
         {

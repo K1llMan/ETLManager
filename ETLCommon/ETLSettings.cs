@@ -13,7 +13,7 @@ namespace ETLCommon
 
         public string RegistryPath { get; set; }
 
-        public string LibsPath { get; set; }
+        public string ModulesPath { get; set; }
 
         public string LogsPath { get; set; }
 
@@ -40,7 +40,7 @@ namespace ETLCommon
 
         private void UpdateSettings(JObject data)
         {
-            LibsPath = GetRelativePath(data["libs"]);
+            ModulesPath = GetRelativePath(data["modules"]);
             LogsPath = GetRelativePath(data["logs"]);
             ProgramsPath = GetRelativePath(data["programs"]);
             UpdatesPath = GetRelativePath(data["updates"]);

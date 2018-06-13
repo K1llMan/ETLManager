@@ -17,13 +17,13 @@ namespace ETLService.Manager
 
         public int ProcessID { get; private set; }
 
-        public string ProgramID { get; }
+        public string ProgramID { get; private set; }
 
-        public string Config { get; }
+        public string Config { get; private set; }
 
-        public JObject ConfigData { get; }
+        public JObject ConfigData { get; private set; }
 
-        public string Module { get; }
+        public string Module { get; private set; }
 
         #endregion Свойства
 
@@ -70,14 +70,21 @@ namespace ETLService.Manager
             };
         }
 
-        public ETLProcess(string fileName, JObject data)
+        public void Init(string fileName)
         {
+            JObject data = JsonCommon.Load(fileName);
+
             Config = fileName;
             ConfigData = data;
 
             ProcessID = -1;
             ProgramID = ConfigData["id"].ToString();
             Module = ConfigData["module"].ToString();
+        }
+
+        public ETLProcess(string fileName)
+        {
+            Init(fileName);
         }
 
         #endregion Основные функции
