@@ -37,6 +37,11 @@ namespace ETLService.Manager
 
         public Dictionary<string, UpdateRecord> Updates { get; private set; }
 
+        /// <summary>
+        /// JWT (JSON Web Token) для авторизации пользователей
+        /// </summary>
+        public JWTControl JWT { get; }
+
         #endregion Свойства
 
         #region Вспомогательные функции
@@ -266,6 +271,11 @@ namespace ETLService.Manager
         {
             string baseDir = AppDomain.CurrentDomain.BaseDirectory;
             Settings = new ETLSettings(Path.Combine(baseDir, "ETLSettings.json"));
+
+            if (Settings.JWTKey.Length < 16)
+                Logger.WriteToTrace("Для корректной работы JWT ключ должен быть не менее 16 символов.", TraceMessageKind.Error);
+
+            JWT = new JWTControl(Settings.DB, Settings.JWTKey);
 
             InitPumpsList();
             CheckUpdates();

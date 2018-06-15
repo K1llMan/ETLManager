@@ -75,6 +75,8 @@ namespace ETLCommon
 
         public ETLRegistrySettings Registry { get; set; }
 
+        public string JWTKey { get; }
+
         #endregion Свойства
 
         #region Основные функции
@@ -91,6 +93,7 @@ namespace ETLCommon
             DB.Connect(data["Database"].ToString());
 
             Registry = new ETLRegistrySettings(path);
+            JWTKey = data["JWTKey"].ToString();
         }
 
         #endregion Основные функции
