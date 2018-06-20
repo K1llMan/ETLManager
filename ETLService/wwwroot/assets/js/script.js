@@ -13,7 +13,7 @@ var context = {
         content.removeClass('visible');
         loading.addClass('visible');
     }, 
-    'isLogged': false
+    'isLogged': function () { return localStorage.getItem("token") !== null; }
 }
 
 // Format string
@@ -30,32 +30,36 @@ var pumpsRegistry = null;
 
 // These are called on page load
 $(function () {
-    $.ajaxSetup({
-        beforeSend: function (xhr) {
-            if (localStorage.getItem("token") !== null) {
-                xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem("token"));
-            }
-        }
-    });
-
-    function Authorization(user, pass) {
-        $.post("api/token", $.param({ username: user, password: pass }))
-            .done(function (token) {
-                //save the token in local storage
-                localStorage.setItem("token", token);
-                //...
-                //getModules();
-            })
-            .fail(function() {
-                
-            });        
-    }
-
-    Authorization("Admin", "Admin");
-
     var modules = {};
     var modulesPath = 'assets/js/modules/';
     var templatesPath = 'assets/templates/';
+
+    // Authorization
+    $('#login').click(function () {
+        var name = $("#name").val();
+        var pass = $("#pass").val();
+
+        Auth.Login(name, pass, function () {
+            var logout = $("<li id=\"login-info\"><a>{0}</a></li>".format(Auth.User().Name + " (Logout)"));
+            logout.click(function () {
+                Auth.Logout();
+                logout.remove();
+                $("#login-btn").css({ "display": "list-item" });
+                getModules();
+            });
+
+            $("#login-data").prepend(logout);
+            $("#login-btn").css({ "display": "none" });
+            getModules();
+        });
+    });
+
+    $('.modal').modal({
+        complete: function () {
+            $("#pass").val('');
+            $("#pass").blur();
+        }
+    });
 
     // Load module script
     function loadModuleScript( script, params ) {
@@ -125,6 +129,7 @@ $(function () {
         // Send the data using post 
         $.get("api/modules")
             .done(function (data) {
+                $('#nav').html('');
                 modules = data;
 
                 // Generate navigation
@@ -152,7 +157,7 @@ $(function () {
                         window.location.hash = key;
                     });
 
-                    nav.append(li);
+                    nav.prepend(li);
                 });
 
                 getRegistry();

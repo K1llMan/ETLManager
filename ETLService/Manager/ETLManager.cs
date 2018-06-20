@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 
 using Newtonsoft.Json.Linq;
 using ETLCommon;
@@ -40,7 +41,7 @@ namespace ETLService.Manager
         /// <summary>
         /// JWT (JSON Web Token) для авторизации пользователей
         /// </summary>
-        public JWTControl JWT { get; }
+        public JwtControl JWT { get; }
 
         #endregion Свойства
 
@@ -275,7 +276,16 @@ namespace ETLService.Manager
             if (Settings.JWTKey.Length < 16)
                 Logger.WriteToTrace("Для корректной работы JWT ключ должен быть не менее 16 символов.", TraceMessageKind.Error);
 
-            JWT = new JWTControl(Settings.DB, Settings.JWTKey);
+            // Функция формирование требований после проверки данных пользователя
+            CheckUser check = d =>
+            {
+                return new Claim[] {
+                    new Claim(ClaimTypes.Name, "Admin"),
+                    new Claim(ClaimTypes.Role, "Admin")
+                };
+            };
+
+            JWT = new JwtControl(check, Settings.JWTKey);
 
             InitPumpsList();
             CheckUpdates();

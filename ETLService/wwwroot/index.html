@@ -13,6 +13,7 @@
     <script type="text/javascript" src="assets/js/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="assets/js/materialize.min.js"></script>
     <script type="text/javascript" src="assets/js/jquery.fullPage.min.js"></script>
+    <script type="text/javascript" src="assets/js/auth.js"></script>
     <script type="text/javascript" src="assets/js/templater.js"></script>
     <script type="text/javascript" src="assets/js/script.js"></script>
 </head>
@@ -22,11 +23,36 @@
             <div>Loading</div>
         </div>
     </div>
+
+    <!-- Modal Structure -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <h4 class="center">Login form</h4>
+            <div class="row">
+                <div class="input-field col s6 offset-s3">
+                    <input id="name" type="text" class="validate">
+                    <label for="name">Login</label>
+                </div>
+                <div class="input-field col s6 offset-s3">
+                    <input id="pass" type="password" class="validate">
+                    <label for="pass">Password</label>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="modal-close waves-effect waves-red btn-flat">Close</a>
+            <a id="login" class="modal-close waves-effect waves-green btn-flat">Login</a>
+        </div>
+    </div>
+
     <!-- full width navigation menu - delete nav element if using top navigation -->
     <div class="navbar-fixed">
        <nav>
             <div class="nav-wrapper blue-grey">
                 <ul class="left hide-on-med-and-down" id="nav">
+                </ul>
+                <ul class="right hide-on-med-and-down" id="login-data">
+                    <li><a id="login-btn" class="modal-trigger right" href="#login-modal">Login</a></li>
                 </ul>
             </div>
         </nav>

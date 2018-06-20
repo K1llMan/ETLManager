@@ -1,60 +1,48 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
-
-using ETLCommon;
 
 using Microsoft.IdentityModel.Tokens;
 
 namespace ETLService.Manager
 {
-    public class JWTUser
-    {
-        public string Name;
-        public string Role;
-    }
+    // Делегат проверки пользователя и 
+    public delegate Claim[] CheckUser(Dictionary<string, string> userData);
 
-    public class JWTControl
+    public class JwtControl
     {
         #region Поля
 
-        private Database db;
         private SecurityKey key;
+        private CheckUser checkUser;
 
         #endregion Поля
 
         #region Основные функции
 
-        public JWTUser IsValidUser(string userName, string password)
+        public JwtSecurityToken GenerateToken(Dictionary<string, string> userData)
         {
-            return new JWTUser { Name = "Admin", Role = "Admin" };
-        }
-
-        public JwtSecurityToken GenerateToken(string userName, string password)
-        {
-            if (key == null)
+            if (key == null || checkUser == null)
                 return null;
 
-            JWTUser user = IsValidUser(userName, password);
-            if (user == null)
+            Claim[] userClaims = checkUser(userData);
+            if (userClaims == null || userClaims.Length == 0)
                 return null;
 
-            var claims = new Claim[]
-            {
-                new Claim(ClaimTypes.Name, user.Name),
-                new Claim(ClaimTypes.Role, user.Role),
+            Claim[] claims = {
                 new Claim(JwtRegisteredClaimNames.Exp, $"{new DateTimeOffset(DateTime.Now.AddDays(1)).ToUnixTimeSeconds()}"),
                 new Claim(JwtRegisteredClaimNames.Nbf, $"{new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}")
             };
 
-            return new JwtSecurityToken(new JwtHeader(new SigningCredentials(key, SecurityAlgorithms.HmacSha256)), new JwtPayload(claims));
+            return new JwtSecurityToken(new JwtHeader(new SigningCredentials(key, SecurityAlgorithms.HmacSha256)), new JwtPayload(claims.Union(userClaims)));
         }
 
-        public JWTControl(Database database, string secretKey)
+        public JwtControl(CheckUser checkUserDelegate, string secretKey)
         {
-            if (database != null)
-                db = database;
+            checkUser = checkUserDelegate;
 
             // Секретный ключ шифрования
             key = string.IsNullOrEmpty(secretKey) || secretKey.Length < 16
