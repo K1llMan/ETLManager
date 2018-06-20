@@ -6,17 +6,16 @@ using Microsoft.AspNetCore.Mvc;
 namespace ETLService.Controllers
 {
     [Produces("application/json")]
-    [Route("api/modules")]
+    [Route("api")]
     public class RootController : Controller
     {
         // GET api/modules
         /// <summary>
         /// Возвращает доступные для отображения модули
         /// </summary>
-        [HttpGet("")]
+        [HttpGet("modules")]
         public object GetModules()
         {
-            var a = User.Identity.IsAuthenticated;
             if (User.IsInRole("Admin"))
                 return new Dictionary<string, Dictionary<string, string>> {
                     { string.Empty, new Dictionary<string, string> {

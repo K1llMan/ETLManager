@@ -149,7 +149,7 @@ namespace ETLCommon
         /// </summary>
         public int Execute(string query, object param = null)
         {
-            if (connection == null)
+            if (connection.State == ConnectionState.Closed)
                 return -1;
 
             return connection.Execute(query, param);
@@ -160,7 +160,9 @@ namespace ETLCommon
         /// </summary>
         public object ExecuteScalar(string query, object param = null)
         {
-            return connection?.ExecuteScalar(query, param);
+            return connection.State == ConnectionState.Closed 
+                ? null 
+                : connection?.ExecuteScalar(query, param);
         }
 
         /// <summary>
@@ -168,7 +170,9 @@ namespace ETLCommon
         /// </summary>
         public IEnumerable<dynamic> Query(string query, object param = null)
         {
-            return connection?.Query<dynamic>(query, param);
+            return connection.State == ConnectionState.Closed 
+                ? null 
+                : connection?.Query<dynamic>(query, param);
         }
 
         /// <summary>
