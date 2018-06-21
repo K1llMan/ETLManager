@@ -18,19 +18,45 @@ namespace ETLApp
 
         #region Свойства
 
+        /// <summary>
+        /// Идентификатор этапа
+        /// </summary>
         public string ID { get; }
 
+        /// <summary>
+        /// Доступность этапа
+        /// </summary>
         public bool Enabled { get; }
 
+        /// <summary>
+        /// Текстовое описание
+        /// </summary>
         public string Name { get; }
 
+        /// <summary>
+        /// Функция выполнения
+        /// </summary>
         public StageFunc Method { get; }
 
+        /// <summary>
+        /// Индивидуальные параметры этапа
+        /// </summary>
         public Dictionary<string, object> Parameters { get; }
 
+        /// <summary>
+        /// Родительская программа
+        /// </summary>
         public ETLProgram RootProgram { get; }
 
+        /// <summary>
+        /// Результат выполнения
+        /// </summary>
         public StageStatus Status { get; private set; }
+
+        /// <summary>
+        /// Статус выполнения
+        /// </summary>
+        public StageExecutionStatus ExecStatus { get; private set; }
 
         #endregion Свойства
 
@@ -85,15 +111,20 @@ namespace ETLApp
             try
             {
                 Logger.WriteToTrace($"Запуск этапа закачки \"{Name}\".");
+                ExecStatus = StageExecutionStatus.Execution;
                 Method?.Invoke();
             }
             catch (Exception ex)
             {
                 Logger.WriteToTrace($"Произошла ошибка: {ex}.", TraceMessageKind.Error);
             }
+            finally
+            {
+                ExecStatus = StageExecutionStatus.Finished;
 
-            // Отключение контроллера
-            Logger.WriteEvent -= WriteTraceHandler;
+                // Отключение контроллера
+                Logger.WriteEvent -= WriteTraceHandler;
+            }
         }
 
         public Stage(JProperty stage, ETLProgram program)
@@ -102,8 +133,9 @@ namespace ETLApp
 
             JToken stageDesc = stage.Value;
             Enabled = Convert.ToBoolean(stageDesc["enabled"]);
-            // Устанавка статусов по умолчанию
-            Status = Enabled ? StageStatus.Successful : StageStatus.Skipped;
+            // Установка статусов по умолчанию
+            Status = StageStatus.Successful;
+            ExecStatus = Enabled ? StageExecutionStatus.InQueue : StageExecutionStatus.Skipped;
 
             Name = stageDesc["name"].ToString();
 

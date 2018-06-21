@@ -3,7 +3,7 @@
 namespace ETLCommon
 {
     /// <summary>
-    /// Статусы выполнения этапа закачки
+    /// Результат выполнения этапа
     /// </summary>
     public enum StageStatus
     {
@@ -14,9 +14,6 @@ namespace ETLCommon
         Warnings,
 
         [Description("С ошибками")]
-        Errors,
-
-        [Description("Пропущен")]
-        Skipped
+        Errors
     }
 }

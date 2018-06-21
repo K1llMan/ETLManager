@@ -69,11 +69,12 @@ namespace ETLApp
                 foreach (Stage stage in Stages.Where(s => s.Enabled))
                 {
                     curStage = stage;
+
                     // Формирование набора доступных параметров для этапа
                     UserParams = commonParams
-                        .Union(stage.Parameters.Where(p => !commonParams.ContainsKey(p.Key)))
+                        .Union(curStage.Parameters.Where(p => !commonParams.ContainsKey(p.Key)))
                         .ToDictionary(p => p.Key, p => p.Value);
-                    stage.Exec();
+                    curStage.Exec();
                 }
 
                 Logger.WriteToTrace($"Результат выполнения этапов: \n\t{ string.Join("\n\t", Stages.Select(s => $"{s.Name}: {s.Status.GetDescription()}")) }", 
