@@ -11,7 +11,7 @@ Auth = (function() {
         }
     });
 
-    function GetCurrentTime() {
+    function getCurrentTime() {
         return Math.round((new Date()).getTime() / 1000);
     }
 
@@ -19,7 +19,7 @@ Auth = (function() {
     if (localStorage.getItem("token") !== null) {
         payload = JSON.parse(window.atob(localStorage.getItem("token").split('.')[1]));
         // Remove expired token
-        if (parseInt(payload.exp, 10) < GetCurrentTime())
+        if (parseInt(payload.exp, 10) < getCurrentTime())
             localStorage.removeItem("token");
     }
 
