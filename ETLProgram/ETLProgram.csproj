@@ -8,4 +8,5 @@
     <ProjectReference Include="..\ETLCommon\ETLCommon.csproj" />
   </ItemGroup>
 
+  <Import Project="$(SolutionDir)\Config\General.xml" /> 
 </Project>

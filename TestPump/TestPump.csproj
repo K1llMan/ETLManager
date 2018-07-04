@@ -8,4 +8,5 @@
     <ProjectReference Include="..\ETLProgram\ETLProgram.csproj" />
   </ItemGroup>
 
+  <Import Project="$(SolutionDir)\Config\Modules.xml" /> 
 </Project>

@@ -5,7 +5,6 @@
         Unknown,
         PostgreSql,
         Oracle,
-        SqlServer,
-        MySql
+        SqlServer
     }
 }

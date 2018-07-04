@@ -290,6 +290,9 @@ namespace ETLService.Manager
             InitPumpsList();
             CheckUpdates();
             InitWatcher();
+
+
+            DBTable table = Settings.DB["redux_messages"];
         }
 
         #endregion Основные функции

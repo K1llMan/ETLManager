@@ -1,0 +1,17 @@
+<Project> 
+  <Import Project="$(SolutionDir)\Config\General.xml" /> 
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>$(OutputPath)\Registry\Modules</OutputPath>	
+  </PropertyGroup>
+  
+  <Target Name="ClearReferenceCopyLocalPaths" AfterTargets="ResolveAssemblyReferences">
+    <ItemGroup>
+      <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" />
+    </ItemGroup>
+  </Target>
+  
+  <Target Name="AfterBuild">  
+	<Delete Files="$(OutputPath)\logger.cfg" />  
+  </Target>   
+</Project>  

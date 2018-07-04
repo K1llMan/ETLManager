@@ -22,6 +22,24 @@ namespace ETLCommon
 
         #region Свойства
 
+        public DBTable this[string tableName]
+        {
+            get
+            {
+                dynamic result = Query(
+                    "select exists (" +
+                    " select 1" +
+                    " from information_schema.tables" +
+                    $" where table_name = '{tableName}')").First();
+
+                // Если не существует, то создаём новую
+                if (result == null || !result.exists)
+                    return null;
+
+                return new DBTable(this, tableName);
+            }
+        }
+
         /// <summary>
         /// Тип базы
         /// </summary>
@@ -149,7 +167,7 @@ namespace ETLCommon
         /// </summary>
         public int Execute(string query, object param = null)
         {
-            if (connection.State == ConnectionState.Closed)
+            if (connection?.State == ConnectionState.Closed)
                 return -1;
 
             return connection.Execute(query, param);
@@ -160,7 +178,7 @@ namespace ETLCommon
         /// </summary>
         public object ExecuteScalar(string query, object param = null)
         {
-            return connection.State == ConnectionState.Closed 
+            return connection?.State == ConnectionState.Closed 
                 ? null 
                 : connection?.ExecuteScalar(query, param);
         }
@@ -170,7 +188,7 @@ namespace ETLCommon
         /// </summary>
         public IEnumerable<dynamic> Query(string query, object param = null)
         {
-            return connection.State == ConnectionState.Closed 
+            return connection?.State == ConnectionState.Closed 
                 ? null 
                 : connection?.Query<dynamic>(query, param);
         }

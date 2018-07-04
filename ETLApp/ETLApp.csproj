@@ -5,13 +5,10 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>..\ETLService\bin\Debug\</OutputPath>
-  </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\ETLCommon\ETLCommon.csproj" />
     <ProjectReference Include="..\ETLProgram\ETLProgram.csproj" />
   </ItemGroup>
 
+  <Import Project="$(SolutionDir)\Config\General.xml" /> 
 </Project>

@@ -1,0 +1,6 @@
+<Project>  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <OutputPath>$(SolutionDir)\Debug</OutputPath>
+  </PropertyGroup>
+</Project>  
