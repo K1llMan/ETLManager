@@ -273,6 +273,16 @@ namespace ETLService.Manager
             string baseDir = AppDomain.CurrentDomain.BaseDirectory;
             Settings = new ETLSettings(Path.Combine(baseDir, "ETLSettings.json"));
 
+            // Соединение с базой
+            try
+            {
+                Settings.DB.Connect();
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteToTrace($"Ошибка при подключении к базе: {ex}", TraceMessageKind.Error);
+            }
+
             if (Settings.JWTKey.Length < 16)
                 Logger.WriteToTrace("Для корректной работы JWT ключ должен быть не менее 16 символов.", TraceMessageKind.Error);
 

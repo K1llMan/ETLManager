@@ -21,9 +21,6 @@
     <Content Update="ETLSettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="Registry\Programs\Test.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Update="Registry\registry.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -34,6 +31,10 @@
 
   <ItemGroup>
     <None Include="wwwroot\index.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Registry\Programs\" />
   </ItemGroup>
 
   <Import Project="$(SolutionDir)\Config\General.xml" /> 

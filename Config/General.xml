@@ -1,6 +1,9 @@
 <Project>  
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <TargetFramework>netcoreapp2.0</TargetFramework>    
+    <PreserveCompilationContext>false</PreserveCompilationContext>
+
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputPath>$(SolutionDir)\Debug</OutputPath>
   </PropertyGroup>
 </Project>  

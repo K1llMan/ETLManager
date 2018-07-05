@@ -15,6 +15,7 @@ namespace ETLCommon
     {
         #region Поля
 
+        private string connectionStr;
         private IDbConnection connection;
         private IDbTransaction transaction;
 
@@ -30,7 +31,7 @@ namespace ETLCommon
                     "select exists (" +
                     " select 1" +
                     " from information_schema.tables" +
-                    $" where table_name = '{tableName}')").First();
+                    $" where table_name = '{tableName}')")?.FirstOrDefault();
 
                 // Если не существует, то создаём новую
                 if (result == null || !result.exists)
@@ -102,45 +103,43 @@ namespace ETLCommon
 
         #region Основные функции
 
+        public Database(string connection)
+        {
+            connectionStr = connection;
+        }
+
         /// <summary>
         /// Соединения с базой (формат [dbType]://[user]:[password]@[serverName[:portNumber][/instanceName]][;property=value[;property=value]])
         /// postgresql://sysdba:masterkey@localhost:5432/db
         /// </summary>
-        public void Connect(string connStr)
+        public void Connect()
         {
-            try
-            {
-                connection?.Close();
-                connection?.Dispose();
+            connection?.Close();
+            connection?.Dispose();
 
-                if (string.IsNullOrEmpty(connStr))
+            if (string.IsNullOrEmpty(connectionStr))
+                return;
+
+            string connectionString = GetConnectionString(connectionStr);
+
+            switch (DatabaseType)
+            {
+                case DBType.PostgreSql:
+                    connection = new NpgsqlConnection(connectionString);
+                    break;
+
+                case DBType.SqlServer:
+                    connection = new SqlConnection(connectionString);
+                    break;
+
+                case DBType.Oracle:
+                    connection = new OracleConnection(connectionString);
+                    break;
+                default:
                     return;
-
-                string connectionString = GetConnectionString(connStr);
-
-                switch (DatabaseType)
-                {
-                    case DBType.PostgreSql:
-                        connection = new NpgsqlConnection(connectionString);
-                        break;
-
-                    case DBType.SqlServer:
-                        connection = new SqlConnection(connectionString);
-                        break;
-
-                    case DBType.Oracle:
-                        connection = new OracleConnection(connectionString);
-                        break;
-                    default:
-                        return;
-                }
-
-                connection.Open();
             }
-            catch (Exception ex)
-            {
-                Logger.WriteToTrace($"Ошибка при подключении к базе: {ex}", TraceMessageKind.Error);
-            }
+
+            connection.Open();
         }
 
         /// <summary>

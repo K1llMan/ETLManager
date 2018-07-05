@@ -89,8 +89,7 @@ namespace ETLCommon
                 ? Path.Combine(AppContext.BaseDirectory, "Registry")
                 : path;
 
-            DB = new Database();
-            DB.Connect(data["Database"].ToString());
+            DB = new Database(data["Database"].ToString());
 
             Registry = new ETLRegistrySettings(path);
             JWTKey = data["JWTKey"].ToString();
