@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace ETLCommon
 {
@@ -93,10 +92,7 @@ namespace ETLCommon
                 return false;
             }
 
-            if (Version == num)
-                return false;
-
-            return true;
+            return Version != num;
         }
 
         private bool ApplyMigrations(decimal num, string direction)
@@ -116,23 +112,8 @@ namespace ETLCommon
                 foreach (Migration m in list)
                     try
                     {
-                        List<Dictionary<string, List<string>>> queries = direction == "up"
-                            ? m.Up
-                            : m.Down;
-
-                        foreach (Dictionary<string, List<string>> query in queries)
-                        {
-                            // Запросы, зависящие от типа базы
-                            List<string> strs = query.Where(p => p.Key == DB.DatabaseType.ToString().ToLower())
-                                    .Select(p => p.Value)
-                                    .FirstOrDefault() ??
-                                // Общие запросы
-                                query.Where(p => p.Key == "common")
-                                    .Select(p => p.Value)
-                                    .FirstOrDefault();
-
-                            DB.Execute(string.Join("", strs));
-                        }
+                        foreach (string query in m.GetQueries(direction, DB.DatabaseType))
+                            DB.Execute(query);
                     }
                     catch (Exception ex)
                     {

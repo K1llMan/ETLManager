@@ -308,6 +308,16 @@ namespace ETLService.Manager
             string baseDir = AppDomain.CurrentDomain.BaseDirectory;
             Settings = new ETLSettings(Path.Combine(baseDir, "ETLSettings.json"));
 
+            // Соединение с базой
+            try
+            {
+                Settings.DB.Connect();
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteToTrace($"Ошибка при подключении к базе: {ex}", TraceMessageKind.Error);
+            }
+
             InitJWT();
             InitMigrator();
 
