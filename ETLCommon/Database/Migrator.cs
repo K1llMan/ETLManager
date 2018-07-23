@@ -125,7 +125,7 @@ namespace ETLCommon
                 DB.Execute(
                     "update ETLParams" +
                     $" set value = {num}" +
-                    $" where name = 'Version'");
+                    " where name = 'Version'");
 
                 // В объекте
                 Version = num;
@@ -135,7 +135,7 @@ namespace ETLCommon
             }
             catch (Exception ex)
             {
-                Logger.WriteToTrace($"Ошибка при выполнении миграции: {ex}", TraceMessageKind.Error);
+                Logger.WriteToTrace($"Ошибка при выполнении миграции {ex}", TraceMessageKind.Error);
 
                 DB.Rollback();
                 return false;
