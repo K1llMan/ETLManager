@@ -12,6 +12,10 @@ namespace TestPump
             Logger.WriteToTrace("Тестирование метода закачки 1");
             if (Convert.ToBoolean(UserParams["deleteData"]))
                 Logger.WriteToTrace(UserParams["deleteData"].ToString());
+            while (true)
+            {
+                int a = 1;
+            }
         }
 
         public void ProcessData()

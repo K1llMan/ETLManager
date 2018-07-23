@@ -1,17 +1,24 @@
 <Project> 
-  <Import Project="$(SolutionDir)\Config\General.xml" /> 
+  <Import Project="$(SolutionDir)\Config\General.xml" />
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>$(OutputPath)\Registry\Modules</OutputPath>	
+    <OutputPath>$(OutputPath)\Registry\Modules</OutputPath>
+    <AllowedReferenceRelatedFileExtensions Condition=" '$(AllowedReferenceRelatedFileExtensions)' == '' ">
+      .pdb;
+      .xml
+    </AllowedReferenceRelatedFileExtensions>
   </PropertyGroup>
   
   <Target Name="ClearReferenceCopyLocalPaths" AfterTargets="ResolveAssemblyReferences">
+    <Message Importance="High" Text="Cleaning references..." />
     <ItemGroup>
       <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" />
     </ItemGroup>
   </Target>
   
-  <Target Name="AfterBuild">  
-	<Delete Files="$(OutputPath)\logger.cfg" />  
+  <Target Name="ProgramsCopy" AfterTargets="AfterBuild">
+    <Delete Files="$(OutputPath)\logger.cfg" />
+    <Message Importance="High" Text="Copying program..." />
+    <Copy SourceFiles="@(None)" DestinationFolder="$(OutputPath)\..\Programs" />
   </Target>   
 </Project>  

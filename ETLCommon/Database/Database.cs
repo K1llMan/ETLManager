@@ -113,34 +113,34 @@ namespace ETLCommon
         /// postgresql://sysdba:masterkey@localhost:5432/db
         /// </summary>
         public void Connect()
-            {
-                connection?.Close();
-                connection?.Dispose();
+        {
+            connection?.Close();
+            connection?.Dispose();
 
             if (string.IsNullOrEmpty(connectionStr))
-                    return;
+                return;
 
             string connectionString = GetConnectionString(connectionStr);
 
-                switch (DatabaseType)
-                {
-                    case DBType.PostgreSql:
-                        connection = new NpgsqlConnection(connectionString);
-                        break;
+            switch (DatabaseType)
+            {
+                case DBType.PostgreSql:
+                    connection = new NpgsqlConnection(connectionString);
+                    break;
 
-                    case DBType.SqlServer:
-                        connection = new SqlConnection(connectionString);
-                        break;
+                case DBType.SqlServer:
+                    connection = new SqlConnection(connectionString);
+                    break;
 
-                    case DBType.Oracle:
-                        connection = new OracleConnection(connectionString);
-                        break;
-                    default:
-                        return;
-                }
-
-                connection.Open();
+                case DBType.Oracle:
+                    connection = new OracleConnection(connectionString);
+                    break;
+                default:
+                    return;
             }
+
+            connection.Open();
+        }
 
         /// <summary>
         /// Отключение
@@ -164,32 +164,32 @@ namespace ETLCommon
         /// <summary>
         /// Параметризированный запрос, возвращающий количество строк
         /// </summary>
-        public object Execute(string query, object param = null, CommandType? type = null)
+        public int Execute(string query, object param = null)
         {
             if (connection?.State == ConnectionState.Closed)
                 return -1;
 
-            return connection.Execute(query, param, commandType: type);
+            return connection.Execute(query, param);
         }
 
         /// <summary>
         /// Параметризированный запрос, возвращающий значение
         /// </summary>
-        public object ExecuteScalar(string query, object param = null, CommandType? type = null)
+        public object ExecuteScalar(string query, object param = null)
         {
             return connection?.State == ConnectionState.Closed 
                 ? null 
-                : connection?.ExecuteScalar(query, param, commandType: type);
+                : connection?.ExecuteScalar(query, param);
         }
 
         /// <summary>
         /// Запрос, возвращающий результат
         /// </summary>
-        public IEnumerable<dynamic> Query(string query, object param = null, CommandType? type = null)
+        public IEnumerable<dynamic> Query(string query, object param = null)
         {
             return connection?.State == ConnectionState.Closed 
                 ? null 
-                : connection?.Query<dynamic>(query, param, commandType: type);
+                : connection?.Query<dynamic>(query, param);
         }
 
         /// <summary>

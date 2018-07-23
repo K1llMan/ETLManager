@@ -94,6 +94,15 @@ namespace ETLApp
             try
             {
                 ID = data["id"].ToString();
+                // Соединение с базой
+                try
+                {
+                    Settings.DB.Connect();
+                }
+                catch (Exception ex)
+                {
+                    Logger.WriteToTrace($"Ошибка при подключении к базе: {ex}", TraceMessageKind.Error);
+                }
 
                 // Формирование общих параметров закачки
                 commonParams = FormParamsList(data["commonParams"]);
