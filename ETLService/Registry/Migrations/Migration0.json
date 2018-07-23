@@ -1,0 +1,51 @@
+﻿[
+  {
+    "version": 0,
+    "up": [
+      {
+        "common": [],
+        "postgresql": [
+          "create table ETLParams (",
+          " name varchar(50) CONSTRAINT etlparams_pkey PRIMARY KEY,",
+          " value varchar(1000)",
+          ");"
+        ]
+      },
+      {
+        "common": [
+          "insert into ETLParams (name, value)",
+          " values ('Version', '0'),",
+          " ('SessNum', '0')"
+        ]
+      }
+    ],
+    "down": [
+      {
+        "common": [
+          "drop table ETLParams"
+        ]
+      }
+    ]
+  },
+  {
+    "version": 1,
+    "up": [
+      {
+        "common": [
+          "update ETLParams",
+          " set value = '1'",
+          " where name = 'SessNum'"
+        ]
+      }
+    ],
+    "down": [
+      {
+        "common": [
+          "update ETLParams",
+          " set value = '0'",
+          " where name = 'SessNum'"
+        ]
+      }
+    ]
+  }
+]

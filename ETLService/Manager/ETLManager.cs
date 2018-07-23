@@ -41,7 +41,12 @@ namespace ETLService.Manager
         /// <summary>
         /// JWT (JSON Web Token) для авторизации пользователей
         /// </summary>
-        public JwtControl JWT { get; }
+        public JwtControl JWT { get; private set; }
+
+        /// <summary>
+        /// Мигратор базы данных
+        /// </summary>
+        public Migrator Migrator { get; private set; }
 
         #endregion Свойства
 
@@ -226,6 +231,36 @@ namespace ETLService.Manager
 
         #endregion Обновления
 
+        #region JWT
+
+        private void InitJWT()
+        {
+            if (Settings.JWTKey.Length < 16)
+                Logger.WriteToTrace("Для корректной работы JWT ключ должен быть не менее 16 символов.", TraceMessageKind.Error);
+
+            // Функция формирование требований после проверки данных пользователя
+            CheckUser check = d =>
+            {
+                return new Claim[] {
+                    new Claim(ClaimTypes.Name, "Admin"),
+                    new Claim(ClaimTypes.Role, "Admin")
+                };
+            };
+
+            JWT = new JwtControl(check, Settings.JWTKey);
+        }
+
+        #endregion JWT
+
+        #region Мигратор
+
+        private void InitMigrator()
+        {
+            Migrator = new Migrator(Settings.DB, Path.Combine(Settings.Registry.MigragionsPath));
+        }
+
+        #endregion Мигратор
+
         #endregion Вспомогательные функции
 
         #region Основные функции
@@ -273,26 +308,14 @@ namespace ETLService.Manager
             string baseDir = AppDomain.CurrentDomain.BaseDirectory;
             Settings = new ETLSettings(Path.Combine(baseDir, "ETLSettings.json"));
 
-            if (Settings.JWTKey.Length < 16)
-                Logger.WriteToTrace("Для корректной работы JWT ключ должен быть не менее 16 символов.", TraceMessageKind.Error);
-
-            // Функция формирование требований после проверки данных пользователя
-            CheckUser check = d =>
-            {
-                return new Claim[] {
-                    new Claim(ClaimTypes.Name, "Admin"),
-                    new Claim(ClaimTypes.Role, "Admin")
-                };
-            };
-
-            JWT = new JwtControl(check, Settings.JWTKey);
+            InitJWT();
+            InitMigrator();
 
             InitPumpsList();
             CheckUpdates();
             InitWatcher();
 
-
-            DBTable table = Settings.DB["redux_messages"];
+            //DBTable table = Settings.DB["redux_messages"];
         }
 
         #endregion Основные функции

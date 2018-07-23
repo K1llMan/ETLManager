@@ -13,16 +13,16 @@ namespace ETLService.Controllers
         [HttpGet("registry")]
         public object GetRegistry()
         {
-            return WebAPI.OK(Program.Manager.Pumps.Select(p => p.ConfigData));
+            return WebAPI.Success(Program.Manager.Pumps.Select(p => p.ConfigData));
         }
 
-        // GET api/pumps/registry/pump1
+        // GET api/pumps/registry/{id}
         [HttpGet("registry/{id}")]
         public object GetRegistry(string id)
         {
             ETLProcess prc = Program.Manager.Pumps.FirstOrDefault(p => p.ProgramID == id);
             if (prc != null)
-                return WebAPI.OK(prc.ConfigData);
+                return WebAPI.Success(prc.ConfigData);
 
             return WebAPI.Error("Отсутствует закачка с заданным идентификатором.");
         }
@@ -32,7 +32,7 @@ namespace ETLService.Controllers
         public object UpdateRegistry()
         {
             int count = Program.Manager.Updates.Count;
-            return WebAPI.OK($"Применено {Program.Manager.ApplyUpdates()} из {count}");
+            return WebAPI.Success($"Применено {Program.Manager.ApplyUpdates()} из {count}");
         }
 
         // GET api/pumps/execute/pump1
@@ -43,7 +43,7 @@ namespace ETLService.Controllers
 
             return pumpID == -1 
                 ? WebAPI.Error($"Ошибка при запуске закачки \"{id}\".") 
-                : WebAPI.OK(pumpID);
+                : WebAPI.Success(pumpID);
         }
     }
 }

@@ -2,7 +2,8 @@
   "modules": "Modules",
   "programs": "Programs",
   "updates": "Updates",
+  "migrations": "Migrations",
   "in": "in",
   "out": "out",
-  "logs": "Logs" 
+  "logs": "Logs"
 }

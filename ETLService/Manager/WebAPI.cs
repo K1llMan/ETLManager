@@ -11,7 +11,7 @@ namespace ETLService.Manager
 
         private enum Statuses
         {
-            OK,
+            Success,
             Error
         }
 
@@ -22,7 +22,7 @@ namespace ETLService.Manager
         private static object GetResponse(Statuses status, object data)
         {
             return new Dictionary<string, object>{
-                { "status", status.ToString() },
+                { "status", status.ToString().ToLower() },
                 { "data", data }
             };
         }
@@ -34,9 +34,9 @@ namespace ETLService.Manager
         /// <summary>
         /// Успешное выполнение операции
         /// </summary>
-        public static object OK(object data)
+        public static object Success(object data)
         {
-            return GetResponse(Statuses.OK, data);
+            return GetResponse(Statuses.Success, data);
         }
 
         /// <summary>

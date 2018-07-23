@@ -15,6 +15,7 @@ namespace ETLCommon
     {
         #region Поля
 
+        private string connectionStr;
         private IDbConnection connection;
         private IDbTransaction transaction;
 
@@ -30,7 +31,7 @@ namespace ETLCommon
                     "select exists (" +
                     " select 1" +
                     " from information_schema.tables" +
-                    $" where table_name = '{tableName}')").First();
+                    $" where table_name = '{tableName}')")?.FirstOrDefault();
 
                 // Если не существует, то создаём новую
                 if (result == null || !result.exists)
@@ -102,21 +103,24 @@ namespace ETLCommon
 
         #region Основные функции
 
+        public Database(string connection)
+        {
+            connectionStr = connection;
+        }
+
         /// <summary>
         /// Соединения с базой (формат [dbType]://[user]:[password]@[serverName[:portNumber][/instanceName]][;property=value[;property=value]])
         /// postgresql://sysdba:masterkey@localhost:5432/db
         /// </summary>
-        public void Connect(string connStr)
-        {
-            try
+        public void Connect()
             {
                 connection?.Close();
                 connection?.Dispose();
 
-                if (string.IsNullOrEmpty(connStr))
+            if (string.IsNullOrEmpty(connectionStr))
                     return;
 
-                string connectionString = GetConnectionString(connStr);
+            string connectionString = GetConnectionString(connectionStr);
 
                 switch (DatabaseType)
                 {
@@ -137,11 +141,6 @@ namespace ETLCommon
 
                 connection.Open();
             }
-            catch (Exception ex)
-            {
-                Logger.WriteToTrace($"Ошибка при подключении к базе: {ex}", TraceMessageKind.Error);
-            }
-        }
 
         /// <summary>
         /// Отключение
@@ -165,32 +164,32 @@ namespace ETLCommon
         /// <summary>
         /// Параметризированный запрос, возвращающий количество строк
         /// </summary>
-        public int Execute(string query, object param = null)
+        public object Execute(string query, object param = null, CommandType? type = null)
         {
             if (connection?.State == ConnectionState.Closed)
                 return -1;
 
-            return connection.Execute(query, param);
+            return connection.Execute(query, param, commandType: type);
         }
 
         /// <summary>
         /// Параметризированный запрос, возвращающий значение
         /// </summary>
-        public object ExecuteScalar(string query, object param = null)
+        public object ExecuteScalar(string query, object param = null, CommandType? type = null)
         {
             return connection?.State == ConnectionState.Closed 
                 ? null 
-                : connection?.ExecuteScalar(query, param);
+                : connection?.ExecuteScalar(query, param, commandType: type);
         }
 
         /// <summary>
         /// Запрос, возвращающий результат
         /// </summary>
-        public IEnumerable<dynamic> Query(string query, object param = null)
+        public IEnumerable<dynamic> Query(string query, object param = null, CommandType? type = null)
         {
             return connection?.State == ConnectionState.Closed 
                 ? null 
-                : connection?.Query<dynamic>(query, param);
+                : connection?.Query<dynamic>(query, param, commandType: type);
         }
 
         /// <summary>

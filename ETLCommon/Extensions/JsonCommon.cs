@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace ETLCommon
@@ -58,6 +59,29 @@ namespace ETLCommon
             {
                 Console.WriteLine(ex);
                 return null;
+            }
+            finally
+            {
+                sr?.Close();
+                fs?.Close();
+            }
+        }
+
+        public static T Load<T>(string fileName)
+        {
+            FileStream fs = null;
+            StreamReader sr = null;
+
+            try
+            {
+                fs = new FileStream(fileName, FileMode.Open);
+                sr = new StreamReader(fs);
+                return JsonConvert.DeserializeObject<T>(sr.ReadToEnd());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return default(T);
             }
             finally
             {

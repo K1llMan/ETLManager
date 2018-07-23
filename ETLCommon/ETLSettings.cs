@@ -21,6 +21,8 @@ namespace ETLCommon
 
         public string UpdatesPath { get; set; }
 
+        public string MigragionsPath { get; set; }
+
         public string InputPath { get; set; }
 
         public string OutputPath { get; set; }
@@ -44,6 +46,7 @@ namespace ETLCommon
             LogsPath = GetRelativePath(data["logs"]);
             ProgramsPath = GetRelativePath(data["programs"]);
             UpdatesPath = GetRelativePath(data["updates"]);
+            MigragionsPath = GetRelativePath(data["migrations"]);
             InputPath = GetRelativePath(data["in"]);
             OutputPath = GetRelativePath(data["out"]);
         }
@@ -89,8 +92,8 @@ namespace ETLCommon
                 ? Path.Combine(AppContext.BaseDirectory, "Registry")
                 : path;
 
-            DB = new Database();
-            DB.Connect(data["Database"].ToString());
+            DB = new Database(data["Database"].ToString());
+            DB.Connect();
 
             Registry = new ETLRegistrySettings(path);
             JWTKey = data["JWTKey"].ToString();
