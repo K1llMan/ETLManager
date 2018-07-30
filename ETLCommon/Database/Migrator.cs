@@ -19,11 +19,7 @@ namespace ETLCommon
 
         public string Path { get; }
 
-        public decimal Major { get; private set; }
-
-        public decimal Minor { get; private set; }
-
-        public decimal Revision { get; private set; }
+        public Version Version { get; private set; }
 
         #endregion Свойства
 
@@ -76,16 +72,9 @@ namespace ETLCommon
                     result = DB.Query(
                         "select value " +
                         " from etl_params" +
-                        " where name = 'Major'");
+                        " where name = 'Version'");
 
-                    Major = Convert.ToDecimal(result.value);
-
-                    result = DB.Query(
-                        "select value " +
-                        " from etl_params" +
-                        " where name = 'Minor'");
-
-                    Minor = Convert.ToDecimal(result.value);
+                    Version = new Version(result.value);
                 }
             }
             catch (Exception ex)
@@ -94,24 +83,28 @@ namespace ETLCommon
             }
         }
 
-        private bool CheckMigrationNumber(string num)
+        private bool CheckMigrationNumber(Version version)
         {
-            if (num < 0)
-            {
-                Logger.WriteToTrace("Номер миграции должен быть положительным.", TraceMessageKind.Error);
-                return false;
-            }
-
-            return Version != num;
+            return Version != version || Version == new Version("0.0.0");
         }
 
-        private bool ApplyMigrations(string num, string direction)
+        private Version Max(Version a, Version b)
         {
-            if (!CheckMigrationNumber(num))
+            return a > b ? a : b;
+        }
+
+        private Version Min(Version a, Version b)
+        {
+            return a < b ? a : b;
+        }
+
+        private bool ApplyMigrations(Version version, string direction)
+        {
+            if (!CheckMigrationNumber(version))
                 return false;
 
             // Список обрабатываемых миграций
-            var list = migrations.Where(m => m.Version <= Math.Max(Version, num) && m.Version > Math.Min(Version, num));
+            var list = migrations.Where(m => m.Version <= Max(Version, version) && m.Version >= Max(Version, version));
             // Для понижения версии список обрабатывается в обратном порядке
             list = direction == "down" ? list.Reverse() : list;
 
@@ -127,18 +120,18 @@ namespace ETLCommon
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception($"{m.Version} до версии {num}: {ex}");
+                        throw new Exception($"{m.Version} до версии {version}: {ex}");
                     }
 
                 // Если вся миграция прошла успешно, то обновляем версии
                 // В базе
                 DB.Execute(
-                    "update ETLParams" +
-                    $" set value = {num}" +
+                    "update etl_params" +
+                    $" set value = '{version}'" +
                     " where name = 'Version'");
 
                 // В объекте
-                Version = num;
+                Version = version;
 
                 DB.Commit();
                 return true;
@@ -161,7 +154,7 @@ namespace ETLCommon
         /// </summary>
         public bool UpTo(string num)
         {
-            return ApplyMigrations(num, "up");
+            return ApplyMigrations(new Version(num), "up");
         }
 
         /// <summary>
@@ -169,16 +162,14 @@ namespace ETLCommon
         /// </summary>
         public bool DownTo(string num)
         {
-            return ApplyMigrations(num, "down");
+            return ApplyMigrations(new Version(num), "down");
         }
 
         public Migrator(Database db, string path)
         {
             DB = db;
             Path = path;
-            Major = -1;
-            Minor = -1;
-            Revision = -1;
+            Version = new Version("0.0.0");
 
             GetMigrationsList();
             GetDBVersion();

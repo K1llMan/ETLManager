@@ -14,7 +14,7 @@
           " programid varchar(100),",
           " systemversion varchar(12),",
           " programversion varchar(20),",
-          " pumpdate datetime,",
+          " pumpdate date,",
           " username varchar(255)",
           ");"
         ]
@@ -22,9 +22,7 @@
       {
         "common": [
           "insert into etl_params (name, value)",
-          " values ('Major', '0'),",
-          " ('Minor', '0'),",
-          " ('Revision', '0')"
+          " values ('Version', '0.0.0')"
         ]
       }
     ],

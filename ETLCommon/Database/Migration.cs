@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ETLCommon
@@ -7,7 +8,7 @@ namespace ETLCommon
     {
         #region Поля
 
-        public decimal Version;
+        public Version Version;
         public List<Dictionary<string, List<string>>> Up;
         public List<Dictionary<string, List<string>>> Down;
 
