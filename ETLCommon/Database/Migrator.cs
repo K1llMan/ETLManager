@@ -23,6 +23,8 @@ namespace ETLCommon
 
         public decimal Minor { get; private set; }
 
+        public decimal Revision { get; private set; }
+
         #endregion Свойства
 
         #region Вспомогательные функции
@@ -68,7 +70,7 @@ namespace ETLCommon
 
                 // При отсутствии таблицы мигрируем базу до нулевой версии
                 if (!result.exists)
-                    UpTo(0);
+                    UpTo("0.0.0");
                 else
                 {
                     result = DB.Query(
@@ -92,7 +94,7 @@ namespace ETLCommon
             }
         }
 
-        private bool CheckMigrationNumber(decimal num)
+        private bool CheckMigrationNumber(string num)
         {
             if (num < 0)
             {
@@ -103,7 +105,7 @@ namespace ETLCommon
             return Version != num;
         }
 
-        private bool ApplyMigrations(decimal num, string direction)
+        private bool ApplyMigrations(string num, string direction)
         {
             if (!CheckMigrationNumber(num))
                 return false;
@@ -157,7 +159,7 @@ namespace ETLCommon
         /// <summary>
         /// Миграция вверх
         /// </summary>
-        public bool UpTo(decimal num)
+        public bool UpTo(string num)
         {
             return ApplyMigrations(num, "up");
         }
@@ -165,7 +167,7 @@ namespace ETLCommon
         /// <summary>
         /// Миграция вниз
         /// </summary>
-        public bool DownTo(decimal num)
+        public bool DownTo(string num)
         {
             return ApplyMigrations(num, "down");
         }
@@ -176,6 +178,7 @@ namespace ETLCommon
             Path = path;
             Major = -1;
             Minor = -1;
+            Revision = -1;
 
             GetMigrationsList();
             GetDBVersion();

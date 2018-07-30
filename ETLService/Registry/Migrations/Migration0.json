@@ -1,6 +1,6 @@
 ﻿[
   {
-    "version": 0,
+    "version": "0.0.0",
     "up": [
       {
         "common": [],
@@ -23,7 +23,8 @@
         "common": [
           "insert into etl_params (name, value)",
           " values ('Major', '0'),",
-          " ('Minor', '0')"
+          " ('Minor', '0'),",
+          " ('Revision', '0')"
         ]
       }
     ],
@@ -37,7 +38,7 @@
     ]
   },
   {
-    "version": 1,
+    "version": "0.0.1",
     "up": [
       {
         "common": [
