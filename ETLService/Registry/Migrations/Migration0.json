@@ -5,24 +5,32 @@
       {
         "common": [],
         "postgresql": [
-          "create table ETLParams (",
-          " name varchar(50) CONSTRAINT etlparams_pkey PRIMARY KEY,",
+          "create table etl_params (",
+          " name varchar(50) primary key,",
           " value varchar(1000)",
+          ");",
+          "create table etl_history (",
+          " id serial primary key,",
+          " programid varchar(100),",
+          " systemversion varchar(12),",
+          " programversion varchar(20),",
+          " pumpdate datetime,",
+          " username varchar(255)",
           ");"
         ]
       },
       {
         "common": [
-          "insert into ETLParams (name, value)",
-          " values ('Version', '0'),",
-          " ('SessNum', '0')"
+          "insert into etl_params (name, value)",
+          " values ('Version', '0')"
         ]
       }
     ],
     "down": [
       {
         "common": [
-          "drop table ETLParams"
+          "drop table etl_params;",
+          "drop table etl_history;"
         ]
       }
     ]
@@ -32,7 +40,7 @@
     "up": [
       {
         "common": [
-          "update ETLParams",
+          "update etl_params",
           " set value = '1'",
           " where name = 'SessNum'"
         ]
@@ -41,7 +49,7 @@
     "down": [
       {
         "common": [
-          "update ETLParams",
+          "update etl_params",
           " set value = '0'",
           " where name = 'SessNum'"
         ]
