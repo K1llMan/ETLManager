@@ -22,7 +22,8 @@
       {
         "common": [
           "insert into etl_params (name, value)",
-          " values ('Version', '0')"
+          " values ('Major', '0'),",
+          " ('Minor', '0')"
         ]
       }
     ],

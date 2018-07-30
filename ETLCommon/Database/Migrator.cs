@@ -19,7 +19,9 @@ namespace ETLCommon
 
         public string Path { get; }
 
-        public decimal Version { get; private set; }
+        public decimal Major { get; private set; }
+
+        public decimal Minor { get; private set; }
 
         #endregion Свойства
 
@@ -62,7 +64,7 @@ namespace ETLCommon
                     "select exists (" +
                     " select 1" +
                     " from information_schema.tables" +
-                    " where table_name = 'etlparams')").First();
+                    " where table_name = 'etl_params')").First();
 
                 // При отсутствии таблицы мигрируем базу до нулевой версии
                 if (!result.exists)
@@ -71,11 +73,17 @@ namespace ETLCommon
                 {
                     result = DB.Query(
                         "select value " +
-                        " from ETLParams" +
-                        " where name = 'Version'").Single();
+                        " from etl_params" +
+                        " where name = 'Major'");
 
-                    if (result != null)
-                        Version = Convert.ToDecimal(result.value);
+                    Major = Convert.ToDecimal(result.value);
+
+                    result = DB.Query(
+                        "select value " +
+                        " from etl_params" +
+                        " where name = 'Minor'");
+
+                    Minor = Convert.ToDecimal(result.value);
                 }
             }
             catch (Exception ex)
@@ -166,7 +174,8 @@ namespace ETLCommon
         {
             DB = db;
             Path = path;
-            Version = -1;
+            Major = -1;
+            Minor = -1;
 
             GetMigrationsList();
             GetDBVersion();
