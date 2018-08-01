@@ -25,6 +25,8 @@ namespace ETLService.Manager
 
         public string Module { get; private set; }
 
+        public Version Version { get; private set; }
+
         #endregion Свойства
 
         #region События
@@ -44,11 +46,11 @@ namespace ETLService.Manager
         /// <summary>
         /// Запуск процесса закачки
         /// </summary>
-        public void Start()
+        public void Start(decimal sessNo)
         {
             ProcessStartInfo psi = new ProcessStartInfo
             {
-                Arguments = $"ETLApp.dll \"{Config}\"",
+                Arguments = $"ETLApp.dll {sessNo} \"{Config}\"",
                 FileName = "dotnet",
                 RedirectStandardOutput = true,
                 UseShellExecute = false,
@@ -80,6 +82,7 @@ namespace ETLService.Manager
             ProcessID = -1;
             ProgramID = ConfigData["id"].ToString();
             Module = ConfigData["module"].ToString();
+            Version = new Version(ConfigData["version"]?.ToString() ?? "0.0.0");
         }
 
         public ETLProcess(string fileName)

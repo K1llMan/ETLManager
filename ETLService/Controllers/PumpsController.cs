@@ -39,7 +39,7 @@ namespace ETLService.Controllers
         [HttpGet("execute/{id}")]
         public object Execute(string id)
         {
-            int pumpID = Program.Manager.Execute(id);
+            decimal pumpID = Program.Manager.Execute(id);
 
             return pumpID == -1 
                 ? WebAPI.Error($"Ошибка при запуске закачки \"{id}\".") 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ETLCommon
 {
@@ -89,6 +90,47 @@ namespace ETLCommon
         #endregion Вспомогательные функции
 
         #region Основные функции
+
+        /// <summary>
+        /// Возвращает следующее значение ключа
+        /// </summary>
+        public decimal GetNextVal()
+        {
+            try
+            {
+                switch (DB.DatabaseType)
+                {
+                    case DBType.PostgreSql:
+                        // Автоматически сгенерированные последовательности имею имя <имя таблицы>_id_seq
+                        return DB.Query($"select NEXTVAL('{Name}_id_seq') as id").Single().id;
+                }
+
+                return -1;
+            }
+            catch (Exception ex)
+            {
+                return -1;
+            }
+        }
+
+        public decimal GetCurVal()
+        {
+            try
+            {
+                switch (DB.DatabaseType)
+                {
+                    case DBType.PostgreSql:
+                        // Автоматически сгенерированные последовательности имею имя <имя таблицы>_id_seq
+                        return DB.Query($"select CURRVAL('{Name}_id_seq') as id").Single().id;
+                }
+
+                return -1;
+            }
+            catch (Exception ex)
+            {
+                return -1;
+            }
+        }
 
         internal DBTable(Database db, string name)
         {

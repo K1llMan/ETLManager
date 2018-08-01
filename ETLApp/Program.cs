@@ -18,7 +18,7 @@ namespace ETLApp
             try
             {
                 ETLSettings settings = new ETLSettings(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ETLSettings.json"));
-                JObject data = JsonCommon.Load(Path.Combine(settings.Registry.ProgramsPath, args[0]));
+                JObject data = JsonCommon.Load(Path.Combine(settings.Registry.ProgramsPath, args[1]));
 
                 string id = data["id"].ToString();
 
@@ -46,6 +46,7 @@ namespace ETLApp
                 program = (ETLProgram)assembly.CreateInstance(type.FullName, false, BindingFlags.CreateInstance, null, 
                     null, CultureInfo.CurrentCulture, null);
 
+                program.SessNo = Convert.ToDecimal(args[0]);
                 program.Settings = settings;
                 program.Initialize(data);
                 program.Exec();

@@ -21,7 +21,7 @@ namespace ETLCommon
 
         public string UpdatesPath { get; set; }
 
-        public string MigragionsPath { get; set; }
+        public string MigrationsPath { get; set; }
 
         public string InputPath { get; set; }
 
@@ -46,7 +46,7 @@ namespace ETLCommon
             LogsPath = GetRelativePath(data["logs"]);
             ProgramsPath = GetRelativePath(data["programs"]);
             UpdatesPath = GetRelativePath(data["updates"]);
-            MigragionsPath = GetRelativePath(data["migrations"]);
+            MigrationsPath = GetRelativePath(data["migrations"]);
             InputPath = GetRelativePath(data["in"]);
             OutputPath = GetRelativePath(data["out"]);
         }

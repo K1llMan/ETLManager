@@ -22,6 +22,8 @@ namespace ETLApp
 
         public string ID { get; private set; }
 
+        public decimal SessNo { get; set; }
+
         public Dictionary<string, object> UserParams { get; private set; }
 
         public ETLSettings Settings { get; set; }

@@ -72,7 +72,7 @@ namespace ETLCommon
                     result = DB.Query(
                         "select value " +
                         " from etl_params" +
-                        " where name = 'Version'");
+                        " where name = 'Version'").Single();
 
                     Version = new Version(result.value);
                 }

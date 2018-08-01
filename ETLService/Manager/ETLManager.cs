@@ -30,12 +30,24 @@ namespace ETLService.Manager
 
         #region Свойства
 
+        /// <summary>
+        /// Настройки
+        /// </summary>
         public ETLSettings Settings { get; set; }
 
+        /// <summary>
+        /// Полный список программ
+        /// </summary>
         public List<ETLProcess> Pumps { get; set; }
 
+        /// <summary>
+        /// Запущенные программы
+        /// </summary>
         public Dictionary<string, ETLProcess> ExecutingPumps { get; set; }
 
+        /// <summary>
+        /// Набор обновлений
+        /// </summary>
         public Dictionary<string, UpdateRecord> Updates { get; private set; }
 
         /// <summary>
@@ -48,36 +60,17 @@ namespace ETLService.Manager
         /// </summary>
         public Migrator Migrator { get; private set; }
 
+
+        /// <summary>
+        /// История
+        /// </summary>
+        public ETLHistory History { get; private set; }
+
         #endregion Свойства
 
         #region Вспомогательные функции
 
-        private void WatcherHandler(object sender, FileSystemEventArgs e)
-        {
-            if (!Path.GetExtension(e.Name).IsMatch("json|dll"))
-                return;
-
-            Logger.WriteToTrace("Доступны обновления реестра.");
-            AddUpdateRecord(e.FullPath);
-        }
-
-        private void InitWatcher()
-        {
-            Logger.WriteToTrace($"Включение слежения за обновлениями в директории \"{Settings.Registry.UpdatesPath}\"...");
-
-            watcher = new FileSystemWatcher
-            {
-                Path = Settings.Registry.UpdatesPath,
-                NotifyFilter = NotifyFilters.Size | NotifyFilters.FileName,
-                Filter = "*.*",
-            };
-
-            watcher.Changed += WatcherHandler;
-            watcher.Renamed += WatcherHandler;
-
-            // Включение слежения за директорией
-            watcher.EnableRaisingEvents = true;
-        }
+        #region Список закачек
 
         /// <summary>
         /// Инициализация списка закачек
@@ -118,7 +111,36 @@ namespace ETLService.Manager
                 }
         }
 
+        #endregion Список закачек
+
         #region Обновления
+
+        private void WatcherHandler(object sender, FileSystemEventArgs e)
+        {
+            if (!Path.GetExtension(e.Name).IsMatch("json|dll"))
+                return;
+
+            Logger.WriteToTrace("Доступны обновления реестра.");
+            AddUpdateRecord(e.FullPath);
+        }
+
+        private void InitWatcher()
+        {
+            Logger.WriteToTrace($"Включение слежения за обновлениями в директории \"{Settings.Registry.UpdatesPath}\"...");
+
+            watcher = new FileSystemWatcher
+            {
+                Path = Settings.Registry.UpdatesPath,
+                NotifyFilter = NotifyFilters.Size | NotifyFilters.FileName,
+                Filter = "*.*",
+            };
+
+            watcher.Changed += WatcherHandler;
+            watcher.Renamed += WatcherHandler;
+
+            // Включение слежения за директорией
+            watcher.EnableRaisingEvents = true;
+        }
 
         private void AddUpdateRecord(string file)
         {
@@ -256,10 +278,19 @@ namespace ETLService.Manager
 
         private void InitMigrator()
         {
-            Migrator = new Migrator(Settings.DB, Path.Combine(Settings.Registry.MigragionsPath));
+            Migrator = new Migrator(Settings.DB, Path.Combine(Settings.Registry.MigrationsPath));
         }
 
         #endregion Мигратор
+
+        #region История
+
+        private void InitHistory()
+        {
+            History = new ETLHistory(Settings.DB);
+        }
+
+        #endregion История
 
         #endregion Вспомогательные функции
 
@@ -275,7 +306,7 @@ namespace ETLService.Manager
         /// <summary>
         /// Функция запуска закачки
         /// </summary>
-        public int Execute(string id)
+        public decimal Execute(string id)
         {
             ETLProcess prc = Pumps.FirstOrDefault(p => p.ProgramID == id);
 
@@ -286,6 +317,10 @@ namespace ETLService.Manager
             // Проверка среди запущенных
             if (!ExecutingPumps.ContainsKey(id))
             {
+                // Для запуска процесса версия БД должна быть выше
+                if (prc.Version > Migrator.Version)
+                    return -1;
+
                 ExecutingPumps.Add(id, prc);
 
                 // При закрытии процесса удаляем его из запущенных
@@ -293,8 +328,10 @@ namespace ETLService.Manager
                     ExecutingPumps.Remove(id);
                 };
 
-                prc.Start();
-                return 0;
+                decimal sessNo = History.AddRecord(prc.ProgramID, Migrator.Version, prc.Version, "user");
+
+                prc.Start(sessNo);
+                return sessNo;
             }
 
             return -1;
@@ -318,14 +355,13 @@ namespace ETLService.Manager
                 Logger.WriteToTrace($"Ошибка при подключении к базе: {ex}", TraceMessageKind.Error);
             }
 
-            InitJWT();
             InitMigrator();
+            InitHistory();
+            InitJWT();
 
             InitPumpsList();
             CheckUpdates();
             InitWatcher();
-
-            //DBTable table = Settings.DB["redux_messages"];
         }
 
         #endregion Основные функции
