@@ -312,14 +312,14 @@ namespace ETLService.Manager
 
             // Проверка наличия в реестре
             if (prc == null)
-                return -1;
+                throw new Exception("Закачка с заданным идентификатором отсутствует.");
 
             // Проверка среди запущенных
             if (!ExecutingPumps.ContainsKey(id))
             {
                 // Для запуска процесса версия БД должна быть выше
                 if (prc.Version > Migrator.Version)
-                    return -1;
+                    throw new Exception("Версия системы ниже необходимой для запуска.");
 
                 ExecutingPumps.Add(id, prc);
 

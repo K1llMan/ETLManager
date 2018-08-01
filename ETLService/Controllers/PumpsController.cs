@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -39,11 +40,14 @@ namespace ETLService.Controllers
         [HttpGet("execute/{id}")]
         public object Execute(string id)
         {
-            decimal pumpID = Program.Manager.Execute(id);
-
-            return pumpID == -1 
-                ? WebAPI.Error($"Ошибка при запуске закачки \"{id}\".") 
-                : WebAPI.Success(pumpID);
+            try
+            {
+                return  WebAPI.Success(Program.Manager.Execute(id));
+            }
+            catch (Exception ex)
+            {
+                return WebAPI.Error($"Ошибка при запуске закачки \"{id}\": {ex.Message}");
+            }
         }
     }
 }

@@ -1,7 +1,7 @@
 {
   "id": "testPump",
   "module": "TestPump.dll",
-  //"version": "0.0.0", 
+  "version": "0.0.0", 
   "desc": {
     "supplierCode": "TEST",
     "dataCode": "0001",
