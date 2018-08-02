@@ -20,11 +20,23 @@ $(function () {
             });
 
             var collapsibleItems = $(Templater.useTemplate('collapsible-item', groups.map(function (id) {
-                return { "id": id, "name": id };
+                    return { "id": id, "name": id };
                 })
             ));
 
             collapsible.append(collapsibleItems);
+
+            $.each(pumpsRegistry, function (i, el) {
+                var body = $(Templater.useTemplate('collapsible-body-item', [el]));
+
+                el.desc.id = el.id;
+                el.desc.version = el.version;
+
+                body.prepend($(Templater.useTemplate('pump-desc', [el.desc])));
+
+                var item = collapsible.find('#' + el.desc.supplierCode);
+                item.find(".collapsible-body").append(body);
+            });
 
             // Update to correct height
             $('html').resize();

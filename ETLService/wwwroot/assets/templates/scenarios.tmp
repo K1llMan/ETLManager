@@ -11,7 +11,25 @@
       <i class="material-icons">filter_drama</i>{{name}}
     </div>
     <div class="collapsible-body">
-      <span>Lorem ipsum dolor sit amet.</span>
     </div>
   </li>  
+</template>
+
+<template id="collapsible-body-item">
+  <div id="{{id}}" class="row">    
+    <div id="buttons" class="col s2"></div>
+  </div>
+</template>
+
+<template id="pump-desc">
+  <div id="info" class="col s10">
+    <div class="valign-wrapper" >
+      <i class="material-icons">filter_drama</i> {{dataCode}} {{name}}
+    </div>
+    <div>{{comment}}</div>
+    <div>
+      <span>PumpIdentifier: {{id}}</span>
+      <span>Version: {{version}}</span>
+    </div>
+  </div>
 </template>

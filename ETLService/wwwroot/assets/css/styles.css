@@ -223,6 +223,25 @@ footer.page-footer {
 .scenarios-page {
 }
 
+#info {
+    font-weight: bold;
+    line-height: 24px;
+    font-size: 18px;
+}
+
+#info div:not(.valign-wrapper) {
+    font-weight: normal;
+    font-size: 14px
+}
+
+#info span{
+    margin-right: 1rem;
+}
+
+#info i {
+    margin-right: 1rem;
+}
+
 .backgroundVideo {
     position: absolute;
     right: 0;
