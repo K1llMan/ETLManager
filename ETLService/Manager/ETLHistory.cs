@@ -37,12 +37,13 @@ namespace ETLService.Manager
         {
             try
             {
-                string query = "insert into etl_history (programid, systemversion, programversion, username)" +
-                               $" values ('{programID}', '{systemVersion}', '{programVersion}', '{userName}')";
+                decimal id = db["etl_history"].GetNextVal();
+                string query = 
+                    "insert into etl_history (id, programid, systemversion, programversion, username)" +
+                    $" values ({id}, '{programID}', '{systemVersion}', '{programVersion}', '{userName}')";
 
                 db.Execute(query);
 
-                decimal id = db["etl_history"].GetCurVal();
                 return id;
             }
             catch (Exception ex)
