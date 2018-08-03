@@ -18,12 +18,13 @@ namespace ETLApp
             try
             {
                 ETLSettings settings = new ETLSettings(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ETLSettings.json"));
+                decimal sessNo = Convert.ToDecimal(args[0]);
                 JObject data = JsonCommon.Load(Path.Combine(settings.Registry.ProgramsPath, args[1]));
 
                 string id = data["id"].ToString();
 
-                Logger.Initialize($"{id}", settings.Registry.LogsPath, true);
-                Logger.WriteToTrace($"Инициализация закачки \"{id}\".", TraceMessageKind.Information);
+                Logger.Initialize($"{sessNo}", Path.Combine(settings.Registry.LogsPath, id), true);
+                Logger.WriteToTrace($"Инициализация закачки \"{id}\"...", TraceMessageKind.Information);
             
                 // Получаем описание закачки и загружаем модуль с кодом
                 string moduleName = data["module"].ToString();
@@ -46,7 +47,7 @@ namespace ETLApp
                 program = (ETLProgram)assembly.CreateInstance(type.FullName, false, BindingFlags.CreateInstance, null, 
                     null, CultureInfo.CurrentCulture, null);
 
-                program.SessNo = Convert.ToDecimal(args[0]);
+                program.SessNo = sessNo;
                 program.Settings = settings;
                 program.Initialize(data);
                 program.Exec();

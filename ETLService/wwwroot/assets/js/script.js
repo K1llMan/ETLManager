@@ -118,7 +118,7 @@ $(function () {
         // Send the data using post 
         $.get("api/pumps/registry")
             .done(function (data) {
-                pumpsRegistry = data["data"];
+                pumpsRegistry = data["data"].sort(function (a, b) { return parseInt(a.desc.dataCode) - parseInt(b.desc.dataCode) });
 
                 // Manually trigger a hashchange to start the app.
                 $(window).trigger('hashchange');

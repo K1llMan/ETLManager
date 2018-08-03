@@ -33,15 +33,24 @@ $(function () {
                 el.desc.version = el.version;
 
                 body.prepend($(Templater.useTemplate('pump-desc', [el.desc])));
+                var startBtn = body.find('#buttons').first();
+                startBtn.click(function () {
+                    var modal = $('#params-modal');
+                    modal.find("h4").html(el.desc.name);
 
+                    modal.modal('open');
+                });
+
+                // Append to group
                 var item = collapsible.find('#' + el.desc.supplierCode);
-                item.find(".collapsible-body").append(body);
+                item.find('.collapsible-body').append(body);
             });
 
             // Update to correct height
             $('html').resize();
 
             $('.collapsible').collapsible();
+            $('.modal').modal();
 
             context.readyForDisplay(true);
         },

@@ -42,7 +42,7 @@ namespace ETLService.Controllers
         {
             try
             {
-                return  WebAPI.Success(Program.Manager.Execute(id));
+                return WebAPI.Success(Program.Manager.Execute(id));
             }
             catch (Exception ex)
             {

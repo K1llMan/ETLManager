@@ -1,4 +1,50 @@
 ﻿<template id="scenarios-page">
+  <!-- Modal Structure -->
+  <div id="params-modal" class="modal">
+    <div class="modal-content">
+      <h4>Scenario name</h4>
+      <div class="row">
+        <h5>Parameters</h5>
+        <div class="col s3">
+          <ul id="stages" class="collection">
+            <li class="collection-item">Alvin</li>
+            <li class="collection-item">
+              Alvin
+              <div class="switch">
+                <label>
+                  <input type="checkbox">
+                    <span class="lever"></span>
+                </label>
+              </div>
+            </li>
+            <li class="collection-item">
+              Alvin              
+              <div class="switch">
+                <label>
+                  <input type="checkbox">
+                    <span class="lever"></span>
+                </label>
+              </div>
+            </li>
+            <li class="collection-item">
+              Alvin
+              <div class="switch">
+                <label>
+                  <input type="checkbox">
+                    <span class="lever"></span>
+                </label>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="col s9"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-red btn-flat">Close</a>
+      <a class="modal-close waves-effect waves-green btn-flat">Run</a>
+    </div>
+  </div>  
   <div class="scenarios-page">
     <ul class="collapsible">
     </ul>    
@@ -16,8 +62,12 @@
 </template>
 
 <template id="collapsible-body-item">
-  <div id="{{id}}" class="row">    
-    <div id="buttons" class="col s2"></div>
+  <div id="{{id}}" class="row pumpRow">    
+    <div id="buttons" class="col s2">
+      <i id="start" class="medium material-icons green-text">play_arrow</i>
+      <i id="restart" class="medium material-icons">sync</i>
+      <i id="history" class="medium material-icons">view_headline</i>
+    </div>
   </div>
 </template>
 

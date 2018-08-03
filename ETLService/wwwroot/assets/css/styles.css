@@ -223,6 +223,16 @@ footer.page-footer {
 .scenarios-page {
 }
 
+.pumpRow {
+    display: flex;
+    align-items: center;
+}
+
+.pumpRow #buttons i {
+    font-size: 3.25rem;
+    cursor: pointer;
+}
+
 #info {
     font-weight: bold;
     line-height: 24px;
@@ -240,6 +250,14 @@ footer.page-footer {
 
 #info i {
     margin-right: 1rem;
+}
+
+#stages .collection-item {
+    display: flex;
+}
+
+#stages .switch {
+    margin-left: auto;
 }
 
 .backgroundVideo {
