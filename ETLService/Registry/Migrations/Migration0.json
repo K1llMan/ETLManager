@@ -16,7 +16,8 @@
           " systemversion varchar(12),",
           " programversion varchar(20),",
           " pumpdate timestamp not null default now(),",
-          " username varchar(255)",
+          " username varchar(255),",
+          " config text",
           ");"
         ]
       },

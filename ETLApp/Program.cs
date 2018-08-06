@@ -6,12 +6,18 @@ using System.Reflection;
 
 using ETLCommon;
 
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace ETLApp
 {
     class Program
     {
+        /// <summary>
+        /// args[0] - id закачки;
+        /// args[1] - тип конфигурации: -s - строка, -f - файл
+        /// args[2] - конфигурация: в зависимости от args[1] это строка конфигурации или имя файла
+        /// </summary>
         static void Main(string[] args)
         {
             ETLProgram program = null;
@@ -19,7 +25,10 @@ namespace ETLApp
             {
                 ETLSettings settings = new ETLSettings(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ETLSettings.json"));
                 decimal sessNo = Convert.ToDecimal(args[0]);
-                JObject data = JsonCommon.Load(Path.Combine(settings.Registry.ProgramsPath, args[1]));
+
+                JObject data = args[1] == "-f" 
+                    ? JsonCommon.Load(Path.Combine(settings.Registry.ProgramsPath, args[2]))
+                    : (JObject)JsonConvert.DeserializeObject(args[2]);
 
                 string id = data["id"].ToString();
 

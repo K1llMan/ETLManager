@@ -33,14 +33,14 @@ namespace ETLService.Manager
 
         #region Основные функции
 
-        public decimal AddRecord(string programID, Version systemVersion, Version programVersion, string userName)
+        public decimal AddRecord(string programID, Version systemVersion, Version programVersion, string userName, string config)
         {
             try
             {
                 decimal id = db["etl_history"].GetNextVal();
                 string query = 
-                    "insert into etl_history (id, programid, systemversion, programversion, username)" +
-                    $" values ({id}, '{programID}', '{systemVersion}', '{programVersion}', '{userName}')";
+                    "insert into etl_history (id, programid, systemversion, programversion, username, config)" +
+                    $" values ({id}, '{programID}', '{systemVersion}', '{programVersion}', '{userName}', '{config}')";
 
                 db.Execute(query);
 
@@ -49,6 +49,21 @@ namespace ETLService.Manager
             catch (Exception ex)
             {
                 return -1;
+            }
+        }
+
+        public dynamic GetRecord(decimal sessNo)
+        {
+            try
+            {
+                return db.Query(
+                    "select *" + 
+                    " from etl_history" + 
+                    $" where id = {sessNo}").FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                return null;
             }
         }
 

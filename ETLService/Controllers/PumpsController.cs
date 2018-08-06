@@ -1,9 +1,13 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 
 using Microsoft.AspNetCore.Mvc;
 
 using ETLService.Manager;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace ETLService.Controllers
 {
@@ -37,12 +41,16 @@ namespace ETLService.Controllers
         }
 
         // GET api/pumps/execute/pump1
-        [HttpGet("execute/{id}")]
+        [HttpPost("execute/{id}")]
         public object Execute(string id)
         {
             try
             {
-                return WebAPI.Success(Program.Manager.Execute(id));
+                StreamReader reader = new StreamReader(Request.Body);
+                // Минимизация строки JSON
+                string config = ((JObject)JsonConvert.DeserializeObject(reader.ReadToEnd()))
+                    .ToString(Formatting.None);
+                return WebAPI.Success(Program.Manager.Execute(id, config));
             }
             catch (Exception ex)
             {

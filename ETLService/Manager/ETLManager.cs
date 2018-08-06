@@ -306,7 +306,7 @@ namespace ETLService.Manager
         /// <summary>
         /// Функция запуска закачки
         /// </summary>
-        public decimal Execute(string id)
+        public decimal Execute(string id, string config)
         {
             ETLProcess prc = Pumps.FirstOrDefault(p => p.ProgramID == id);
 
@@ -328,9 +328,9 @@ namespace ETLService.Manager
                     ExecutingPumps.Remove(id);
                 };
 
-                decimal sessNo = History.AddRecord(prc.ProgramID, Migrator.Version, prc.Version, "user");
+                decimal sessNo = History.AddRecord(prc.ProgramID, Migrator.Version, prc.Version, "user", config);
 
-                prc.Start(sessNo);
+                prc.Start(sessNo, config);
                 return sessNo;
             }
 

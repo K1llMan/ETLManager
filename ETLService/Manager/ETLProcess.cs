@@ -46,11 +46,11 @@ namespace ETLService.Manager
         /// <summary>
         /// Запуск процесса закачки
         /// </summary>
-        public void Start(decimal sessNo)
+        public void Start(decimal sessNo, string config)
         {
             ProcessStartInfo psi = new ProcessStartInfo
             {
-                Arguments = $"ETLApp.dll {sessNo} \"{Config}\"",
+                Arguments = $"ETLApp.dll {sessNo} -s \"{config.Replace("\"", "\\\"")}\"",
                 FileName = "dotnet",
                 RedirectStandardOutput = true,
                 UseShellExecute = false,
