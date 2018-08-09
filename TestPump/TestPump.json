@@ -1,6 +1,7 @@
 {
   "id": "testPump",
   "module": "TestPump.dll",
+  "version": "0.0.0", 
   "desc": {
     "supplierCode": "TEST",
     "dataCode": "0001",
@@ -26,6 +27,12 @@
         "testPumpedData": {
           "desc": "Test param for testing data.",
           "value": true,
+          "default": true,
+          "type": "check"
+        },
+        "testParam1": {
+          "desc": "Param 1",
+          "value": false,
           "default": true,
           "type": "check"
         }

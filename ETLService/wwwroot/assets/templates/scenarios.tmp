@@ -6,49 +6,38 @@
       <div class="row">
         <h5>Parameters</h5>
         <div class="col s3">
-          <ul id="stages" class="collection">
-            <li class="collection-item">Alvin</li>
-            <li class="collection-item">
-              Alvin
-              <div class="switch">
-                <label>
-                  <input type="checkbox">
-                    <span class="lever"></span>
-                </label>
-              </div>
-            </li>
-            <li class="collection-item">
-              Alvin              
-              <div class="switch">
-                <label>
-                  <input type="checkbox">
-                    <span class="lever"></span>
-                </label>
-              </div>
-            </li>
-            <li class="collection-item">
-              Alvin
-              <div class="switch">
-                <label>
-                  <input type="checkbox">
-                    <span class="lever"></span>
-                </label>
-              </div>
-            </li>
-          </ul>
+          <div id="stages" class="collection">            
+          </div>
         </div>
-        <div class="col s9"></div>
+        <div id="params" class="col s9">
+        </div>
       </div>
     </div>
     <div class="modal-footer">
       <a class="modal-close waves-effect waves-red btn-flat">Close</a>
-      <a class="modal-close waves-effect waves-green btn-flat">Run</a>
+      <a id="runPump" class="modal-close waves-effect waves-green btn-flat">Run</a>
     </div>
   </div>  
   <div class="scenarios-page">
     <ul class="collapsible">
     </ul>    
   </div>
+</template>
+
+<template id="common-stage-item">
+  <a id="common" class="collection-item clickable">Common</a>
+</template>
+
+<template id="stage-item">
+  <a id="{{id}}" class="collection-item clickable">
+    {{name}}
+    <div class="switch">
+      <label>
+        <input type="checkbox">
+          <span class="lever"></span>
+      </label>
+    </div>
+  </a>
 </template>
 
 <template id="collapsible-item">
@@ -82,4 +71,14 @@
       <span>Version: {{version}}</span>
     </div>
   </div>
+</template>
+
+<!-- Components markup -->
+<template id="check">
+  <p>
+    <label>
+      <input type="checkbox" />
+      <span>{{desc}}</span>
+    </label>
+  </p>
 </template>

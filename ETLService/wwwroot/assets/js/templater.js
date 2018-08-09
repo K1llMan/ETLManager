@@ -9,20 +9,21 @@ Templater = (function() {
                 return;
             
             var template = templates.filter(function(k, v){
-                return v.id === templateName;
+                return v.id == templateName;
             });
 
-            if (template.length === 0)
+            if (template.length == 0)
                 return;
             
             template = template[0].innerHTML;
 
-            if (data === null)
+            if (data == null)
                 return template;
             
             var i = 0,
                 len = data.length,
                 html = '';
+
             // Replace the {% raw %}{{XXX}}{% endraw %} with the corresponding property
             function replaceWithData(data_bit) {
                 var html_snippet, prop, regex;

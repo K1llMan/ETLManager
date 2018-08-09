@@ -34,22 +34,29 @@ $(function () {
     var modulesPath = 'assets/js/modules/';
     var templatesPath = 'assets/templates/';
 
+    function addLogout() {
+        var logout = $("<li id=\"login-info\"><a>{0}</a></li>".format(Auth.User().Name + " (Logout)"));
+        logout.click(function () {
+            Auth.Logout();
+            logout.remove();
+            $("#login-btn").css({ "display": "list-item" });
+            getModules();
+        });
+
+        $("#login-data").prepend(logout);
+        $("#login-btn").css({ "display": "none" });
+    }
+
+    if (context.isLogged())
+        addLogout();    
+    
     // Authorization
     $('#login').click(function () {
         var name = $("#name").val();
         var pass = $("#pass").val();
 
         Auth.Login(name, pass, function () {
-            var logout = $("<li id=\"login-info\"><a>{0}</a></li>".format(Auth.User().Name + " (Logout)"));
-            logout.click(function () {
-                Auth.Logout();
-                logout.remove();
-                $("#login-btn").css({ "display": "list-item" });
-                getModules();
-            });
-
-            $("#login-data").prepend(logout);
-            $("#login-btn").css({ "display": "none" });
+            addLogout();
             getModules();
         });
     });

@@ -29,6 +29,12 @@
           "value": true,
           "default": true,
           "type": "check"
+        },
+        "testParam1": {
+          "desc": "Param 1",
+          "value": false,
+          "default": true,
+          "type": "check"
         }
       }
     },

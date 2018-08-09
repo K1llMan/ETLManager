@@ -26,6 +26,10 @@ h1, h3{
     flex-flow: row wrap;
 }
 
+.clickable {
+    cursor: pointer;
+}
+
 /*-----------------
 	The Header
 ------------------*/
