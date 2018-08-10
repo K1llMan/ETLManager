@@ -12,6 +12,7 @@
           "create sequence if not exists etl_history_id_seq;",
           "create table etl_history (",
           " id integer primary key not null default nextval('etl_history_id_seq'),",
+          " status varchar(20),",
           " programid varchar(100),",
           " systemversion varchar(12),",
           " programversion varchar(20),",

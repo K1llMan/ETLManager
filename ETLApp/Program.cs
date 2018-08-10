@@ -21,10 +21,15 @@ namespace ETLApp
         static void Main(string[] args)
         {
             ETLProgram program = null;
+            ETLHistory history;
+            dynamic historyRecord;
             try
             {
                 ETLSettings settings = new ETLSettings(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ETLSettings.json"));
+                history = new ETLHistory(settings.DB);
+
                 decimal sessNo = Convert.ToDecimal(args[0]);
+                historyRecord = history[sessNo];
 
                 JObject data = args[1] == "-f" 
                     ? JsonCommon.Load(Path.Combine(settings.Registry.ProgramsPath, args[2]))
@@ -60,6 +65,10 @@ namespace ETLApp
                 program.Settings = settings;
                 program.Initialize(data);
                 program.Exec();
+
+                // Обновление статуса закачки после выполнения
+                historyRecord.status = program.Status.ToString();
+                history[sessNo] = historyRecord;
             }
             catch (Exception ex)
             {

@@ -30,6 +30,20 @@ namespace ETLApp
 
         public List<Stage> Stages { get; set; }
 
+        public PumpStatus Status
+        {
+            get
+            {
+                List<StageStatus> stageStatuses = Stages.Select(s => s.Status).ToList();
+
+                if (stageStatuses.Contains(StageStatus.Errors))
+                    return PumpStatus.Errors;
+                if (stageStatuses.Contains(StageStatus.Warnings))
+                    return PumpStatus.Warnings;
+                return PumpStatus.Successful;
+            }
+        }
+
         #endregion Свойства
 
         #region Вспомогательные функции
