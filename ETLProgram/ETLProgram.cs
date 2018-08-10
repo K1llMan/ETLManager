@@ -81,10 +81,17 @@ namespace ETLApp
 
             try
             {
+                Logger.WriteToTrace($"Общие параметры закачки: \n\t{string.Join(";\n\t", commonParams.Select(p => $"{p.Key}: {p.Value}"))}.", 
+                    TraceMessageKind.Information);
+
                 // Обход всех этапов закачки
                 foreach (Stage stage in Stages.Where(s => s.Enabled))
                 {
                     curStage = stage;
+
+                    if (stage.Parameters.Count > 0)
+                        Logger.WriteToTrace($"Параметры этапа \"{stage.Name}\": \n\t{string.Join(";\n\t", stage.Parameters.Select(p => $"{p.Key}: {p.Value}"))}.",
+                            TraceMessageKind.Information);
 
                     // Формирование набора доступных параметров для этапа
                     UserParams = commonParams

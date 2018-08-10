@@ -2,7 +2,7 @@
   "profiles": {
     "ETLApp": {
       "commandName": "Project",
-      "commandLineArgs": "\"0\" \"-f\" \"TestPump.json\""
+      "commandLineArgs": "\"25\" \"-f\" \"TestPump.json\""
     }
   }
 }
