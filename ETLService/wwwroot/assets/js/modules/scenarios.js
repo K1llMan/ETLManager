@@ -14,37 +14,57 @@ $(function () {
     }
 
     function setValue(input, obj, param) {
-        if (input.attr('type') == 'checkbox') {
-            obj[param] = input.is(":checked");
-            return;
+        switch (input.attr('type')) {
+            case "checkbox":
+                obj[param] = input.is(":checked");
+                break;
+            case "radio":
+                var checked = input.is(":checked");
+                obj[param] = checked;
+                // Update other params in radio group
+                if (checked) {
+                    var name = $(input).attr('name');
+                    var inputs = $(input).parents('form').find('input:not(:checked)[name="' + name + '"]');
+                    inputs.change();
+                }
+                break;
+            default:
+                obj[param] = input.val();
         }
-
-        obj[param] = input.val();
     }
 
     function bindValue(input, obj, param) {
-        if (input.attr('type') == 'checkbox')
-            input[0].checked = obj[param];
-        else
-            input.val(obj[param]);
+        switch (input.attr('type')) {
+            case "checkbox":
+            case "radio":
+                input[0].checked = obj[param];
+                break;
+            default:
+                input.val(obj[param]);
+        }
 
         input.change(function () {
             setValue(input, obj, param);
         });        
     }
 
-    function initParams(params) {
+    function initParams(paramGroups) {
         var paramsPanel = $('#params-modal #params');
         paramsPanel.html('');
 
-        if (Object.keys(params).length == 0)
+        if (Object.keys(paramGroups).length == 0)
             return;
 
-        $.each(Object.keys(params), function(i, key) {
-            var component = $(Templater.useTemplate(params[key].type, [params[key]]));
-            paramsPanel.append(component);
+        $.each(paramGroups, function (i, params) {
+            var form = $("<form></form>");
+            paramsPanel.append(form);
 
-            bindValue(component.find('input'), params[key], 'value');
+            $.each(Object.keys(params), function(j, key) {
+                var component = $(Templater.useTemplate(params[key].ui.type, [params[key].ui]));
+                form.append(component);
+
+                bindValue(component.find('input'), params[key], 'value');
+            });            
         });
     }
 

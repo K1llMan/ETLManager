@@ -82,3 +82,12 @@
     </label>
   </p>
 </template>
+
+<template id="radio">
+  <p>
+    <label>
+      <input name="group" type="radio"/>
+      <span>{{desc}}</span>
+    </label>
+  </p>
+</template>

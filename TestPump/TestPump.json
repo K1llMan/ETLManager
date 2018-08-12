@@ -14,7 +14,7 @@
         "value": false,
         "default": true,
         "ui": {
-          "desc": "Delete earlier pumpped data",
+          "desc": "Delete earlier pumped data",
           "type": "check"
         }
       }
@@ -43,6 +43,32 @@
             "ui": {
               "desc": "Param 1",
               "type": "check"
+            }
+          }
+        },
+        {
+          "selectParam1": {
+            "value": true,
+            "default": true,
+            "ui": {
+              "desc": "Radio 1",
+              "type": "radio"
+            }
+          },
+          "testCheckParam1": {
+            "value": false,
+            "default": true,
+            "ui": {
+              "desc": "Test check param in group 1",
+              "type": "check"
+            }
+          },
+          "selectParam2": {
+            "value": false,
+            "default": true,
+            "ui": {
+              "desc": "Radio 2",
+              "type": "radio"
             }
           }
         }
