@@ -56,7 +56,7 @@ $(function () {
             return;
 
         $.each(paramGroups, function (i, params) {
-            var form = $("<form></form>");
+            var form = $('<form class="row"></form>');
             paramsPanel.append(form);
 
             $.each(Object.keys(params), function(j, key) {

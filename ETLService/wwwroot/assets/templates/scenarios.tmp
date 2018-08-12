@@ -86,7 +86,7 @@
 <template id="radio">
   <p>
     <label>
-      <input name="group" type="radio"/>
+      <input class="with-gap" name="group" type="radio"/>
       <span>{{desc}}</span>
     </label>
   </p>
