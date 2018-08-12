@@ -26,8 +26,6 @@ namespace ETLApp
 
         private static void Init(decimal sessNo, string id, string moduleName)
         {
-            settings = new ETLSettings(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ETLSettings.json"));
-            history = new ETLHistory(settings.DB);
             historyRecord = history[sessNo];
 
             Logger.Initialize($"{sessNo}", Path.Combine(settings.Registry.LogsPath, id), true);
@@ -55,6 +53,9 @@ namespace ETLApp
             program.Initialize(config);
             program.Exec();
 
+            if (historyRecord == null)
+                return;
+
             // Обновление статуса закачки после выполнения
             historyRecord.status = program.Status.ToString();
             history[sessNo] = historyRecord;
@@ -73,6 +74,9 @@ namespace ETLApp
         {
             try
             {
+                settings = new ETLSettings(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ETLSettings.json"));
+                history = new ETLHistory(settings.DB);
+
                 JObject config = args[1] == "-f"
                     ? JsonCommon.Load(Path.Combine(settings.Registry.ProgramsPath, args[2]))
                     : (JObject)JsonConvert.DeserializeObject(args[2]);

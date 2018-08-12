@@ -8,14 +8,18 @@
     "name": "Test program",
     "comment": "Test program for testing tests"
   },
-  "commonParams": {
-    "deleteData": {
-      "desc": "Delete earlier pumpped data",
-      "value": false,
-      "default": true,
-      "type": "check"
+  "commonParams": [
+    {
+      "deleteData": {
+        "value": false,
+        "default": true,
+        "ui": {
+          "desc": "Delete earlier pumpped data",
+          "type": "check"
+        }
+      }
     }
-  },
+  ],
 
   "stages": {
     "pump": {
@@ -23,20 +27,26 @@
       "name": "Pump data",
       "desc": "stage desc",
       "func": "PumpData",
-      "params": {
-        "testPumpedData": {
-          "desc": "Test param for testing data.",
-          "value": true,
-          "default": true,
-          "type": "check"
-        },
-        "testParam1": {
-          "desc": "Param 1",
-          "value": false,
-          "default": true,
-          "type": "check"
+      "params": [
+        {
+          "testPumpedData": {
+            "value": true,
+            "default": true,
+            "ui": {
+              "desc": "Test param for testing data.",
+              "type": "check"
+            }
+          },
+          "testParam1": {
+            "value": false,
+            "default": true,
+            "ui": {
+              "desc": "Param 1",
+              "type": "check"
+            }
+          }
         }
-      }
+      ]
     },
 
     "processData": {
@@ -44,8 +54,10 @@
       "name": "Process data",
       "desc": "stage desc",
       "func": "ProcessData",
-      "params": {
-      }
+      "params": [
+        {
+        }
+      ]
     },
 
     "clone": {
@@ -53,8 +65,10 @@
       "name": "Cloning data",
       "desc": "stage desc",
       "func": "CloneData",
-      "params": {
-      }
+      "params": [
+        {
+        }
+      ]
     }
   }
 }

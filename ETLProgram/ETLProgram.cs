@@ -52,18 +52,19 @@ namespace ETLApp
         {
             Dictionary<string, object> paramDict = new Dictionary<string, object>();
 
-            foreach (JProperty param in list.Children())
-                try
-                {
-                    if (paramDict.ContainsKey(param.Name))
-                        continue;
+            foreach (JObject paramList in list.Children())
+                foreach (JProperty param in paramList.Properties())
+                    try
+                    {
+                        if (paramDict.ContainsKey(param.Name))
+                            continue;
 
-                    paramDict.Add(param.Name, ((JValue)param.Value["value"]).Value);
-                }
-                catch (Exception ex)
-                {
-                    Logger.WriteToTrace($"Ошибка при формировании общих параметров: {ex}", TraceMessageKind.Error);
-                }
+                        paramDict.Add(param.Name, ((JValue)param.Value["value"]).Value);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.WriteToTrace($"Ошибка при формировании общих параметров: {ex}", TraceMessageKind.Error);
+                    }
 
             return paramDict;
         }
