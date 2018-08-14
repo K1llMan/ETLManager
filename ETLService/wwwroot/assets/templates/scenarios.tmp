@@ -53,9 +53,8 @@
 <template id="collapsible-body-item">
   <div id="{{id}}" class="row pumpRow">    
     <div id="buttons" class="col s2">
-      <i id="start" class="medium material-icons green-text">play_arrow</i>
-      <i id="restart" class="medium material-icons">sync</i>
-      <i id="history" class="medium material-icons">view_headline</i>
+      <i id="history" class="right medium material-icons">view_headline</i>
+      <i id="start" class="right medium material-icons green-text">play_arrow</i>
     </div>
   </div>
 </template>

@@ -59,7 +59,10 @@ $(function () {
             var form = $('<form class="row"></form>');
             paramsPanel.append(form);
 
-            $.each(Object.keys(params), function(j, key) {
+            $.each(Object.keys(params), function (j, key) {
+                if (params[key].ui == undefined || params[key].ui == null)
+                    return;
+
                 var component = $(Templater.useTemplate(params[key].ui.type, [params[key].ui]));
                 form.append(component);
 
@@ -149,7 +152,7 @@ $(function () {
             el.desc.version = el.version;
 
             body.prepend($(Templater.useTemplate('pump-desc', [el.desc])));
-            var startBtn = body.find('#buttons').first();
+            var startBtn = body.find('#buttons #start');
             startBtn.click(function () {
                 updateModal(el);
             });
