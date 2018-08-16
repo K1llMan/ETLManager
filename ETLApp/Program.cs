@@ -16,8 +16,7 @@ namespace ETLApp
         #region Поля
 
         private static ETLProgram program;
-        private static ETLSettings settings;
-        private static ETLHistory history;
+        private static ETLContext context;
         private static dynamic historyRecord;
 
         #endregion Поля
@@ -26,13 +25,14 @@ namespace ETLApp
 
         private static void Init(decimal sessNo, string id, string moduleName)
         {
-            historyRecord = history[sessNo];
-
-            Logger.Initialize($"{sessNo}", Path.Combine(settings.Registry.LogsPath, id), true);
+            Logger.Initialize($"{sessNo}", Path.Combine(context.Settings.Registry.LogsPath, id), true);
             Logger.WriteToTrace($"Инициализация закачки \"{id}\"...", TraceMessageKind.Information);
 
+            context.Initialize();
+            historyRecord = context.History[sessNo];
+
             // Получаем описание закачки и загружаем модуль с кодом
-            string module = Path.Combine(settings.Registry.ModulesPath, moduleName);
+            string module = Path.Combine(context.Settings.Registry.ModulesPath, moduleName);
             if (!File.Exists(module))
                 throw new Exception($"Не обнаружен программный модуль \"{moduleName}\".");
 
@@ -49,7 +49,7 @@ namespace ETLApp
         private static void Exec(decimal sessNo, JObject config)
         {
             program.SessNo = sessNo;
-            program.Settings = settings;
+            program.Context = context;
             program.Initialize(config);
             program.Exec();
 
@@ -58,7 +58,8 @@ namespace ETLApp
 
             // Обновление статуса закачки после выполнения
             historyRecord.status = program.Status.ToString();
-            history[sessNo] = historyRecord;
+            historyRecord.pumpfinishdate = (object)DateTime.Now;
+            context.History[sessNo] = historyRecord;
         }
 
         #endregion Вспомогательные функции
@@ -74,11 +75,10 @@ namespace ETLApp
         {
             try
             {
-                settings = new ETLSettings(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ETLSettings.json"));
-                history = new ETLHistory(settings.DB);
+                context = new ETLContext(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ETLSettings.json"));
 
                 JObject config = args[1] == "-f"
-                    ? JsonCommon.Load(Path.Combine(settings.Registry.ProgramsPath, args[2]))
+                    ? JsonCommon.Load(Path.Combine(context.Settings.Registry.ProgramsPath, args[2]))
                     : (JObject)JsonConvert.DeserializeObject(args[2]);
 
                 decimal sessNo = Convert.ToDecimal(args[0]);

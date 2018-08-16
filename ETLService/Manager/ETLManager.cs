@@ -33,7 +33,7 @@ namespace ETLService.Manager
         /// <summary>
         /// Настройки
         /// </summary>
-        public ETLSettings Settings { get; set; }
+        public ETLContext Context { get; set; }
 
         /// <summary>
         /// Полный список программ
@@ -55,17 +55,6 @@ namespace ETLService.Manager
         /// </summary>
         public JwtControl JWT { get; private set; }
 
-        /// <summary>
-        /// Мигратор базы данных
-        /// </summary>
-        public Migrator Migrator { get; private set; }
-
-
-        /// <summary>
-        /// История
-        /// </summary>
-        public ETLHistory History { get; private set; }
-
         #endregion Свойства
 
         #region Вспомогательные функции
@@ -82,7 +71,7 @@ namespace ETLService.Manager
             Pumps = new List<ETLProcess>();            
             ExecutingPumps = new Dictionary<string, ETLProcess>();
 
-            string[] pumpConfigs = Directory.GetFiles(Settings.Registry.ProgramsPath);
+            string[] pumpConfigs = Directory.GetFiles(Context.Settings.Registry.ProgramsPath);
             List<string> ids = new List<string>();
             foreach (string pumpConfig in pumpConfigs)
                 try
@@ -126,11 +115,11 @@ namespace ETLService.Manager
 
         private void InitWatcher()
         {
-            Logger.WriteToTrace($"Включение слежения за обновлениями в директории \"{Settings.Registry.UpdatesPath}\"...");
+            Logger.WriteToTrace($"Включение слежения за обновлениями в директории \"{Context.Settings.Registry.UpdatesPath}\"...");
 
             watcher = new FileSystemWatcher
             {
-                Path = Settings.Registry.UpdatesPath,
+                Path = Context.Settings.Registry.UpdatesPath,
                 NotifyFilter = NotifyFilters.Size | NotifyFilters.FileName,
                 Filter = "*.*",
             };
@@ -182,7 +171,7 @@ namespace ETLService.Manager
             Logger.WriteToTrace("Проверка наличия обновлений.");
             Updates = new Dictionary<string, UpdateRecord>();
 
-            string[] files = Directory.GetFiles(Settings.Registry.UpdatesPath);
+            string[] files = Directory.GetFiles(Context.Settings.Registry.UpdatesPath);
 
             // Очистка от файлов, не являющихся библиотеками или конфигурациями
             files.Where(f => !Path.GetExtension(f).IsMatch("json|dll|pdb"))
@@ -228,10 +217,10 @@ namespace ETLService.Manager
             // Копирование файлов в необходимые директории
             if (!string.IsNullOrEmpty(rec.Config))
             {
-                MoveFile(rec.Config, Settings.Registry.UpdatesPath, Settings.Registry.ProgramsPath);
+                MoveFile(rec.Config, Context.Settings.Registry.UpdatesPath, Context.Settings.Registry.ProgramsPath);
 
                 // Обноление конфигурации загруженных в реестр закачек или добавление новой
-                string configFile = Path.Combine(Settings.Registry.ProgramsPath, rec.Config);
+                string configFile = Path.Combine(Context.Settings.Registry.ProgramsPath, rec.Config);
                 if (prc == null)
                     Pumps.Add(new ETLProcess(configFile));
                 else
@@ -241,10 +230,10 @@ namespace ETLService.Manager
             if (!string.IsNullOrEmpty(rec.Module))
             {
                 // Модуль
-                MoveFile(rec.Module, Settings.Registry.UpdatesPath, Settings.Registry.ModulesPath);
+                MoveFile(rec.Module, Context.Settings.Registry.UpdatesPath, Context.Settings.Registry.ModulesPath);
 
                 // Отладочные данные
-                MoveFile(rec.Module.Replace("dll", "pdb"), Settings.Registry.UpdatesPath, Settings.Registry.ModulesPath);
+                MoveFile(rec.Module.Replace("dll", "pdb"), Context.Settings.Registry.UpdatesPath, Context.Settings.Registry.ModulesPath);
             }
 
             // Удаление применённого обновления из списка доступных
@@ -257,7 +246,7 @@ namespace ETLService.Manager
 
         private void InitJWT()
         {
-            if (Settings.JWTKey.Length < 16)
+            if (Context.Settings.JWTKey.Length < 16)
                 Logger.WriteToTrace("Для корректной работы JWT ключ должен быть не менее 16 символов.", TraceMessageKind.Error);
 
             // Функция формирование требований после проверки данных пользователя
@@ -269,28 +258,10 @@ namespace ETLService.Manager
                 };
             };
 
-            JWT = new JwtControl(check, Settings.JWTKey);
+            JWT = new JwtControl(check, Context.Settings.JWTKey);
         }
 
         #endregion JWT
-
-        #region Мигратор
-
-        private void InitMigrator()
-        {
-            Migrator = new Migrator(Settings.DB, Path.Combine(Settings.Registry.MigrationsPath));
-        }
-
-        #endregion Мигратор
-
-        #region История
-
-        private void InitHistory()
-        {
-            History = new ETLHistory(Settings.DB);
-        }
-
-        #endregion История
 
         #endregion Вспомогательные функции
 
@@ -318,7 +289,7 @@ namespace ETLService.Manager
             if (!ExecutingPumps.ContainsKey(id))
             {
                 // Для запуска процесса версия БД должна быть выше
-                if (prc.Version > Migrator.Version)
+                if (prc.Version > Context.Version)
                     throw new Exception("Версия системы ниже необходимой для запуска.");
 
                 ExecutingPumps.Add(id, prc);
@@ -328,7 +299,7 @@ namespace ETLService.Manager
                     ExecutingPumps.Remove(id);
                 };
 
-                decimal sessNo = History.AddRecord(prc.ProgramID, Migrator.Version, prc.Version, "user", config);
+                decimal sessNo = Context.History.AddRecord(prc.ProgramID, Context.Version, prc.Version, "user", config);
 
                 prc.Start(sessNo, config);
                 return sessNo;
@@ -343,20 +314,18 @@ namespace ETLService.Manager
         public ELTManager()
         {
             string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            Settings = new ETLSettings(Path.Combine(baseDir, "ETLSettings.json"));
+            Context = new ETLContext(Path.Combine(baseDir, "ETLSettings.json"));
 
             // Соединение с базой
             try
             {
-                Settings.DB.Connect();
+                Context.Initialize();
             }
             catch (Exception ex)
             {
                 Logger.WriteToTrace($"Ошибка при подключении к базе: {ex}", TraceMessageKind.Error);
             }
 
-            InitMigrator();
-            InitHistory();
             InitJWT();
 
             InitPumpsList();
@@ -368,7 +337,7 @@ namespace ETLService.Manager
 
         public void Dispose()
         {
-            Settings?.Dispose();
+            Context?.Dispose();
         }
     }
 }

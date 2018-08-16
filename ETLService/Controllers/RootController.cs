@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ETLService.Controllers
@@ -33,6 +32,14 @@ namespace ETLService.Controllers
                         { "template", "scenarios.tmp" }
                     }
                 }
+            };
+        }
+
+        [HttpGet("info")]
+        public object GetVersion()
+        {
+            return new Dictionary<string, object> {
+                { "version", Program.Manager.Context.Version }
             };
         }
     }

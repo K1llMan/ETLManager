@@ -61,7 +61,7 @@ namespace ETLCommon
                 db.Execute(
                     "update etl_history" +
                     " set status = @status, programid = @programid, systemversion = @systemversion, programversion = @programversion," +
-                    " username = @username, config = @config" +
+                    " pumpstartdate = @pumpstartdate, pumpfinishdate = @pumpfinishdate, username = @username, config = @config" +
                     $" where id = {sessNo}", record);
             }
             catch (Exception ex)

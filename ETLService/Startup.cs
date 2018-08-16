@@ -36,7 +36,7 @@ namespace ETLService
                     {
                         
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Program.Manager.Settings.JWTKey)),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Program.Manager.Context.Settings.JWTKey)),
                         
                         // Любой Issuer и любой Audience
                         ValidateIssuer = false,                        

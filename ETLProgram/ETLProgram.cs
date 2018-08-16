@@ -26,7 +26,7 @@ namespace ETLApp
 
         public Dictionary<string, object> UserParams { get; private set; }
 
-        public ETLSettings Settings { get; set; }
+        public ETLContext Context { get; set; }
 
         public List<Stage> Stages { get; set; }
 
@@ -121,7 +121,7 @@ namespace ETLApp
                 // Соединение с базой
                 try
                 {
-                    Settings.DB.Connect();
+                    Context.DB.Connect();
                 }
                 catch (Exception ex)
                 {
@@ -146,7 +146,7 @@ namespace ETLApp
 
         public void Dispose()
         {
-            Settings?.Dispose();
+            Context?.Dispose();
         }
     }
 }

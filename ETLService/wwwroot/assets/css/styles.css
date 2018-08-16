@@ -12,6 +12,16 @@ h1, h3{
 	font: normal 24px 'Open Sans', Arial, Helvetica, sans-serif;
 }
 
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
 /*-----------------
     Basic
 -----------------*/

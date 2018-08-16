@@ -133,7 +133,7 @@ $(function () {
 
         // Groups by id
         var groups = [];
-        $.each(pumpsRegistry, function (i, el) {
+        $.each(etlContext.pumpsRegistry, function (i, el) {
             if (groups.indexOf(el.desc.supplierCode) == -1)
                 groups.push(el.desc.supplierCode);
         });
@@ -145,7 +145,7 @@ $(function () {
 
         collapsible.append(collapsibleItems);
 
-        $.each(pumpsRegistry, function (i, el) {
+        $.each(etlContext.pumpsRegistry, function (i, el) {
             var body = $(Templater.useTemplate('collapsible-body-item', [el]));
 
             el.desc.id = el.id;

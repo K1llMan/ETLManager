@@ -16,7 +16,8 @@
           " programid varchar(100),",
           " systemversion varchar(12),",
           " programversion varchar(20),",
-          " pumpdate timestamp not null default now(),",
+          " pumpstartdate timestamp not null default now(),",
+          " pumpfinishdate timestamp not null default now(),",
           " username varchar(255),",
           " config text",
           ");"

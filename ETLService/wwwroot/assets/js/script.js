@@ -26,7 +26,9 @@ String.prototype.format = String.prototype.f = function () {
     });
 };
 
-var pumpsRegistry = null;
+var etlContext = {
+    
+}
 
 // These are called on page load
 $(function () {
@@ -121,11 +123,28 @@ $(function () {
 
     context.readyForDisplay(false);
 
+    function getInfo() {
+        // Send the data using post 
+        $.get("api/info")
+            .done(function (data) {
+                etlContext.info = data;
+                var version = Object.keys(etlContext.info.version).map(function(key) {
+                    return etlContext.info.version[key];
+                })
+                .filter(function(value) {
+                    return value != -1;
+                })
+                .join('.');
+
+                $('footer #version').html(version);
+            });
+    }
+
     function getRegistry() {
         // Send the data using post 
         $.get("api/pumps/registry")
             .done(function (data) {
-                pumpsRegistry = data["data"].sort(function (a, b) { return parseInt(a.desc.dataCode) - parseInt(b.desc.dataCode) });
+                etlContext.pumpsRegistry = data["data"].sort(function (a, b) { return parseInt(a.desc.dataCode) - parseInt(b.desc.dataCode) });
 
                 // Manually trigger a hashchange to start the app.
                 $(window).trigger('hashchange');
@@ -167,6 +186,7 @@ $(function () {
                     nav.prepend(li);
                 });
 
+                getInfo();
                 getRegistry();
             });
     };

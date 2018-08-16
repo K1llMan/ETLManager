@@ -70,15 +70,15 @@ namespace ETLCommon
 
     #region Настройки
 
-    public class ETLSettings: IDisposable
+    public class ETLSettings
     {
         #region Свойства
-
-        public Database DB { get; }
 
         public ETLRegistrySettings Registry { get; set; }
 
         public string JWTKey { get; }
+
+        public string ConnectString { get; }
 
         #endregion Свойства
 
@@ -92,19 +92,12 @@ namespace ETLCommon
                 ? Path.Combine(AppContext.BaseDirectory, "Registry")
                 : path;
 
-            DB = new Database(data["Database"].ToString());
-            DB.Connect();
-
             Registry = new ETLRegistrySettings(path);
             JWTKey = data["JWTKey"].ToString();
+            ConnectString = data["Database"].ToString();
         }
 
         #endregion Основные функции
-
-        public void Dispose()
-        {
-            DB?.Disconnect();
-        }
     }
 
     #endregion Настройки
