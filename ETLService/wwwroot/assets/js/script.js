@@ -128,15 +128,9 @@ $(function () {
         $.get("api/info")
             .done(function (data) {
                 etlContext.info = data;
-                var version = Object.keys(etlContext.info.version).map(function(key) {
-                    return etlContext.info.version[key];
-                })
-                .filter(function(value) {
-                    return value != -1;
-                })
-                .join('.');
+                var version = etlContext.info.version;
 
-                $('footer #version').html(version);
+                $('footer #version').html([version.major, version.minor, version.build].join('.'));
             });
     }
 
