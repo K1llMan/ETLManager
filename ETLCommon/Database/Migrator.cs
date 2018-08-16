@@ -104,7 +104,7 @@ namespace ETLCommon
                 return false;
 
             // Список обрабатываемых миграций
-            var list = migrations.Where(m => m.Version <= Max(Version, version) && m.Version >= Max(Version, version));
+            var list = migrations.Where(m => m.Version <= Max(Version, version) && m.Version >= Min(Version, version));
             // Для понижения версии список обрабатывается в обратном порядке
             list = direction == "down" ? list.Reverse() : list;
 

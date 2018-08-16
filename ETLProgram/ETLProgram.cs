@@ -44,6 +44,8 @@ namespace ETLApp
             }
         }
 
+        public Version Version { get; private set; }
+
         #endregion Свойства
 
         #region Вспомогательные функции
@@ -121,11 +123,19 @@ namespace ETLApp
                 // Соединение с базой
                 try
                 {
-                    Context.DB.Connect();
+                    Context.Initialize();
                 }
                 catch (Exception ex)
                 {
                     Logger.WriteToTrace($"Ошибка при подключении к базе: {ex}", TraceMessageKind.Error);
+                    return;
+                }
+
+                Version = new Version(data["version"]?.ToString() ?? "0.0.0");
+                if (Version > Context.Version)
+                {
+                    Logger.WriteToTrace("Версия системы ниже необходимой для запуска.", TraceMessageKind.Error);
+                    return;
                 }
 
                 // Формирование общих параметров закачки
