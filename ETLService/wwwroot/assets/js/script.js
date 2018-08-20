@@ -26,9 +26,8 @@ String.prototype.format = String.prototype.f = function () {
     });
 };
 
-var etlContext = {
-    
-}
+var etlContext = {};
+var broadcast = Broadcast("ws://" + window.location.host + "/api/broadcast", null);
 
 // These are called on page load
 $(function () {

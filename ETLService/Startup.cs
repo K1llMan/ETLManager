@@ -8,6 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 using ETLCommon;
 
+using ETLService.Manager;
+
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.IdentityModel.Tokens;
 
@@ -76,6 +78,10 @@ namespace ETLService
             // Статический контент
             app.UseDefaultFiles();
             app.UseStaticFiles(GetStaticFileConfiguration());
+
+            // Использование сокетов
+            app.UseWebSockets();
+            app.UseMiddleware<SocketMiddleware>();
 
             app.UseMvc();
         }

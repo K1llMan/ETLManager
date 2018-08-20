@@ -36,6 +36,11 @@ namespace ETLService.Manager
         public ETLContext Context { get; set; }
 
         /// <summary>
+        /// Рассылка информации для клиентов
+        /// </summary>
+        public ETLBroadcast Broadcast { get; set; }
+
+        /// <summary>
         /// Полный список программ
         /// </summary>
         public List<ETLProcess> Pumps { get; set; }
@@ -263,6 +268,15 @@ namespace ETLService.Manager
 
         #endregion JWT
 
+        #region Рассылка
+
+        private void InitBroadcast()
+        {
+            Broadcast = new ETLBroadcast();
+        }
+
+        #endregion Рассылка
+
         #endregion Вспомогательные функции
 
         #region Основные функции
@@ -327,6 +341,7 @@ namespace ETLService.Manager
             }
 
             InitJWT();
+            InitBroadcast();
 
             InitPumpsList();
             CheckUpdates();
