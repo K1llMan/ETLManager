@@ -93,12 +93,13 @@ namespace ETLService
         {
             // Закрытие веб-сокетов при остановке приложения
             Program.Manager.Broadcast.Stop();
+
+            // Корректное уничтожение объекта
+            Program.Manager?.Dispose();
         }
 
         private void OnStopped()
         {
-            // Корректное уничтожение объекта
-            Program.Manager?.Dispose();
             Logger.CloseLogFile();
         }
 
