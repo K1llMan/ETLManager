@@ -36,7 +36,6 @@ namespace ETLService
                 {
                     jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
                     {
-                        
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Program.Manager.Context.Settings.JWTKey)),
                         

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.WebSockets;
-using System.Text;
-using System.Threading;
+﻿using System.Net.WebSockets;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Http;
@@ -25,19 +19,17 @@ namespace ETLService.Manager
 
         public async Task Invoke(HttpContext context)
         {
-            if (context.Request.Path == "/api/broadcast")
-            {
-                if (context.WebSockets.IsWebSocketRequest)
-                {
-                    WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
-                    ETLSocket socket = Program.Manager.Broadcast.Add(webSocket);
-                    await socket.Receive();
-                }
-                else
-                    context.Response.StatusCode = 400;
-            }
-            else
+            if (context.Request.Path != "/api/broadcast")
                 await nextDelegate(context);
+
+            if (!context.WebSockets.IsWebSocketRequest)
+            {
+                context.Response.StatusCode = 400;
+                return;
+            }
+
+            WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
+            await Program.Manager.Broadcast.Add(webSocket).Receive();
         }
     }
 }
