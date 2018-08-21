@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Concurrent;
 using System.Net.WebSockets;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
-using Microsoft.AspNetCore.Http;
-
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace ETLService.Manager
 {
@@ -19,7 +11,7 @@ namespace ETLService.Manager
     /// </summary>
     public class ETLBroadcast
     {
-        private static ConcurrentDictionary<string, ETLSocket> sockets = new ConcurrentDictionary<string, ETLSocket>();
+        private ConcurrentDictionary<string, ETLSocket> sockets = new ConcurrentDictionary<string, ETLSocket>();
 
         #region Основные функции
 
@@ -50,11 +42,27 @@ namespace ETLService.Manager
         public ETLSocket Add(WebSocket socket)
         {
             ETLSocket etlSocket = new ETLSocket(socket);
-            etlSocket.ReceiveEvent += async args => await Invoke(args.Data);
 
-            sockets.TryAdd(Guid.NewGuid().ToString(), etlSocket);
+            etlSocket.ReceiveEvent += async (s, args) => await Invoke(args.Data);
+            etlSocket.CloseEvent += (s, args) => {
+                Remove(((ETLSocket)s).GUID);
+            };
+
+            sockets.TryAdd(etlSocket.GUID, etlSocket);
 
             return etlSocket;
+        }
+
+        /// <summary>
+        /// Удаление подключения
+        /// </summary>
+        public void Remove(string guid)
+        {
+            ETLSocket socket = null;
+            if (sockets.ContainsKey(guid))
+                sockets.TryRemove(guid, out socket);
+
+            socket?.Close();
         }
 
         #endregion Основные функции

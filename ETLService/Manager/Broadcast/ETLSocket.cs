@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
-using Microsoft.AspNetCore.Http;
 
 namespace ETLService.Manager
 {
@@ -19,9 +14,14 @@ namespace ETLService.Manager
         #region Поля
 
         private WebSocket curSocket;
+
         // Сообщение
         private StringBuilder data;
         private int size;
+
+        #endregion Поля
+
+        #region События
 
         // Событие записи в лог
         public class ReceiveEventArgs
@@ -29,10 +29,36 @@ namespace ETLService.Manager
             public string Data { get; internal set; }
         }
 
-        public delegate void RecieveEventHandler(ReceiveEventArgs e);
+        public delegate void RecieveEventHandler(object sender, ReceiveEventArgs e);
         public event RecieveEventHandler ReceiveEvent;
 
-        #endregion Поля
+        // Событие закрытия соединения
+        public class CloseEventArgs
+        {
+            public WebSocketCloseStatus? Status { get; internal set; }
+
+            public string Description { get; internal set; }
+        }
+
+        public delegate void CloseEventHandler(object sender, CloseEventArgs e);
+        public event CloseEventHandler CloseEvent;
+
+        // Событие закрытия соединения
+        public class SendEventArgs
+        {
+            public string Data { get; internal set; }
+        }
+
+        public delegate void SendEventHandler(object sender, SendEventArgs e);
+        public event SendEventHandler SendEvent;
+
+        #endregion События
+
+        #region Свойства
+
+        public string GUID { get; }
+
+        #endregion Свойства
 
         #region Основные функции
 
@@ -51,7 +77,7 @@ namespace ETLService.Manager
                 // Вызов события 
                 if (result.EndOfMessage)
                 {
-                    ReceiveEvent?.Invoke(new ReceiveEventArgs {
+                    ReceiveEvent?.Invoke(this, new ReceiveEventArgs {
                         Data = data.ToString()
                     });
 
@@ -60,6 +86,11 @@ namespace ETLService.Manager
             } while (!result.CloseStatus.HasValue);
 
             await curSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
+            CloseEvent?.Invoke(this, new CloseEventArgs{
+                Status = curSocket.CloseStatus,
+                Description = curSocket.CloseStatusDescription
+            });
+
         }
 
         public async Task Send(string sendingData)
@@ -71,6 +102,9 @@ namespace ETLService.Manager
             {
                 byte[] encoded = Encoding.UTF8.GetBytes(sendingData);
                 await curSocket.SendAsync(new ArraySegment<byte>(encoded, 0, sendingData.Length), WebSocketMessageType.Text, true, CancellationToken.None);
+                SendEvent?.Invoke(this, new SendEventArgs {
+                    Data = data.ToString()
+                });
             }
             catch (Exception ex)
             {
@@ -82,6 +116,7 @@ namespace ETLService.Manager
         {
             if (curSocket.State == WebSocketState.Closed)
                 return;
+
             await curSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
         }
 
@@ -91,6 +126,8 @@ namespace ETLService.Manager
         public ETLSocket(WebSocket socket, int bufferSize = 4096)
         {
             curSocket = socket;
+            GUID = Guid.NewGuid().ToString();
+
             data = new StringBuilder();
             size = bufferSize;
         }
