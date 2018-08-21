@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Threading.Tasks;
 
@@ -8,6 +7,16 @@ using Newtonsoft.Json.Linq;
 
 namespace ETLService.Manager
 {
+    /// <summary>
+    /// Действие рассылки
+    /// </summary>
+    public class ETLBroadcastAction
+    {
+        public string Action;
+
+        public object Data;
+    }
+
     /// <summary>
     /// Класс для обновления данных на всех подключённых клиентах
     /// </summary>
@@ -20,9 +29,9 @@ namespace ETLService.Manager
         /// <summary>
         /// Рассылка данных всем клиентам
         /// </summary>
-        public async Task Broadcast(object data)
+        public async Task Broadcast(ETLBroadcastAction action)
         {
-            string dataStr = JsonConvert.SerializeObject(data, Formatting.None);
+            string dataStr = JsonConvert.SerializeObject(action, Formatting.None);
 
             foreach (ETLSocket socket in sockets.Values)
                 await socket.Send(dataStr);
@@ -40,9 +49,9 @@ namespace ETLService.Manager
             switch (data["func"].ToString())
             {
                 case "ololo":
-                    await Broadcast(new Dictionary<string,object>{
-                        { "func", "myFunc" },
-                        { "data", new string[] { "1", "5", "5" } }
+                    await Broadcast(new ETLBroadcastAction{
+                        Action = "myFunc",
+                        Data = new string[] { "1", "5", "5" }
                     });
                     break;
             }
