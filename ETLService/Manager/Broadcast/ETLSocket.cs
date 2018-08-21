@@ -3,6 +3,7 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace ETLService.Manager
 {
@@ -62,6 +63,9 @@ namespace ETLService.Manager
 
         #region Основные функции
 
+        /// <summary>
+        /// Получение сообщения
+        /// </summary>
         public async Task Receive()
         {
             if (curSocket.State != WebSocketState.Open)
@@ -78,7 +82,7 @@ namespace ETLService.Manager
                 if (result.EndOfMessage)
                 {
                     ReceiveEvent?.Invoke(this, new ReceiveEventArgs {
-                        Data = data.ToString()
+                        Data = HttpUtility.UrlDecode(data.ToString())
                     });
 
                     data.Clear();
@@ -90,9 +94,11 @@ namespace ETLService.Manager
                 Status = curSocket.CloseStatus,
                 Description = curSocket.CloseStatusDescription
             });
-
         }
 
+        /// <summary>
+        /// Отправка сообщения
+        /// </summary>
         public async Task Send(string sendingData)
         {
             if (curSocket.State != WebSocketState.Open)
@@ -112,6 +118,9 @@ namespace ETLService.Manager
             }
         }
 
+        /// <summary>
+        /// Закрытие соединения
+        /// </summary>
         public async Task Close()
         {
             if (curSocket.State == WebSocketState.Closed)

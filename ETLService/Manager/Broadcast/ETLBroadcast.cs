@@ -1,8 +1,10 @@
 ﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Threading.Tasks;
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace ETLService.Manager
 {
@@ -29,11 +31,21 @@ namespace ETLService.Manager
         /// <summary>
         /// Исполнение команды
         /// </summary>
-        public async Task Invoke(string data)
+        public async Task Invoke(string dataStr)
         {
-            object dataStr = JsonConvert.DeserializeObject(data);
+            if (string.IsNullOrEmpty(dataStr))
+                return;
 
-            await Broadcast("invoked");
+            JObject data = (JObject)JsonConvert.DeserializeObject(dataStr);
+            switch (data["func"].ToString())
+            {
+                case "ololo":
+                    await Broadcast(new Dictionary<string,object>{
+                        { "func", "myFunc" },
+                        { "data", new string[] { "1", "5", "5" } }
+                    });
+                    break;
+            }
         }
 
         /// <summary>
@@ -49,7 +61,6 @@ namespace ETLService.Manager
             };
 
             sockets.TryAdd(etlSocket.GUID, etlSocket);
-
             return etlSocket;
         }
 
@@ -63,6 +74,12 @@ namespace ETLService.Manager
                 sockets.TryRemove(guid, out socket);
 
             socket?.Close();
+        }
+
+        public async void Stop()
+        {
+            foreach (ETLSocket socket in sockets.Values)
+                await socket.Close();
         }
 
         #endregion Основные функции

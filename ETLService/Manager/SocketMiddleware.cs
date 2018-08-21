@@ -16,35 +16,11 @@ namespace ETLService.Manager
     /// </summary>
     public class SocketMiddleware
     {
-        private static ConcurrentDictionary<string, ETLBroadcast> _activeConnections = new ConcurrentDictionary<string, ETLBroadcast>();
-        private string _packet;
-
-        private ManualResetEvent _send = new ManualResetEvent(false);
-        private ManualResetEvent _exit = new ManualResetEvent(false);
-        private readonly RequestDelegate _next;
+        private readonly RequestDelegate nextDelegate;
 
         public SocketMiddleware(RequestDelegate next)
         {
-            _next = next;
-        }
-
-        public void Send(string data)
-        {
-            _packet = data;
-            _send.Set();
-        }
-
-        private async Task Echo(HttpContext context, WebSocket webSocket)
-        {
-            var buffer = new byte[1024 * 4];
-            WebSocketReceiveResult result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-            while (!result.CloseStatus.HasValue)
-            {
-                await webSocket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType, result.EndOfMessage, CancellationToken.None);
-
-                result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-            }
-            await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
+            nextDelegate = next;
         }
 
         public async Task Invoke(HttpContext context)
@@ -58,14 +34,10 @@ namespace ETLService.Manager
                     await socket.Receive();
                 }
                 else
-                {
                     context.Response.StatusCode = 400;
-                }
             }
             else
-            {
-                await _next(context);
-            }
+                await nextDelegate(context);
         }
     }
 }

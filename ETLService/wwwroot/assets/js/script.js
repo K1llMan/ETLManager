@@ -27,7 +27,7 @@ String.prototype.format = String.prototype.f = function () {
 };
 
 var etlContext = {};
-var broadcast = Broadcast("ws://" + window.location.host + "/api/broadcast", null);
+Broadcast.connect("ws://" + window.location.host + "/api/broadcast");
 
 // These are called on page load
 $(function () {
@@ -137,6 +137,8 @@ $(function () {
         // Send the data using post 
         $.get("api/pumps/registry")
             .done(function (data) {
+                //broadcast.send(JSON.stringify(data));
+
                 etlContext.pumpsRegistry = data["data"].sort(function (a, b) { return parseInt(a.desc.dataCode) - parseInt(b.desc.dataCode) });
 
                 // Manually trigger a hashchange to start the app.

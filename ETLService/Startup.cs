@@ -65,6 +65,7 @@ namespace ETLService
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime)
         {
+            applicationLifetime.ApplicationStopping.Register(OnStopping);
             applicationLifetime.ApplicationStopped.Register(OnStopped);
 
             if (env.IsDevelopment())
@@ -87,6 +88,12 @@ namespace ETLService
         }
 
         #region Lifetime events
+
+        private void OnStopping()
+        {
+            // Закрытие веб-сокетов при остановке приложения
+            Program.Manager.Broadcast.Stop();
+        }
 
         private void OnStopped()
         {
