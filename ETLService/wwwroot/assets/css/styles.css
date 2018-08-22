@@ -237,6 +237,14 @@ footer.page-footer {
 .scenarios-page {
 }
 
+.badges-container {
+    margin-left: auto;
+}
+
+.badges-container .badge {
+    margin-right: 5px;
+}
+
 .pumpRow {
     display: flex;
     align-items: center;

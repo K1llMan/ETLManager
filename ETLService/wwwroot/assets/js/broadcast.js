@@ -1,33 +1,15 @@
 ﻿var broadcastHandlers = {
     'startPump': function (data) {
         var icon = $('#' + data.id + ' #info .material-icons');
-        icon.attr('class', icon.attr('class').replace(/[\s](.+)?-text/g, ''));
-        icon.html('trending_flat');
+        setStatus(icon, "Running");
+
+        updateBadges(icon.parents('li'));
     },
     'endPump': function (data) {
-        var iconStr = 'remove';
-        var color = '';
-        switch (data.status) {
-            case 'Successful':
-                iconStr = 'check';
-                color = 'green-text';
-                break;
-            case 'Warnings':
-                iconStr = 'error_outline';
-                color = 'orange-text';
-                break;
-            case 'Errors':
-                iconStr = 'error';
-                color = 'red-text';
-                break;
-            case 'Terminated':
-                iconStr = 'clear';
-                break;
-        }
-
         var icon = $('#' + data.id + ' #info .material-icons');
-        icon.html(iconStr);
-        icon.addClass(color);
+        setStatus(icon, data.status);
+
+        updateBadges(icon.parents('li'));
     }
 }
 

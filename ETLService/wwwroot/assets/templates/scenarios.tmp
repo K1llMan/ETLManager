@@ -22,6 +22,11 @@
     <ul class="collapsible">
     </ul>    
   </div>
+  <div class="fixed-action-btn">
+    <a class="btn-floating btn-large waves-effect waves-light pulse">
+      <i class="large material-icons">autorenew</i>
+    </a>
+  </div>
 </template>
 
 <template id="common-stage-item">
@@ -44,6 +49,11 @@
   <li id="{{id}}">
     <div class="collapsible-header">
       {{name}}
+      <div class="badges-container">
+        <span class="new badge red" data-badge-caption="errors">4</span>
+        <span class="new badge orange" data-badge-caption="warnings">4</span>
+        <span class="new badge green" data-badge-caption="running">4</span>
+      </div>
     </div>
     <div class="collapsible-body">
     </div>
@@ -62,7 +72,7 @@
 <template id="pump-desc">
   <div id="info" class="col s10">
     <div class="valign-wrapper" >
-      <i class="material-icons">filter_drama</i> {{dataCode}} {{name}}
+      <i id="status" class="material-icons">{{status}}</i> {{dataCode}} {{name}}
     </div>
     <div>{{comment}}</div>
     <div>

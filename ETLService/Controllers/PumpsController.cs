@@ -57,5 +57,16 @@ namespace ETLService.Controllers
                 return WebAPI.Error($"Ошибка при запуске закачки \"{id}\": {ex.Message}");
             }
         }
+
+        // GET api/pumps/statuses
+        [HttpGet("statuses")]
+        public object GetStatuses()
+        {
+            return WebAPI.Success(Program.Manager.Pumps.ToDictionary(
+                p => p.ProgramID, 
+                p => Program.Manager.ExecutingPumps.ContainsKey(p.ProgramID) 
+                    ? "Running" 
+                    :  p.LastStatus.ToString()));
+        }
     }
 }

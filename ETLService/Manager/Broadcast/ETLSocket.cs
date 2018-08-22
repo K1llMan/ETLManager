@@ -24,7 +24,7 @@ namespace ETLService.Manager.Broadcast
 
         #region События
 
-        // Событие записи в лог
+        // Событие получения сообщения
         public class ReceiveEventArgs
         {
             public string Data { get; internal set; }

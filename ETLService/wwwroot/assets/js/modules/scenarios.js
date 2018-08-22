@@ -148,10 +148,15 @@ $(function () {
         $.each(etlContext.pumpsRegistry, function (i, el) {
             var body = $(Templater.useTemplate('collapsible-body-item', [el]));
 
-            el.desc.id = el.id;
-            el.desc.version = el.version;
+            var desc = $.extend(true, {}, el.desc);
 
-            body.prepend($(Templater.useTemplate('pump-desc', [el.desc])));
+            desc.id = el.id;
+            desc.version = el.version;
+
+            var pumpDesc = $(Templater.useTemplate('pump-desc', [desc]));
+            setStatus($(pumpDesc).find('#status'), etlContext.statuses[el.id]);
+
+            body.prepend(pumpDesc);
             var startBtn = body.find('#buttons #start');
             startBtn.click(function () {
                 updateModal(el);
@@ -160,6 +165,10 @@ $(function () {
             // Append to group
             var item = collapsible.find('#' + el.desc.supplierCode);
             item.find('.collapsible-body').append(body);
+        });
+
+        $.each(collapsibleItems, function (i, el) {
+            updateBadges(el);
         });
 
         $('.collapsible').collapsible();

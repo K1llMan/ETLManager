@@ -135,6 +135,14 @@ $(function () {
             });
     }
 
+    function getStatuses() {
+        // Send the data using post 
+        $.get("api/pumps/statuses")
+            .done(function (data) {
+                etlContext.statuses = data.data;
+            });
+    }
+
     function getRegistry() {
         // Send the data using post 
         $.get("api/pumps/registry")
@@ -184,6 +192,7 @@ $(function () {
                 });
 
                 getInfo();
+                getStatuses();
                 getRegistry();
             });
     };
