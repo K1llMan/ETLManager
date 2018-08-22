@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace ETLService.Manager
+namespace ETLService.Manager.Broadcast
 {
     /// <summary>
     /// Класс для обновления данных на всех подключённых клиентах
@@ -31,7 +31,7 @@ namespace ETLService.Manager
         }
 
         public delegate void RecieveEventHandler(object sender, ReceiveEventArgs e);
-        public event RecieveEventHandler ReceiveEvent;
+        public event RecieveEventHandler OnReceive;
 
         // Событие закрытия соединения
         public class CloseEventArgs
@@ -42,7 +42,7 @@ namespace ETLService.Manager
         }
 
         public delegate void CloseEventHandler(object sender, CloseEventArgs e);
-        public event CloseEventHandler CloseEvent;
+        public event CloseEventHandler OnClose;
 
         // Событие закрытия соединения
         public class SendEventArgs
@@ -51,7 +51,7 @@ namespace ETLService.Manager
         }
 
         public delegate void SendEventHandler(object sender, SendEventArgs e);
-        public event SendEventHandler SendEvent;
+        public event SendEventHandler OnSend;
 
         #endregion События
 
@@ -81,7 +81,7 @@ namespace ETLService.Manager
                 // Вызов события 
                 if (result.EndOfMessage)
                 {
-                    ReceiveEvent?.Invoke(this, new ReceiveEventArgs {
+                    OnReceive?.Invoke(this, new ReceiveEventArgs {
                         Data = HttpUtility.UrlDecode(data.ToString())
                     });
 
@@ -90,7 +90,7 @@ namespace ETLService.Manager
             } while (!result.CloseStatus.HasValue);
 
             await curSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
-            CloseEvent?.Invoke(this, new CloseEventArgs{
+            OnClose?.Invoke(this, new CloseEventArgs{
                 Status = curSocket.CloseStatus,
                 Description = curSocket.CloseStatusDescription
             });
@@ -108,7 +108,7 @@ namespace ETLService.Manager
             {
                 byte[] encoded = Encoding.UTF8.GetBytes(sendingData);
                 await curSocket.SendAsync(new ArraySegment<byte>(encoded, 0, sendingData.Length), WebSocketMessageType.Text, true, CancellationToken.None);
-                SendEvent?.Invoke(this, new SendEventArgs {
+                OnSend?.Invoke(this, new SendEventArgs {
                     Data = data.ToString()
                 });
             }

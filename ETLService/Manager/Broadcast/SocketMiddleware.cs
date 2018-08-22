@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Http;
 
-namespace ETLService.Manager
+namespace ETLService.Manager.Broadcast
 {
     /// <summary>
     /// Класс для обновления данных на всех подключённых клиентах
@@ -20,7 +20,10 @@ namespace ETLService.Manager
         public async Task Invoke(HttpContext context)
         {
             if (context.Request.Path != "/api/broadcast")
+            {
                 await nextDelegate(context);
+                return;
+            }
 
             if (!context.WebSockets.IsWebSocketRequest)
             {

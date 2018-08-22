@@ -7,6 +7,8 @@ using System.Security.Claims;
 using Newtonsoft.Json.Linq;
 using ETLCommon;
 
+using ETLService.Manager.Broadcast;
+
 namespace ETLService.Manager
 {
     public class ELTManager: IDisposable
@@ -306,14 +308,29 @@ namespace ETLService.Manager
                 if (prc.Version > Context.Version)
                     throw new Exception("Версия системы ниже необходимой для запуска.");
 
-                ExecutingPumps.Add(id, prc);
+                decimal sessNo = Context.History.AddRecord(prc.ProgramID, Context.Version, prc.Version, "user", config);
 
-                // При закрытии процесса удаляем его из запущенных
-                prc.Exit += (s, a) => {
-                    ExecutingPumps.Remove(id);
+                // При запуске добавляем в список запущенных
+                prc.OnStart += async (s, a) => {
+                    ExecutingPumps.Add(id, (ETLProcess)s);
+                    await Broadcast.Broadcast(new ETLBroadcastAction {
+                        Action = "startPump",
+                        Data = new Dictionary<string, object> {
+                            { "id", id }
+                        }
+                    });
                 };
 
-                decimal sessNo = Context.History.AddRecord(prc.ProgramID, Context.Version, prc.Version, "user", config);
+                // При закрытии процесса удаляем его из запущенных
+                prc.OnExit += async (s, a) => {
+                    ExecutingPumps.Remove(id);
+                    await Broadcast.Broadcast(new ETLBroadcastAction {
+                        Action = "endPump",
+                        Data = new Dictionary<string, object> {
+                            { "id", id }
+                        }
+                    });
+                };
 
                 prc.Start(sessNo, config);
                 return sessNo;

@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using ETLCommon;
 
-using ETLService.Manager;
+using ETLService.Manager.Broadcast;
 
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.IdentityModel.Tokens;

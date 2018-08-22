@@ -31,13 +31,11 @@ namespace ETLService.Manager
 
         #region События
 
-        public class WriteEventArgs
-        {
-            public string Message { get; internal set; }
-        }
+        public delegate void StartEventHandler(object sender, EventArgs a);
+        public event StartEventHandler OnStart;
 
-        public delegate void ProcessEventHandler(object e, EventArgs a);
-        public event ProcessEventHandler Exit;
+        public delegate void ExitEventHandler(object sender, EventArgs a);
+        public event ExitEventHandler OnExit;
 
         #endregion События
 
@@ -63,12 +61,16 @@ namespace ETLService.Manager
 
             Logger.WriteToTrace($"Процесс закачки \"{ProgramID}\" ({ProcessID}) запущен.");
 
+            // Событие запуска
+            OnStart?.Invoke(this, EventArgs.Empty);
+
             prc.Exited += (s, a) => {
                 Logger.WriteToTrace($"Процесс закачки \"{ProgramID}\" ({ProcessID}) завершён.");
 
-                Exit?.Invoke(s, a);
-                // После завершения процесса очищаем все обработчики, привязанные с событию завершения
-                Exit?.GetInvocationList().ToList().ForEach(d => Exit -= (ProcessEventHandler)d);
+                OnExit?.Invoke(this, a);
+                // После завершения процесса очищаем все обработчики
+                OnStart?.GetInvocationList().ToList().ForEach(d => OnStart -= (StartEventHandler)d);
+                OnExit?.GetInvocationList().ToList().ForEach(d => OnExit -= (ExitEventHandler)d);
             };
         }
 

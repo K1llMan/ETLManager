@@ -1,4 +1,14 @@
-﻿/*-----------------------------------------------------------------------------
+﻿var broadcastHandlers = {
+    'startPump': function (data) {
+        $('#' + data.id + ' #info .material-icons').html('trending_flat');
+        console.log('startPump handler');
+    },
+    'endPump': function(data) {
+        $('#' + data.id + ' #info .material-icons').html('check');
+    }
+}
+
+/*-----------------------------------------------------------------------------
                              ETL Broadcast (jQuery 3.3.1)
 -----------------------------------------------------------------------------*/
 Broadcast = (function () {
@@ -29,7 +39,6 @@ Broadcast = (function () {
                 console.log('Код: ' + event.code + ' причина: ' + event.reason);
             };
 
-
             /*
             {
                 'func': 'callingFunc',
@@ -45,8 +54,8 @@ Broadcast = (function () {
                 if (socketHandlers == null)
                     return;
 
-                if (Object.keys(socketHandlers).indexOf(data.func) != -1)
-                    socketHandlers[data.func](data.data);
+                if (Object.keys(socketHandlers).indexOf(data.Action) != -1)
+                    socketHandlers[data.Action](data.Data);
             };
 
             socket.onerror = function (error) {

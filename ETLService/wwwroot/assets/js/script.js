@@ -27,6 +27,8 @@ String.prototype.format = String.prototype.f = function () {
 };
 
 var etlContext = {};
+
+Broadcast.setHandlers(broadcastHandlers);
 Broadcast.connect("ws://" + window.location.host + "/api/broadcast");
 
 // These are called on page load

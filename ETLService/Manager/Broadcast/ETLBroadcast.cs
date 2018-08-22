@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace ETLService.Manager
+namespace ETLService.Manager.Broadcast
 {
     /// <summary>
     /// Действие рассылки
@@ -29,12 +29,15 @@ namespace ETLService.Manager
         /// <summary>
         /// Рассылка данных всем клиентам
         /// </summary>
-        public async Task Broadcast(ETLBroadcastAction action)
+        public async Task Broadcast(params ETLBroadcastAction[] actions)
         {
-            string dataStr = JsonConvert.SerializeObject(action, Formatting.None);
+            foreach (ETLBroadcastAction action in actions)
+            {
+                string dataStr = JsonConvert.SerializeObject(action, Formatting.None);
 
-            foreach (ETLSocket socket in sockets.Values)
-                await socket.Send(dataStr);
+                foreach (ETLSocket socket in sockets.Values)
+                    await socket.Send(dataStr);
+            }
         }
 
         /// <summary>
@@ -46,7 +49,7 @@ namespace ETLService.Manager
                 return;
 
             JObject data = (JObject)JsonConvert.DeserializeObject(dataStr);
-            switch (data["func"].ToString())
+            switch (data["Action"].ToString())
             {
                 case "ololo":
                     await Broadcast(new ETLBroadcastAction{
@@ -64,8 +67,8 @@ namespace ETLService.Manager
         {
             ETLSocket etlSocket = new ETLSocket(socket);
 
-            etlSocket.ReceiveEvent += async (s, args) => await Invoke(args.Data);
-            etlSocket.CloseEvent += (s, args) => {
+            etlSocket.OnReceive += async (s, args) => await Invoke(args.Data);
+            etlSocket.OnClose += (s, args) => {
                 Remove(((ETLSocket)s).GUID);
             };
 
