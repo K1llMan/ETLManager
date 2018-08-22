@@ -93,6 +93,25 @@ namespace ETLCommon
             }
         }
 
+        public dynamic GetLastRecord(string programID)
+        {
+            try
+            {
+                string query =
+                    "select *" + 
+                    " from etl_history" + 
+                    $" where programid = '{programID}'" +
+                    " order by pumpfinishdate desc" +
+                    " limit 1";
+
+                return db.Query(query).SingleOrDefault();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
         public ETLHistory(Database db)
         {
             this.db = db;

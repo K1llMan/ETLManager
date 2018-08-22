@@ -95,7 +95,7 @@ namespace ETLService.Manager
                     }
 
                     // Процесс инициализируется данными конфигурации
-                    ETLProcess prc = new ETLProcess(pumpConfig);
+                    ETLProcess prc = new ETLProcess(pumpConfig, Context.History);
 
                     // Сохраняется конфиг закачки с описанием
                     Pumps.Add(prc);
@@ -229,7 +229,7 @@ namespace ETLService.Manager
                 // Обноление конфигурации загруженных в реестр закачек или добавление новой
                 string configFile = Path.Combine(Context.Settings.Registry.ProgramsPath, rec.Config);
                 if (prc == null)
-                    Pumps.Add(new ETLProcess(configFile));
+                    Pumps.Add(new ETLProcess(configFile, Context.History));
                 else
                     prc.Init(configFile);
             }
@@ -327,7 +327,8 @@ namespace ETLService.Manager
                     await Broadcast.Broadcast(new ETLBroadcastAction {
                         Action = "endPump",
                         Data = new Dictionary<string, object> {
-                            { "id", id }
+                            { "id", id },
+                            { "status", ((ETLProcess)s).LastStatus.ToString() }
                         }
                     });
                 };

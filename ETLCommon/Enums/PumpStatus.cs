@@ -17,6 +17,9 @@ namespace ETLCommon
         Errors,
 
         [Description("Завершена досрочно")]
-        Terminated
+        Terminated,
+
+        [Description("Не запускалась")]
+        None,
     }
 }

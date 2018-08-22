@@ -43,7 +43,7 @@
 <template id="collapsible-item">
   <li id="{{id}}">
     <div class="collapsible-header">
-      <i class="material-icons">filter_drama</i>{{name}}
+      {{name}}
     </div>
     <div class="collapsible-body">
     </div>

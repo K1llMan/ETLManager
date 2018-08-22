@@ -22,7 +22,7 @@ namespace TestPump
 
         public void CloneData()
         {
-            Logger.WriteToTrace("Тестирование метода закачки 3");
+            Logger.WriteToTrace("Тестирование метода закачки 3", TraceMessageKind.Warning);
         }
     }
 }

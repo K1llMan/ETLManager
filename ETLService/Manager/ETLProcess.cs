@@ -13,6 +13,12 @@ namespace ETLService.Manager
     /// </summary>
     public class ETLProcess
     {
+        #region Поля
+
+        private ETLHistory history;
+
+        #endregion Поля
+
         #region Свойства
 
         public int ProcessID { get; private set; }
@@ -22,6 +28,8 @@ namespace ETLService.Manager
         public string Config { get; private set; }
 
         public JObject ConfigData { get; private set; }
+
+        public PumpStatus LastStatus { get; private set; }
 
         public string Module { get; private set; }
 
@@ -38,6 +46,30 @@ namespace ETLService.Manager
         public event ExitEventHandler OnExit;
 
         #endregion События
+
+        #region Вспомогательные функции
+
+        private PumpStatus GetLastStatus()
+        {
+            dynamic record = history.GetLastRecord(ProgramID);
+
+            if (record == null)
+                return PumpStatus.None;
+
+            return Enum.Parse<PumpStatus>(record.status);
+        }
+
+        private PumpStatus GetStatus(decimal sessNo)
+        {
+            dynamic record = history[sessNo];
+
+            if (record == null)
+                return PumpStatus.None;
+
+            return Enum.Parse<PumpStatus>(record.status);
+        }
+
+        #endregion Вспомогательные функции
 
         #region Основные функции
 
@@ -66,6 +98,8 @@ namespace ETLService.Manager
 
             prc.Exited += (s, a) => {
                 Logger.WriteToTrace($"Процесс закачки \"{ProgramID}\" ({ProcessID}) завершён.");
+                // Обновляем статус после окончания закачки
+                LastStatus = GetStatus(sessNo);
 
                 OnExit?.Invoke(this, a);
                 // После завершения процесса очищаем все обработчики
@@ -84,11 +118,13 @@ namespace ETLService.Manager
             ProcessID = -1;
             ProgramID = ConfigData["id"].ToString();
             Module = ConfigData["module"].ToString();
+            LastStatus = GetLastStatus();
             Version = new Version(ConfigData["version"]?.ToString() ?? "0.0.0");
         }
 
-        public ETLProcess(string fileName)
+        public ETLProcess(string fileName, ETLHistory etlHistory)
         {
+            history = etlHistory;
             Init(fileName);
         }
 
