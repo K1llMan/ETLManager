@@ -36,7 +36,7 @@ namespace ETLService.Controllers
         [HttpPut("registry")]
         public object UpdateRegistry()
         {
-            int count = Program.Manager.Updates.Count;
+            int count = Program.Manager.UpdateManager.Updates.Count;
             return WebAPI.Success($"Применено {Program.Manager.ApplyUpdates()} из {count}");
         }
 

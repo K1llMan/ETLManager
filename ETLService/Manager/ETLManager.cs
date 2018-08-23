@@ -16,8 +16,6 @@ namespace ETLService.Manager
     {
         #region Поля
 
-        private FileSystemWatcher watcher;
-
         #endregion Поля
 
         #region Свойства
@@ -41,11 +39,6 @@ namespace ETLService.Manager
         /// Запущенные программы
         /// </summary>
         public Dictionary<string, ETLProcess> ExecutingPumps { get; set; }
-
-        /// <summary>
-        /// Набор обновлений
-        /// </summary>
-        public Dictionary<string, ETLUpdateRecord> Updates { get; private set; }
 
         /// <summary>
         /// Менеджер обновлений
@@ -103,145 +96,6 @@ namespace ETLService.Manager
         }
 
         #endregion Список закачек
-
-        #region Обновления
-
-        private void WatcherHandler(object sender, FileSystemEventArgs e)
-        {
-            if (!Path.GetExtension(e.Name).IsMatch("json|dll"))
-                return;
-
-            Logger.WriteToTrace("Доступны обновления реестра.");
-            AddUpdateRecord(e.FullPath);
-        }
-
-        private void InitWatcher()
-        {
-            Logger.WriteToTrace($"Включение слежения за обновлениями в директории \"{Context.Settings.Registry.UpdatesPath}\"...");
-
-            watcher = new FileSystemWatcher
-            {
-                Path = Context.Settings.Registry.UpdatesPath,
-                NotifyFilter = NotifyFilters.Size | NotifyFilters.FileName,
-                Filter = "*.*",
-            };
-
-            watcher.Changed += WatcherHandler;
-            watcher.Renamed += WatcherHandler;
-
-            // Включение слежения за директорией
-            watcher.EnableRaisingEvents = true;
-        }
-
-        private void AddUpdateRecord(string file)
-        {
-            string extension = Path.GetExtension(file).Replace(".", string.Empty);
-            string fileName = Path.GetFileName(file);
-            // На программу подразумевается одна конфигурация и один модуль
-            ETLProcess prc = Pumps.FirstOrDefault(p => extension.IsMatch("json")
-                ? p.Config == fileName
-                : p.Module == fileName);
-
-            // В реестре закачка отсутствует, есть только программный модуль
-            if (prc == null && extension.IsMatch("dll"))
-                return;
-
-            switch (extension)
-            {
-                case "json":
-                    JObject data = JsonCommon.Load(file);
-                    ETLUpdateRecord rec = new ETLUpdateRecord
-                    {
-                        Config = fileName,
-                        Module = data["module"].ToString()
-                    };
-                    Updates[prc == null ? data["id"].ToString() : prc.ProgramID] = rec;
-                    break;
-                case "dll":
-                    // Если записи нет, то добавляем, иначе нужный модуль уже должен быть прописан в обновление
-                    if (!Updates.ContainsKey(prc.ProgramID))
-                        Updates.Add(prc.ProgramID, new ETLUpdateRecord { Module = fileName });
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Проверка обновлений при запуске сервиса
-        /// </summary>
-        private void CheckUpdates()
-        {
-            Updates = new Dictionary<string, ETLUpdateRecord>();
-
-            string[] files = Directory.GetFiles(Context.Settings.Registry.UpdatesPath);
-
-            // Очистка от файлов, не являющихся библиотеками или конфигурациями
-            files.Where(f => !Path.GetExtension(f).IsMatch("json|dll|pdb"))
-                 .ToList()
-                 .ForEach(f => File.Delete(f));
-
-            files = files.Where(f => Path.GetExtension(f).IsMatch("json|dll")).ToArray();
-
-            if (!files.Any())
-                return;
-
-            foreach (string file in files)
-                AddUpdateRecord(file);
-        }
-
-        /// <summary>
-        /// Перемещение файла
-        /// </summary>
-        private void MoveFile(string fileName, string sourceDir, string destDir)
-        {
-            string sourcePath = Path.Combine(sourceDir, fileName);
-            string destPath = Path.Combine(destDir, fileName);
-
-            if (!File.Exists(sourcePath))
-                return;
-
-            if (File.Exists(destPath))
-                File.Delete(destPath);
-            File.Move(sourcePath, destPath);
-        }
-
-        /// <summary>
-        /// Применение обновлений
-        /// </summary>
-        private void ApplyUpdate(string id, ETLUpdateRecord rec)
-        {
-            // Обновление невозможно применить при запущенном процессе закачки
-            if (ExecutingPumps.ContainsKey(id))
-                return;
-
-            ETLProcess prc = Pumps.FirstOrDefault(p => p.ProgramID == id);
-
-            // Копирование файлов в необходимые директории
-            if (!string.IsNullOrEmpty(rec.Config))
-            {
-                MoveFile(rec.Config, Context.Settings.Registry.UpdatesPath, Context.Settings.Registry.ProgramsPath);
-
-                // Обноление конфигурации загруженных в реестр закачек или добавление новой
-                string configFile = Path.Combine(Context.Settings.Registry.ProgramsPath, rec.Config);
-                if (prc == null)
-                    Pumps.Add(new ETLProcess(configFile, Context.History));
-                else
-                    prc.Init(configFile);
-            }
-
-            if (!string.IsNullOrEmpty(rec.Module))
-            {
-                // Модуль
-                MoveFile(rec.Module, Context.Settings.Registry.UpdatesPath, Context.Settings.Registry.ModulesPath);
-
-                // Отладочные данные
-                MoveFile(rec.Module.Replace("dll", "pdb"), Context.Settings.Registry.UpdatesPath, Context.Settings.Registry.ModulesPath);
-            }
-
-            // Удаление применённого обновления из списка доступных
-            Updates.Remove(id);
-        }
-
-        #endregion Обновления
 
         #region JWT
 
@@ -307,18 +161,18 @@ namespace ETLService.Manager
 
         public int ApplyUpdates()
         {
-            int count = Program.Manager.Updates.Count;
+            int count = UpdateManager.Updates.Count;
 
-            foreach (KeyValuePair<string, ETLUpdateRecord> pair in Updates)
+            foreach (ETLUpdateRecord rec in UpdateManager.Updates.Values)
             {
                 // Обновление невозможно применить при запущенном процессе закачки
-                if (ExecutingPumps.ContainsKey(pair.Key))
+                if (ExecutingPumps.ContainsKey(rec.ProgramID))
                     continue;
 
-                ApplyUpdate(pair.Key, pair.Value);
+                UpdateManager.ApplyUpdate(rec, Context.History);
             }
 
-            return count - Updates.Count;
+            return count - UpdateManager.Updates.Count;
         }
 
         /// <summary>
@@ -394,9 +248,6 @@ namespace ETLService.Manager
             InitJWT();
             InitBroadcast();
             InitUpdateManager();
-
-            //CheckUpdates();
-            //InitWatcher();
         }
 
         #endregion Основные функции
