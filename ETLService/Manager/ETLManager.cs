@@ -36,11 +36,6 @@ namespace ETLService.Manager
         public List<ETLProcess> Pumps { get; set; }
 
         /// <summary>
-        /// Запущенные программы
-        /// </summary>
-        public Dictionary<string, ETLProcess> ExecutingPumps { get; set; }
-
-        /// <summary>
         /// Менеджер обновлений
         /// </summary>
         public ETLUpdateManager UpdateManager { get; private set; }
@@ -64,7 +59,6 @@ namespace ETLService.Manager
             Logger.WriteToTrace("Формирование списка закачек.");
 
             Pumps = new List<ETLProcess>();            
-            ExecutingPumps = new Dictionary<string, ETLProcess>();
 
             string[] pumpConfigs = Directory.GetFiles(Context.Settings.Registry.ProgramsPath);
             List<string> ids = new List<string>();
@@ -166,7 +160,8 @@ namespace ETLService.Manager
             foreach (ETLUpdateRecord rec in UpdateManager.Updates.Values)
             {
                 // Обновление невозможно применить при запущенном процессе закачки
-                if (ExecutingPumps.ContainsKey(rec.ProgramID))
+                ETLProcess prc = Pumps.FirstOrDefault(p => p.ProgramID == rec.ProgramID);
+                if (prc != null && prc.IsExecuting)
                     continue;
 
                 UpdateManager.ApplyUpdate(rec, Context.History);
@@ -187,42 +182,38 @@ namespace ETLService.Manager
                 throw new Exception("Закачка с заданным идентификатором отсутствует.");
 
             // Проверка среди запущенных
-            if (!ExecutingPumps.ContainsKey(id))
-            {
-                // Для запуска процесса версия БД должна быть выше
-                if (prc.Version > Context.Version)
-                    throw new Exception("Версия системы ниже необходимой для запуска.");
+            if (prc.IsExecuting)
+                return -1;
 
-                decimal sessNo = Context.History.AddRecord(prc.ProgramID, Context.Version, prc.Version, "user", config);
+            // Для запуска процесса версия БД должна быть выше
+            if (prc.Version > Context.Version)
+                throw new Exception("Версия системы ниже необходимой для запуска.");
 
-                // При запуске добавляем в список запущенных
-                prc.OnStart += async (s, a) => {
-                    ExecutingPumps.Add(id, (ETLProcess)s);
-                    await Broadcast.Send(new ETLBroadcastAction {
-                        Action = "startPump",
-                        Data = new Dictionary<string, object> {
-                            { "id", id }
-                        }
-                    });
-                };
+            decimal sessNo = Context.History.AddRecord(prc.ProgramID, Context.Version, prc.Version, "user", config);
 
-                // При закрытии процесса удаляем его из запущенных
-                prc.OnExit += async (s, a) => {
-                    ExecutingPumps.Remove(id);
-                    await Broadcast.Send(new ETLBroadcastAction {
-                        Action = "endPump",
-                        Data = new Dictionary<string, object> {
-                            { "id", id },
-                            { "status", ((ETLProcess)s).LastStatus.ToString() }
-                        }
-                    });
-                };
+            // При запуске добавляем в список запущенных
+            prc.OnStart += async (s, a) => {
+                await Broadcast.Send(new ETLBroadcastAction {
+                    Action = "startPump",
+                    Data = new Dictionary<string, object> {
+                        { "id", id }
+                    }
+                });
+            };
 
-                prc.Start(sessNo, config);
-                return sessNo;
-            }
+            // При закрытии процесса удаляем его из запущенных
+            prc.OnExit += async (s, a) => {
+                await Broadcast.Send(new ETLBroadcastAction {
+                    Action = "endPump",
+                    Data = new Dictionary<string, object> {
+                        { "id", id },
+                        { "status", ((ETLProcess)s).LastStatus.ToString() }
+                    }
+                });
+            };
 
-            return -1;
+            prc.Start(sessNo, config);
+            return sessNo;
         }
 
         /// <summary>
@@ -242,7 +233,7 @@ namespace ETLService.Manager
             {
                 Logger.WriteToTrace($"Ошибка при подключении к базе: {ex}", TraceMessageKind.Error);
             }
-
+           
             InitPumpsList();
 
             InitJWT();

@@ -64,7 +64,7 @@ namespace ETLService.Controllers
         {
             return WebAPI.Success(Program.Manager.Pumps.ToDictionary(
                 p => p.ProgramID, 
-                p => Program.Manager.ExecutingPumps.ContainsKey(p.ProgramID) 
+                p => p.IsExecuting 
                     ? "Running" 
                     :  p.LastStatus.ToString()));
         }

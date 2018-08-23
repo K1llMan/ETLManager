@@ -21,17 +21,19 @@ namespace ETLService.Manager
 
         #region Свойства
 
-        public int ProcessID { get; private set; }
-
-        public string ProgramID { get; private set; }
-
         public string Config { get; private set; }
 
         public JObject ConfigData { get; private set; }
 
         public PumpStatus LastStatus { get; private set; }
 
+        public bool IsExecuting { get; private set; }
+
         public string Module { get; private set; }
+
+        public int ProcessID { get; private set; }
+
+        public string ProgramID { get; private set; }
 
         public Version Version { get; private set; }
 
@@ -92,6 +94,7 @@ namespace ETLService.Manager
             prc.EnableRaisingEvents = true;
 
             Logger.WriteToTrace($"Процесс закачки \"{ProgramID}\" ({ProcessID}) запущен.");
+            IsExecuting = true;
 
             // Событие запуска
             OnStart?.Invoke(this, EventArgs.Empty);
@@ -100,6 +103,7 @@ namespace ETLService.Manager
                 Logger.WriteToTrace($"Процесс закачки \"{ProgramID}\" ({ProcessID}) завершён.");
                 // Обновляем статус после окончания закачки
                 LastStatus = GetStatus(sessNo);
+                IsExecuting = false;
 
                 OnExit?.Invoke(this, a);
                 // После завершения процесса очищаем все обработчики
