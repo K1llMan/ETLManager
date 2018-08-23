@@ -68,5 +68,12 @@ namespace ETLService.Controllers
                     ? "Running" 
                     :  p.LastStatus.ToString()));
         }
+
+        // GET api/pumps/updates
+        [HttpGet("updates")]
+        public object GetUpdates()
+        {
+            return WebAPI.Success(Program.Manager.UpdateManager.Updates);
+        }
     }
 }

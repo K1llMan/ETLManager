@@ -29,7 +29,7 @@ namespace ETLService.Manager.Broadcast
         /// <summary>
         /// Рассылка данных всем клиентам
         /// </summary>
-        public async Task Broadcast(params ETLBroadcastAction[] actions)
+        public async Task Send(params ETLBroadcastAction[] actions)
         {
             foreach (ETLBroadcastAction action in actions)
             {
@@ -52,7 +52,7 @@ namespace ETLService.Manager.Broadcast
             switch (data["Action"].ToString())
             {
                 case "ololo":
-                    await Broadcast(new ETLBroadcastAction{
+                    await Send(new ETLBroadcastAction{
                         Action = "myFunc",
                         Data = new string[] { "1", "5", "5" }
                     });
@@ -88,6 +88,9 @@ namespace ETLService.Manager.Broadcast
             socket?.Close();
         }
 
+        /// <summary>
+        /// Закрытие всех сокетов
+        /// </summary>
         public async void Stop()
         {
             foreach (ETLSocket socket in sockets.Values)

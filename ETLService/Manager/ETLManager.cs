@@ -8,22 +8,12 @@ using Newtonsoft.Json.Linq;
 using ETLCommon;
 
 using ETLService.Manager.Broadcast;
+using ETLService.Manager.Update;
 
 namespace ETLService.Manager
 {
     public class ELTManager: IDisposable
     {
-        #region Структуры
-
-        public struct UpdateRecord
-        {
-            public string Module { get; set; }
-
-            public string Config { get; set; }
-        }
-
-        #endregion Структуры
-
         #region Поля
 
         private FileSystemWatcher watcher;
@@ -55,7 +45,12 @@ namespace ETLService.Manager
         /// <summary>
         /// Набор обновлений
         /// </summary>
-        public Dictionary<string, UpdateRecord> Updates { get; private set; }
+        public Dictionary<string, ETLUpdateRecord> Updates { get; private set; }
+
+        /// <summary>
+        /// Менеджер обновлений
+        /// </summary>
+        public ETLUpdateManager UpdateManager { get; private set; }
 
         /// <summary>
         /// JWT (JSON Web Token) для авторизации пользователей
@@ -155,7 +150,7 @@ namespace ETLService.Manager
             {
                 case "json":
                     JObject data = JsonCommon.Load(file);
-                    UpdateRecord rec = new UpdateRecord
+                    ETLUpdateRecord rec = new ETLUpdateRecord
                     {
                         Config = fileName,
                         Module = data["module"].ToString()
@@ -165,7 +160,7 @@ namespace ETLService.Manager
                 case "dll":
                     // Если записи нет, то добавляем, иначе нужный модуль уже должен быть прописан в обновление
                     if (!Updates.ContainsKey(prc.ProgramID))
-                        Updates.Add(prc.ProgramID, new UpdateRecord { Module = fileName });
+                        Updates.Add(prc.ProgramID, new ETLUpdateRecord { Module = fileName });
                     break;
             }
         }
@@ -175,8 +170,7 @@ namespace ETLService.Manager
         /// </summary>
         private void CheckUpdates()
         {
-            Logger.WriteToTrace("Проверка наличия обновлений.");
-            Updates = new Dictionary<string, UpdateRecord>();
+            Updates = new Dictionary<string, ETLUpdateRecord>();
 
             string[] files = Directory.GetFiles(Context.Settings.Registry.UpdatesPath);
 
@@ -213,7 +207,7 @@ namespace ETLService.Manager
         /// <summary>
         /// Применение обновлений
         /// </summary>
-        private void ApplyUpdate(string id, UpdateRecord rec)
+        private void ApplyUpdate(string id, ETLUpdateRecord rec)
         {
             // Обновление невозможно применить при запущенном процессе закачки
             if (ExecutingPumps.ContainsKey(id))
@@ -279,6 +273,34 @@ namespace ETLService.Manager
 
         #endregion Рассылка
 
+        #region Обновления
+
+        private void InitUpdateManager()
+        {
+            Logger.WriteToTrace($"Включение слежения за обновлениями в директории \"{Context.Settings.Registry.UpdatesPath}\"...");
+            UpdateManager = new ETLUpdateManager(Pumps, Context.Settings.Registry);
+
+            Logger.WriteToTrace("Проверка наличия обновлений.");
+            UpdateManager.CheckUpdates();
+
+            UpdateManager.OnReceiveUpdate += async (s, a) =>{
+                await Broadcast.Send(new ETLBroadcastAction {
+                    Action = "receiveUpdate",
+                    Data = a.UpdateInfo
+                });
+            };
+
+            UpdateManager.OnUpdate += async (s, a) => {
+                await Broadcast.Send(new ETLBroadcastAction
+                {
+                    Action = "update",
+                    Data = a.UpdateInfo
+                });
+            };
+        }
+
+        #endregion Обновления
+
         #endregion Вспомогательные функции
 
         #region Основные функции
@@ -286,7 +308,16 @@ namespace ETLService.Manager
         public int ApplyUpdates()
         {
             int count = Program.Manager.Updates.Count;
-            Updates.ToList().ForEach(p => ApplyUpdate(p.Key, p.Value));
+
+            foreach (KeyValuePair<string, ETLUpdateRecord> pair in Updates)
+            {
+                // Обновление невозможно применить при запущенном процессе закачки
+                if (ExecutingPumps.ContainsKey(pair.Key))
+                    continue;
+
+                ApplyUpdate(pair.Key, pair.Value);
+            }
+
             return count - Updates.Count;
         }
 
@@ -313,7 +344,7 @@ namespace ETLService.Manager
                 // При запуске добавляем в список запущенных
                 prc.OnStart += async (s, a) => {
                     ExecutingPumps.Add(id, (ETLProcess)s);
-                    await Broadcast.Broadcast(new ETLBroadcastAction {
+                    await Broadcast.Send(new ETLBroadcastAction {
                         Action = "startPump",
                         Data = new Dictionary<string, object> {
                             { "id", id }
@@ -324,7 +355,7 @@ namespace ETLService.Manager
                 // При закрытии процесса удаляем его из запущенных
                 prc.OnExit += async (s, a) => {
                     ExecutingPumps.Remove(id);
-                    await Broadcast.Broadcast(new ETLBroadcastAction {
+                    await Broadcast.Send(new ETLBroadcastAction {
                         Action = "endPump",
                         Data = new Dictionary<string, object> {
                             { "id", id },
@@ -358,12 +389,14 @@ namespace ETLService.Manager
                 Logger.WriteToTrace($"Ошибка при подключении к базе: {ex}", TraceMessageKind.Error);
             }
 
+            InitPumpsList();
+
             InitJWT();
             InitBroadcast();
+            InitUpdateManager();
 
-            InitPumpsList();
-            CheckUpdates();
-            InitWatcher();
+            //CheckUpdates();
+            //InitWatcher();
         }
 
         #endregion Основные функции

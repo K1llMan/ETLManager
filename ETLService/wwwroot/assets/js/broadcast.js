@@ -10,6 +10,12 @@
         setStatus(icon, data.status);
 
         updateBadges(icon.parents('li'));
+    },
+    'receiveUpdate': function (data) {
+        etlContext.updates[data.ProgramID] = data;
+    },
+    'update': function(data) {
+        
     }
 }
 
@@ -60,7 +66,8 @@ Broadcast = (function () {
                     return;
 
                 if (Object.keys(socketHandlers).indexOf(data.Action) != -1)
-                    socketHandlers[data.Action](data.Data);
+                    if (socketHandlers[data.Action] != null)
+                        socketHandlers[data.Action](data.Data);
             };
 
             socket.onerror = function (error) {
