@@ -13,6 +13,8 @@
     },
     'receiveUpdate': function (data) {
         etlContext.updates[data.ProgramID] = data;
+
+        $('#updatesBtn').toggleClass('hide', etlContext.updates.length < 1);
     },
     'update': function(data) {
         

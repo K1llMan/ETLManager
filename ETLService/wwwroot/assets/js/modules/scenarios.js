@@ -71,7 +71,7 @@ $(function () {
         });
     }
 
-    function updateModal(config) {
+    function updatePumpModal(config) {
         var modal = $('#params-modal');
         modal.find("h4").html(config.desc.name);
 
@@ -149,7 +149,6 @@ $(function () {
             var body = $(Templater.useTemplate('collapsible-body-item', [el]));
 
             var desc = $.extend(true, {}, el.desc);
-
             desc.id = el.id;
             desc.version = el.version;
 
@@ -159,7 +158,7 @@ $(function () {
             body.prepend(pumpDesc);
             var startBtn = body.find('#buttons #start');
             startBtn.click(function () {
-                updateModal(el);
+                updatePumpModal(el);
             });
 
             // Append to group
@@ -172,6 +171,46 @@ $(function () {
         });
 
         $('.collapsible').collapsible();
+    }
+
+    function updateUpdatesModal() {
+        var modal = $('#update-modal');
+        var collection = modal.find('.collection');
+        collection.html('');
+
+        $.each(etlContext.updates, function (i, el) {
+            var upRec = $.extend(true, {}, el);
+            var name = 'New pump';
+            var dataCode = '0000';
+
+            // Search pump config
+            var config = etlContext.pumpsRegistry.filter(function(c) {
+                return c.id == upRec.programID;
+            });
+
+            if (config[0] != null) {
+                name = config[0].desc.name;
+                dataCode = config[0].desc.dataCode;
+            }
+            upRec.dataCode = dataCode;
+            upRec.name = name;
+
+            var record = $(Templater.useTemplate('update-record', [upRec]));
+
+            record.find('.chips-container').append((Templater.useTemplate('chip', [{ 'tag': 'new' }, { 'tag': 'module' }, { 'tag': 'config' }])));
+            collection.append(record);
+        });
+
+        modal.modal('open');
+    }
+
+    function updateUpdates() {
+        var btn = $('#updatesBtn');
+        btn.toggleClass('hide', etlContext.updates.length < 1);
+
+        btn.click(function() {
+            updateUpdatesModal();
+        });
     }
 
     var module = {
@@ -187,10 +226,10 @@ $(function () {
             $('.main-content').append(page);
 
             updateRegistry();
+            updateUpdates();
 
             // Update to correct height
             $('html').resize();
-
             $('.modal').modal();
 
             context.readyForDisplay(true);

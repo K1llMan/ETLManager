@@ -282,6 +282,10 @@ footer.page-footer {
     margin-left: auto;
 }
 
+.update-record div {
+    margin-bottom: 2px;
+}
+
 .backgroundVideo {
     position: absolute;
     right: 0;

@@ -1,5 +1,5 @@
 ﻿<template id="scenarios-page">
-  <!-- Modal Structure -->
+  <!-- Params modal -->
   <div id="params-modal" class="modal">
     <div class="modal-content">
       <h4>Scenario name</h4>
@@ -17,18 +17,39 @@
       <a class="modal-close waves-effect waves-red btn-flat">Close</a>
       <a id="runPump" class="modal-close waves-effect waves-green btn-flat">Run</a>
     </div>
-  </div>  
+  </div>
+
+  <!-- Updates modal -->
+  <div id="update-modal" class="modal">
+    <div class="modal-content">
+      <h4>Updates list</h4>
+      <div class="row">
+        <ul class="collection">
+          <li class="collection-item">Alvin</li>
+          <li class="collection-item">Alvin</li>
+          <li class="collection-item">Alvin</li>
+          <li class="collection-item">Alvin</li>
+        </ul>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-red btn-flat">Close</a>
+      <a id="runUpdate" class="modal-close waves-effect waves-green btn-flat">Update</a>
+    </div>
+  </div>
+  
   <div class="scenarios-page">
     <ul class="collapsible">
     </ul>    
   </div>
   <div class="fixed-action-btn">
-    <a class="btn-floating btn-large waves-effect waves-light pulse">
+    <a id="updatesBtn" class="btn-floating btn-large pulse hide">
       <i class="large material-icons">autorenew</i>
     </a>
   </div>
 </template>
 
+<!-- Params modal templates -->
 <template id="common-stage-item">
   <a id="common" class="collection-item clickable">Common</a>
 </template>
@@ -80,6 +101,27 @@
       <span>Version: {{version}}</span>
     </div>
   </div>
+</template>
+
+<!-- Updates modal templates -->
+<template id="update-record">
+  <li class="collection-item flow-right update-record">
+    <label>
+      <input type="checkbox" />
+      <span></span>
+    </label>
+    <div>
+      <div>{{dataCode}} {{name}}</div>
+      <div>
+        PumpIdentifier: {{programID}}
+      </div>
+      <div class="chips-container"></div>
+    </div>
+  </li>
+</template>
+
+<template id="chip">
+  <div class="chip">{{tag}}</div>
 </template>
 
 <!-- Components markup -->

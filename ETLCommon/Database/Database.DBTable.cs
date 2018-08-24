@@ -112,6 +112,9 @@ namespace ETLCommon
             }
         }
 
+        /// <summary>
+        /// Возвращает текущее значение
+        /// </summary>
         public decimal GetCurVal()
         {
             try
@@ -129,6 +132,26 @@ namespace ETLCommon
             {
                 return -1;
             }
+        }
+
+        public dynamic[] Select()
+        {
+            return null;
+        }
+
+        public int Insert(params dynamic[] rows)
+        {
+            return 0;
+        }
+
+        public int Update(params dynamic[] rows)
+        {
+            return 0;
+        }
+
+        public int Delete(params dynamic[] rows)
+        {
+            return 0;
         }
 
         internal DBTable(Database db, string name)
