@@ -13,9 +13,13 @@ namespace ETLCommon
 
         // По умолчанию для логгирования задаются все уровни
         private static TraceMessageKind[] levels = { TraceMessageKind.All };
-        private static List<Writer> writers;
+        private static List<Writer> writers = new List<Writer>();
 
         private static string logsDir;
+
+        #endregion Поля
+
+        #region События
 
         // Событие записи в лог
         public class WriteEventArgs
@@ -27,7 +31,8 @@ namespace ETLCommon
         public delegate void WriteEventHandler(WriteEventArgs e);
         public static event WriteEventHandler WriteEvent;
 
-        #endregion Поля
+
+        #endregion События
 
         #region Вспомогательные функции
 
@@ -97,8 +102,7 @@ namespace ETLCommon
 
         private static void InitWriters(string[] loggerParams, string fileName, bool useConsole)
         {
-            if (loggerParams == null)
-            {
+            if (loggerParams == null) {
                 InitDefaultLoggers(fileName, useConsole);
                 return;
             }
@@ -111,21 +115,19 @@ namespace ETLCommon
                 string roolLevels = loggerParams.FirstOrDefault(s => s.IsMatch(@"RootLevels[\s]*="));
                 if (!string.IsNullOrEmpty(roolLevels))
                     levels = getValue(roolLevels).Split('|')
-                        .Select(s =>
-                        {
+                        .Select(s => {
                             TraceMessageKind k = (TraceMessageKind)Enum.Parse(typeof(TraceMessageKind), s.Trim());
                             return k;
                         })
                         .ToArray();
 
                 string loggerStr = loggerParams.FirstOrDefault(s => s.IsMatch(@"Loggers[\s]*="));
-                if (string.IsNullOrEmpty(loggerStr))
-                {
+                if (string.IsNullOrEmpty(loggerStr)) {
                     InitDefaultLoggers(fileName, useConsole);
                     return;
                 }
                 string[] loggers = getValue(loggerStr).Split(',').Select(s => s.Trim()).ToArray();
-                foreach (string logger in loggers)
+                foreach (string logger in loggers) 
                 {
                     Dictionary<string, object> curLogParams = loggerParams
                         .Where(s => s.IsMatch(string.Format(@"{0}\..*=", logger)))
@@ -169,13 +171,10 @@ namespace ETLCommon
             if (!Directory.Exists(logsDir))
                 Directory.CreateDirectory(logsDir);
 
-            writers = new List<Writer>();
-
             // Загружаем данные конфига логгеров
             string[] configData = null;
             string configPath = baseDir + "\\logger.cfg";
-            if (File.Exists(configPath))
-            {
+            if (File.Exists(configPath)) {
                 FileStream fs = new FileStream(configPath, FileMode.Open);
                 StreamReader sr = null;
                 try
@@ -189,9 +188,7 @@ namespace ETLCommon
                 }
                 finally
                 {
-                    if (sr != null)
-                        sr.Close();
-
+                    sr?.Close();
                     fs.Close();
                 }
             }

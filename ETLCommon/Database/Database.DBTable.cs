@@ -82,8 +82,7 @@ namespace ETLCommon
             }
             catch (Exception ex)
             {
-                Logger.WriteToTrace($"Ошибка формирования атрибутов: {ex}", TraceMessageKind.Error);
-                throw;
+                throw new Exception($"Ошибка формирования атрибутов.", ex);
             }
         }
 

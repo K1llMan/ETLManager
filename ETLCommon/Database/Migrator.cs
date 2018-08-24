@@ -37,15 +37,12 @@ namespace ETLCommon
 
             FileInfo[] files = new DirectoryInfo(Path).GetFiles("*.json");
             foreach (FileInfo file in files)
-                try
-                {
+                try {
                     List<Migration> m = JsonCommon.Load<List<Migration>>(file.FullName);
 
                     ((List<Migration>)migrations).AddRange(m);
                 }
-                catch (Exception ex)
-                {
-                    Logger.WriteToTrace($"Ошибка при загрузке миграции из файла \"{file.Name}\": {ex}", TraceMessageKind.Error);
+                catch {
                 }
 
             migrations = migrations.OrderBy(m => m.Version);
@@ -79,7 +76,7 @@ namespace ETLCommon
             }
             catch (Exception ex)
             {
-                Logger.WriteToTrace($"Ошибка при получении версии базы данных: {ex}", TraceMessageKind.Error);
+                throw new Exception("Ошибка при получении версии базы данных.", ex);
             }
         }
 
@@ -138,10 +135,9 @@ namespace ETLCommon
             }
             catch (Exception ex)
             {
-                Logger.WriteToTrace($"Ошибка при выполнении миграции {ex}", TraceMessageKind.Error);
-
                 DB.Rollback();
-                return false;
+
+                throw new Exception("Ошибка при выполнении миграции", ex);
             }
         }
 
