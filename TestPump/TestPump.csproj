@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ETLProgramCommon\ETLProgramCommon.csproj" />
     <ProjectReference Include="..\ETLProgram\ETLProgram.csproj" />
   </ItemGroup>
 

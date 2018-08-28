@@ -3,6 +3,8 @@
 using ETLApp;
 using ETLCommon;
 
+using ETLProgramCommon;
+
 namespace TestPump
 {
     public class TestPump: ETLProgram
@@ -10,6 +12,10 @@ namespace TestPump
         public void PumpData()
         {
             Logger.WriteToTrace("Тестирование метода закачки 1");
+
+            Entity ent = new Entity(Context.DB["etl_params"]);
+            ent.Select();
+
             if (Convert.ToBoolean(UserParams["deleteData"]))
                 Logger.WriteToTrace(UserParams["deleteData"].ToString());
         }

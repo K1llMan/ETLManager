@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ETLCommon\ETLCommon.csproj" />
-    <ProjectReference Include="..\ETLProgramCommon\ETLProgramCommon.csproj" />
   </ItemGroup>
 
   <Import Project="$(SolutionDir)\Config\General.xml" /> 

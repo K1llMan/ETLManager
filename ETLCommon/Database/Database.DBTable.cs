@@ -39,7 +39,7 @@ namespace ETLCommon
     {
         #region Свойства
 
-        public Dictionary<string, DBAttribute> Attributes { get; private set; }
+        public List<DBAttribute> Attributes { get; private set; }
 
         /// <summary>
         /// База
@@ -59,30 +59,35 @@ namespace ETLCommon
         {
             try
             {
-                Attributes = new Dictionary<string, DBAttribute>();
+                Attributes = new List<DBAttribute>();
 
-                dynamic result = DB.Query(
-                    "select (column_name) as Name, (data_type) as Type, (column_default) as DefaultValue, (is_nullable) as Nullable, (character_maximum_length) as Size" +
-                    " from information_schema.columns" +
-                    $" where table_name = '{Name}'");
-
-                foreach (dynamic field in result)
+                switch (DB.DatabaseType)
                 {
-                    string name = field.name;
-                    string nullable = field.nullable;
+                    case DBType.PostgreSql:
+                        dynamic result = DB.Query(
+                            "select (column_name) as Name, (data_type) as Type, (column_default) as DefaultValue, (is_nullable) as Nullable, (character_maximum_length) as Size" +
+                            " from information_schema.columns" +
+                            $" where table_name = '{Name}'");
 
-                    Attributes.Add(name, new DBAttribute{
-                        Default = field.defaultvalue,
-                        Name = name,
-                        Nullable = nullable.IsMatch("yes"),
-                        Size = field.size == null ? 0 : field.size,
-                        Type = DB.FromDBType(field.type)                    
-                    });
+                        foreach (dynamic field in result)
+                        {
+                            string name = field.name;
+                            string nullable = field.nullable;
+
+                            Attributes.Add(new DBAttribute {
+                                Default = field.defaultvalue,
+                                Name = name,
+                                Nullable = nullable.IsMatch("yes"),
+                                Size = field.size == null ? 0 : field.size,
+                                Type = DB.FromDBType(field.type)
+                            });
+                        }
+                        break;
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception($"Ошибка формирования атрибутов.", ex);
+                throw new Exception("Ошибка формирования атрибутов.", ex);
             }
         }
 
@@ -103,13 +108,12 @@ namespace ETLCommon
                         // Автоматически сгенерированные последовательности имею имя <имя таблицы>_id_seq
                         return DB.Query($"select NEXTVAL('{Name}_id_seq') as id").Single().id;
                 }
-
-                return -1;
             }
             catch (Exception ex)
             {
-                return -1;
             }
+
+            return -1;
         }
 
         /// <summary>
@@ -125,18 +129,42 @@ namespace ETLCommon
                         // Автоматически сгенерированные последовательности имею имя <имя таблицы>_id_seq
                         return DB.Query($"select CURRVAL('{Name}_id_seq') as id").Single().id;
                 }
-
-                return -1;
             }
             catch (Exception ex)
             {
-                return -1;
             }
+
+            return -1;
         }
 
-        public dynamic[] Select()
+        #region CRUD
+
+        public dynamic Select(string[] fields, string constr = "")
         {
+            try {
+                // Выбираются только существующие атрибуты
+                string[] corrFields = fields.Contains("*") 
+                    ? new string[] { "*" }
+                    : fields.Intersect(Attributes.Select(a => a.Name)).ToArray();
+
+                string query = 
+                    $"select {string.Join(", ", corrFields)}" + 
+                    $" from {Name}" + 
+                    (string.IsNullOrEmpty(constr) 
+                        ? string.Empty
+                        : $" where {constr}");
+
+                return DB.Query(query);
+            }
+            catch (Exception ex) {
+            }
+
             return null;
+        }
+
+        public dynamic Select(string constr = "")
+        {
+            return Select(new string[] { "*" }, constr);
         }
 
         public int Insert(params dynamic[] rows)
@@ -149,10 +177,12 @@ namespace ETLCommon
             return 0;
         }
 
-        public int Delete(params dynamic[] rows)
+        public int Delete(string constr = "")
         {
             return 0;
         }
+
+        #endregion CRUD
 
         internal DBTable(Database db, string name)
         {
