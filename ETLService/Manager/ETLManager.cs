@@ -212,7 +212,7 @@ namespace ETLService.Manager
                 });
             };
 
-            prc.Start(sessNo, config);
+            prc.Start(sessNo);
             return sessNo;
         }
 

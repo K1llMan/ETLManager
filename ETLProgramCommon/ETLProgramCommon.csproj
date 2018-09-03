@@ -8,5 +8,9 @@
     <ProjectReference Include="..\ETLCommon\ETLCommon.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DataAccess\" />
+  </ItemGroup>
+
   <Import Project="$(SolutionDir)\Config\General.xml" /> 
 </Project>
