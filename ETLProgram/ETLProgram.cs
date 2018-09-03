@@ -90,6 +90,8 @@ namespace ETLApp
                 // Обход всех этапов закачки
                 foreach (Stage stage in Stages.Where(s => s.Enabled))
                 {
+                    Logger.Indent();
+
                     curStage = stage;
 
                     if (stage.Parameters.Count > 0)
@@ -101,6 +103,8 @@ namespace ETLApp
                         .Union(curStage.Parameters.Where(p => !commonParams.ContainsKey(p.Key)))
                         .ToDictionary(p => p.Key, p => p.Value);
                     curStage.Exec();
+
+                    Logger.Unindent();
                 }
 
                 Logger.WriteToTrace($"Результат выполнения этапов: \n\t{ string.Join("\n\t", Stages.Select(s => $"{s.Name}: {s.Status.GetDescription()}")) }", 

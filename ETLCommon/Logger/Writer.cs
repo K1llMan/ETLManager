@@ -31,7 +31,9 @@ namespace ETLCommon
         private StreamWriter sw;
 
         private WriterType type;
-        private string layout = "\r\n{0}: {1} {2}: {3}";
+
+        private string indent = "    ";
+        private string layout = "\r\n{0}{1}: {2} {3}{4}";
         private string timeFormat = string.Empty;
         private int categoryCount = 2;
         private TraceMessageKind[] levels = { TraceMessageKind.All };
@@ -75,10 +77,11 @@ namespace ETLCommon
         {
             Dictionary<string,string> replaces = new Dictionary<string, string> {
                 { "{newline}", "\r\n" },
-                { "{category.*?}", "{0}" },
-                { "{time.*?}", "{1}" },
-                { "{kind}", "{2}" },
-                { "{msg}", "{3}" }
+                { "{indent}", "{0}" },
+                { "{category.*?}", "{1}" },
+                { "{time.*?}", "{2}" },
+                { "{kind}", "{3}" },
+                { "{msg}", "{4}" }
             };
 
             foreach (string key in replaces.Keys)
@@ -125,7 +128,7 @@ namespace ETLCommon
                     if (!Directory.Exists(dir))
                         Directory.CreateDirectory(dir);
 
-                    sw = new StreamWriter(parameters["File"].ToString(), true, Encoding.GetEncoding(1251));
+                    sw = new StreamWriter(parameters["File"].ToString(), true, Encoding.UTF8);
                     break;
                 case WriterType.Console:
                     sw = new StreamWriter(Console.OpenStandardOutput(), Encoding.GetEncoding(866));
@@ -150,7 +153,7 @@ namespace ETLCommon
         /// <summary>
         /// Запись в логгер
         /// </summary>
-        public void Write(string message, TraceMessageKind traceMessageKind, string category)
+        public void Write(string message, TraceMessageKind traceMessageKind, string category, int indentLevel)
         {
             // Если уровень логирование недопустимый, то пропускаем запись
             if (!levels.Contains(TraceMessageKind.All) && !levels.Contains(traceMessageKind))
@@ -159,7 +162,8 @@ namespace ETLCommon
             string[] words = category.Split('.');
             category = string.Join(".", words.Skip(words.Length - Math.Min(words.Length, categoryCount)));
 
-            string formattedMessage = string.Format(layout, category, DateTime.Now.ToString(timeFormat), StringResources.GetLine(traceMessageKind), message);
+            string formattedMessage = string.Format(layout, 
+                string.Concat(Enumerable.Repeat(indent, indentLevel)), category, DateTime.Now.ToString(timeFormat), StringResources.GetLine(traceMessageKind), message);
             // Если сообщения совпадают, то инкрементируем счетчик
             if (formattedMessage == lastMessage && traceMessageKind == lastMessageKind)
             {

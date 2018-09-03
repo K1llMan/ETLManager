@@ -17,6 +17,8 @@ namespace ETLCommon
 
         private static string logsDir;
 
+        private static int indentLevel;
+
         #endregion Поля
 
         #region События
@@ -46,7 +48,7 @@ namespace ETLCommon
                 return;
 
             foreach (Writer writer in writers)
-                writer.Write(message, traceMessageKind, category);
+                writer.Write(message, traceMessageKind, category, indentLevel);
 
             WriteEvent?.Invoke(new WriteEventArgs { Message = message, Kind = traceMessageKind });
         }
@@ -155,6 +157,23 @@ namespace ETLCommon
         #endregion Вспомогательные функции
 
         #region Основные функции
+
+        /// <summary>
+        /// Увеличить отступ
+        /// </summary>
+        public static void Indent()
+        {
+            indentLevel++;
+        }
+
+        /// <summary>
+        /// Уменьшить отступ
+        /// </summary>
+        public static void Unindent()
+        {
+            if (indentLevel > 0)
+                indentLevel--;
+        }
 
         /// <summary>
         /// Инициализация

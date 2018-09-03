@@ -216,6 +216,16 @@ namespace ETLService.Manager
             return sessNo;
         }
 
+        public List<ETLLogRecord> GetLog(decimal sessNo)
+        {
+            dynamic record = Context.History[sessNo];
+            if (record == null)
+                return null;
+
+            string path = Path.Combine(Context.Settings.Registry.LogsPath, record.programid, sessNo + ".txt");
+            return ETLLogParser.Parse(path);
+        }
+
         /// <summary>
         /// Конструктор
         /// </summary>
