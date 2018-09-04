@@ -14,7 +14,8 @@ namespace ETLService.Manager
         public string Kind;
         public string Message;
         public string Module;
-        public DateTime Date;
+        public DateTime Start;
+        public DateTime End;
 
         public List<ETLLogRecord> Children;
 
@@ -24,7 +25,7 @@ namespace ETLService.Manager
 
             Module = message.GetMatches("^.+?(?=:)").FirstOrDefault().Trim();
             string date = message.GetMatches(@"([\d\.]+ [\d\:]+)").FirstOrDefault();
-            Date = DateTime.ParseExact(date, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+            Start = DateTime.ParseExact(date, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture);
             Kind = message.GetMatches(@"(?<=[\d] )[\w]+?(?=: )").FirstOrDefault();
 
             foreach (string s in new string[] { Module + ":", date, Kind + ":" })
@@ -44,7 +45,7 @@ namespace ETLService.Manager
             ETLLogRecord parent = null;
             while (curRow < rows.Length) {
                 int curLevel = (int)rows[curRow][0];
-                ETLLogRecord record = new ETLLogRecord((string)rows[curRow][1]);
+                ETLLogRecord record = (ETLLogRecord)rows[curRow][1];
 
                 if (curLevel == level) {
                     log.Add(record);
@@ -53,8 +54,11 @@ namespace ETLService.Manager
                     continue;
                 }
 
-                if (curLevel > level)
+                if (curLevel > level) {
                     FormHierarchy(parent.Children, rows, ref curRow, curLevel);
+                    // Время окончания родителя равно времени окончания последнего потомка
+                    parent.End = parent.Children.Last().End;
+                }
 
                 if (curLevel < level)
                     return;
@@ -77,8 +81,19 @@ namespace ETLService.Manager
                     // Отрезается стек вызова в сообщениях об ошибках
                     .Where(s => !s.TrimStart().StartsWith("at"))
                     // По уровню отступов вычисляется уровень записи в иерархии
-                    .Select(s => new object[]{ s.GetMatches(@"[\s]+").FirstOrDefault().Length / 4, s })
+                    .Select(s => new object[]{ s.GetMatches(@"[\s]+").FirstOrDefault().Length / 4, new ETLLogRecord(s) })
                     .ToArray();
+
+                // Заполнение поля окончания операции
+                for (int i = 0; i < data.Length; i++) {
+                    ETLLogRecord rec = (ETLLogRecord)data[i][1];
+                    if (i == data.Length - 1) {
+                        rec.End = rec.Start;
+                        continue;
+                    }
+
+                    rec.End = ((ETLLogRecord)data[i + 1][1]).Start;
+                }
 
                 List<ETLLogRecord> records = new List<ETLLogRecord>();
                 int curRow = 0;
