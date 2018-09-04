@@ -81,6 +81,7 @@ namespace ETLApp
         public void Exec()
         {
             Logger.WriteToTrace($"Запуск закачки \"{ID}\".", TraceMessageKind.Information);
+            Logger.Indent();
 
             try
             {
@@ -90,6 +91,8 @@ namespace ETLApp
                 // Обход всех этапов закачки
                 foreach (Stage stage in Stages.Where(s => s.Enabled))
                 {
+                    Logger.WriteToTrace($"Запуск этапа закачки \"{stage.Name}\".");
+
                     Logger.Indent();
 
                     curStage = stage;
@@ -114,6 +117,8 @@ namespace ETLApp
             {
                 Logger.WriteToTrace($"Ошибка при выполнении закачки: {ex}", TraceMessageKind.Error);
             }
+
+            Logger.Unindent();
         }
 
         /// <summary>

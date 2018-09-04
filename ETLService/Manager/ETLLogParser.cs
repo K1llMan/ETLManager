@@ -39,6 +39,28 @@ namespace ETLService.Manager
     /// </summary>
     public static class ETLLogParser
     {
+        private static void FormHierarchy(List<ETLLogRecord> log, object[][] rows, ref int curRow, int level)
+        {
+            ETLLogRecord parent = null;
+            while (curRow < rows.Length) {
+                int curLevel = (int)rows[curRow][0];
+                ETLLogRecord record = new ETLLogRecord((string)rows[curRow][1]);
+
+                if (curLevel == level) {
+                    log.Add(record);
+                    curRow++;
+                    parent = record;
+                    continue;
+                }
+
+                if (curLevel > level)
+                    FormHierarchy(parent.Children, rows, ref curRow, curLevel);
+
+                if (curLevel < level)
+                    return;
+            }
+        }
+
         public static List<ETLLogRecord> Parse(string fileName)
         {
             if (!File.Exists(fileName))
@@ -50,12 +72,19 @@ namespace ETLService.Manager
             try {
                 fs = new FileStream(fileName, FileMode.Open);
                 sr = new StreamReader(fs, Encoding.UTF8);
-                var data = sr.ReadToEnd()
+                object[][] data = sr.ReadToEnd()
                     .Split("\r\n", StringSplitOptions.RemoveEmptyEntries)
                     // Отрезается стек вызова в сообщениях об ошибках
-                    .Where(s => !s.TrimStart().StartsWith("at"));
+                    .Where(s => !s.TrimStart().StartsWith("at"))
+                    // По уровню отступов вычисляется уровень записи в иерархии
+                    .Select(s => new object[]{ s.GetMatches(@"[\s]+").FirstOrDefault().Length / 4, s })
+                    .ToArray();
 
-                return data.Select(s => new ETLLogRecord(s)).ToList();
+                List<ETLLogRecord> records = new List<ETLLogRecord>();
+                int curRow = 0;
+                FormHierarchy(records, data, ref curRow, 0);
+
+                return records;
             }
             catch (Exception ex) {
                 throw new Exception($"Ошибка при разборе файла лога \"{fileName}\"", ex);

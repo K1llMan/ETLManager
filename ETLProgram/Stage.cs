@@ -111,7 +111,6 @@ namespace ETLApp
 
             try
             {
-                Logger.WriteToTrace($"Запуск этапа закачки \"{Name}\".");
                 ExecStatus = StageExecutionStatus.Execution;
                 Method?.Invoke();
             }
