@@ -14,6 +14,7 @@ namespace TestPump
         {
             Thread.Sleep(1000);
             Logger.WriteToTrace("Тестирование метода закачки 1");
+            Logger.WriteToTrace(RootInDir.ToString());
 
             Entity ent = new Entity(Context.DB["etl_params"]);
             ent.Select();
@@ -33,6 +34,7 @@ namespace TestPump
         {
             Thread.Sleep(2000);
             Logger.WriteToTrace("Тестирование метода закачки 3", TraceMessageKind.Warning);
+            Logger.WriteToTrace(RootOutDir.ToString());
         }
     }
 }

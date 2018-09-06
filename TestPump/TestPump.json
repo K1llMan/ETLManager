@@ -1,13 +1,17 @@
 ﻿{
   "id": "testPump",
   "module": "TestPump.dll",
-  "version": "0.0.0", 
+  "version": "0.0.0",
   "desc": {
     "supplierCode": "TEST",
     "dataCode": "0001",
     "name": "Test program",
     "comment": "Test program for testing tests"
   },
+
+  "rootInDir": "Test",
+  "rootOutDir": "Test",
+
   "commonParams": [
     {
       "deleteData": {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 using ETLCommon;
@@ -20,16 +21,34 @@ namespace ETLApp
 
         #region Свойства
 
-        public string ID { get; private set; }
-
-        public decimal SessNo { get; set; }
-
-        public Dictionary<string, object> UserParams { get; private set; }
-
+        /// <summary>
+        /// Контекст
+        /// </summary>
         public ETLContext Context { get; set; }
 
+        /// <summary>
+        /// Идентификатор программы закачки
+        /// </summary>
+        public string ID { get; private set; }
+
+        /// <summary>
+        /// Номер сессии
+        /// </summary>
+        public decimal SessNo { get; set; }
+
+        /// <summary>
+        /// Пользовательские параметры
+        /// </summary>
+        public Dictionary<string, object> UserParams { get; private set; }
+
+        /// <summary>
+        /// Этапы
+        /// </summary>
         public List<Stage> Stages { get; set; }
 
+        /// <summary>
+        /// Текущий статус
+        /// </summary>
         public PumpStatus Status
         {
             get
@@ -44,6 +63,19 @@ namespace ETLApp
             }
         }
 
+        /// <summary>
+        /// Корневой каталог входящих данных
+        /// </summary>
+        public DirectoryInfo RootInDir { get; private set; }
+
+        /// <summary>
+        /// Корневой каталог исходящих данных
+        /// </summary>
+        public DirectoryInfo RootOutDir { get; private set; }
+
+        /// <summary>
+        /// Версия программы закачки
+        /// </summary>
         public Version Version { get; private set; }
 
         #endregion Свойства
@@ -146,6 +178,17 @@ namespace ETLApp
                     Logger.WriteToTrace("Версия системы ниже необходимой для запуска.", TraceMessageKind.Error);
                     return;
                 }
+
+                if (data["rootInDir"].IsNullOrEmpty())
+                {
+                    Logger.WriteToTrace("Не задана директория входных данных.", TraceMessageKind.Error);
+                    return;
+                }
+
+                // Основные рабочие каталоги с данными
+                RootInDir = new DirectoryInfo(Path.Combine(Context.Settings.Registry.InputPath, data["rootInDir"].ToString()));
+                if (!data["rootInDir"].IsNullOrEmpty())
+                    RootOutDir = new DirectoryInfo(Path.Combine(Context.Settings.Registry.OutputPath, data["rootOutDir"].ToString()));
 
                 // Формирование общих параметров закачки
                 commonParams = FormParamsList(data["commonParams"]);
