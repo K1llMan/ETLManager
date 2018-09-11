@@ -87,6 +87,7 @@ class ETLApp {
         window.addEventListener('hashchange', (e) => this.render(decodeURI(window.location.hash)));
 
         this.etlContext = {};
+        this.modules = {};
     }
 
     init() {
@@ -115,8 +116,6 @@ class ETLApp {
                 this.etlContext.registry = d["data"].sort(function(a, b) {
                     return parseInt(a.desc.dataCode) - parseInt(b.desc.dataCode);
                 });
-
-                window.dispatchEvent('hashchange');
             }
         });
 
@@ -124,7 +123,7 @@ class ETLApp {
             'success': (d) => { this.etlContext.updates = d; }
         });
 
-        let modal = M.Modal.init(document.querySelector('.modal'), {
+        M.Modal.init(document.querySelector('.modal'), {
             'onCloseStart': function () {
                 let pass = document.getElementById('pass');
                 pass.value = '';
@@ -132,10 +131,32 @@ class ETLApp {
                 pass.blur();
             }
         });
+
+        Request.send("api/modules",{
+            'success': (d) => {
+                this.modules = d;
+                window.dispatchEvent(new HashChangeEvent('hashchange'));
+            }
+        });
     }
 
     render(url) {
         console.log(url);
+
+        // Get the keyword from the url.
+        let temp = url.split('/')[0];
+
+        // Execute the needed function depending on the url keyword (stored in temp).
+        if (this.modules[temp]) {
+            //loadModule(modules[temp]);
+        }
+        // If the keyword isn't listed in the above - render the error page.
+        else {
+            if (document.querySelectorAll(`[href = "${temp}"]`).length === 0) {
+                //loadModule(modules[Object.keys(modules)[0]]);
+            }
+            //renderErrorPage();
+        }
     }
 }
 

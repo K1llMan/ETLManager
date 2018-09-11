@@ -62,14 +62,14 @@ Broadcast = (function () {
             */
             socket.onmessage = function (event) {
                 console.log("Получены данные " + decodeURI(event.data));
-                var data = JSON.parse(decodeURI(event.data));
+                var msg = JSON.parse(decodeURI(event.data));
 
                 if (socketHandlers == null)
                     return;
 
-                if (Object.keys(socketHandlers).indexOf(data.Action) != -1)
-                    if (socketHandlers[data.Action] != null)
-                        socketHandlers[data.Action](data.Data);
+                if (Object.keys(socketHandlers).indexOf(msg.action) != -1)
+                    if (socketHandlers[msg.action] != null)
+                        socketHandlers[msg.action](msg.data);
             };
 
             socket.onerror = function (error) {

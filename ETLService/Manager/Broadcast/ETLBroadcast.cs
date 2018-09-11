@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace ETLService.Manager.Broadcast
 {
@@ -33,7 +34,7 @@ namespace ETLService.Manager.Broadcast
         {
             foreach (ETLBroadcastAction action in actions)
             {
-                string dataStr = JsonConvert.SerializeObject(action, Formatting.None);
+                string dataStr = JsonConvert.SerializeObject(action, Formatting.None, new JsonSerializerSettings{ ContractResolver = new CamelCasePropertyNamesContractResolver() });
 
                 foreach (ETLSocket socket in sockets.Values)
                     await socket.Send(dataStr);

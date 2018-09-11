@@ -1,7 +1,8 @@
-﻿class Broadcast {
+﻿let socketHandlers = [];
+
+class Broadcast {
     constructor() {
         this.socket = null;
-        this.socketHandlers = null;
     }
 
     connect(url) {
@@ -33,14 +34,16 @@
         */
         socket.onmessage = function (event) {
             console.log("Получены данные " + decodeURI(event.data));
-            var data = JSON.parse(decodeURI(event.data));
+            let msg = JSON.parse(decodeURI(event.data));
 
             if (socketHandlers == null)
                 return;
 
-            if (Object.keys(socketHandlers).indexOf(data.Action) != -1)
-                if (socketHandlers[data.Action] != null)
-                    socketHandlers[data.Action](data.Data);
+            socketHandlers.forEach((h) => {
+                if (Object.keys(h).indexOf(msg.action) != -1)
+                    if (h[msg.action] != null)
+                        h[msg.action](msg.data);                
+            });
         };
 
         socket.onerror = function (error) {
@@ -55,6 +58,10 @@
             return;
 
         this.socket.send(encodeURI(JSON.stringify(data)));        
+    }
+
+    static addHandlers(handlers) {
+        socketHandlers.push(handlers);
     }
 }
 
