@@ -84,6 +84,8 @@ class ETLApp {
         document.body.appendChild(bodyData.content.cloneNode(true));
         document.body.appendChild(footerData.content.cloneNode(true));
 
+        window.addEventListener('hashchange', (e) => this.render(decodeURI(window.location.hash)));
+
         this.etlContext = {};
     }
 
@@ -121,6 +123,19 @@ class ETLApp {
         Request.send('api/pumps/updates',{
             'success': (d) => { this.etlContext.updates = d; }
         });
+
+        let modal = M.Modal.init(document.querySelector('.modal'), {
+            'onCloseStart': function () {
+                let pass = document.getElementById('pass');
+                pass.value = '';
+                pass.focus();
+                pass.blur();
+            }
+        });
+    }
+
+    render(url) {
+        console.log(url);
     }
 }
 
