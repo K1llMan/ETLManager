@@ -1,0 +1,55 @@
+*, *:before, *:after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/*-----------------
+    Basic
+-----------------*/
+
+.flow-down {
+    display: flex;
+    flex-flow: column;
+}
+
+.flow-right {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+
+::-webkit-scrollbar-track
+{
+}
+
+::-webkit-scrollbar
+{
+    width: 5px;
+}
+
+::-webkit-scrollbar:horizontal
+{
+    height: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: transparent;
+}
+
+*:hover::-webkit-scrollbar-thumb
+{
+    background-color: rgba(128,128,128,0.3);
+}
+::-webkit-scrollbar-thumb:hover
+{
+    background-color: rgba(128,128,128,0.5);
+}
+
+::-webkit-scrollbar-corner {
+    opacity: 0.2;
+}
