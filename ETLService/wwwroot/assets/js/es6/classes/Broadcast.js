@@ -26,7 +26,7 @@ class Broadcast {
 
         /*
         {
-            'func': 'callingFunc',
+            'action': 'callingFunc',
             'data': {
                 'd1': 'my very useful data'
             }

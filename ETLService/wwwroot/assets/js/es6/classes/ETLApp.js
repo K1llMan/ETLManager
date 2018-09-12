@@ -158,6 +158,24 @@ class ETLApp {
             //renderErrorPage();
         }
     }
+
+    get readyForDisplay() {
+        return document.querySelector('.loading-container').classList.contains('visible');
+    }
+
+    set readyForDisplay(isReady) {
+        let content = document.querySelector('.main-content');
+        let loading = document.querySelector('.loading-container');
+
+        if (isReady) {
+            content.classList.add('visible');
+            loading.classList.remove('visible');
+            return;
+        }
+
+        content.classList.remove('visible');
+        loading.classList.add('visible');        
+    }
 }
 
 export { ETLApp };

@@ -45,6 +45,7 @@ class Auth {
 
     logout() {
         localStorage.removeItem("token");
+        this.payload = null;
     }
 
     get user() {
@@ -52,6 +53,10 @@ class Auth {
             'Name': this.payload ? this.payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"] : undefined,
             'Role': this.payload ? this.payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] : undefined
         }
+    }
+
+    get isLogged() {
+        return this.payload == null;
     }
 }
 

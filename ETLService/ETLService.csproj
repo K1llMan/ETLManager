@@ -39,6 +39,10 @@
     <None Include="wwwroot\index.html" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\assets\js\es6\modules\" />
+  </ItemGroup>
+
   <Import Project="$(SolutionDir)\Config\General.xml" />
 
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions> 
