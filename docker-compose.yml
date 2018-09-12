@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  etlservice:
+    image: ${DOCKER_REGISTRY}etlservice
+    build:
+      context: .
+      dockerfile: ETLService/Dockerfile
