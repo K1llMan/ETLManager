@@ -56,7 +56,7 @@ class Auth {
     }
 
     get isLogged() {
-        return this.payload == null;
+        return this.payload != null;
     }
 }
 

@@ -1,33 +1,13 @@
-﻿import { Broadcast } from "./Broadcast.js";
-import { Request } from "./Request.js";
-import { Auth } from "./Auth.js";
+﻿import { htmlToElement } from "./utils.js";
 
-const bodyData = document.createElement('template');
-bodyData.innerHTML = `
+import { Broadcast } from "./Broadcast.js";
+import { Request } from "./Request.js";
+import { AuthModal } from "./AuthModal.js";
+
+const bodyData = htmlToElement(`
     <div class="loading-container">
         <div class="flow-down">
             <div>Loading</div>
-        </div>
-    </div>
-
-    <!-- Modal Structure -->
-    <div id="login-modal" class="modal">
-        <div class="modal-content">
-            <h4 class="center">Login form</h4>
-            <div class="row">
-                <div class="input-field col s6 offset-s3">
-                    <input id="name" type="text" class="validate">
-                    <label for="name">Login</label>
-                </div>
-                <div class="input-field col s6 offset-s3">
-                    <input id="pass" type="password" class="validate">
-                    <label for="pass">Password</label>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <a class="modal-close waves-effect waves-red btn-flat">Close</a>
-            <a id="login" class="modal-close waves-effect waves-green btn-flat">Login</a>
         </div>
     </div>
 
@@ -38,7 +18,6 @@ bodyData.innerHTML = `
                 <ul class="left hide-on-med-and-down" id="nav">
                 </ul>
                 <ul class="right hide-on-med-and-down" id="login-data">
-                    <li><a id="login-btn" class="modal-trigger right" href="#login-modal">Login</a></li>
                 </ul>
             </div>
         </nav>
@@ -47,10 +26,9 @@ bodyData.innerHTML = `
         <div class="main-content">
         </div>    
     </div>
-`;
+`);
 
-const footerData = document.createElement('template');
-footerData.innerHTML = `
+const footerData = htmlToElement(`
 <footer class="page-footer blue-grey lighten-1">
     <!-- <div class="container">
         <div class="row">
@@ -77,17 +55,65 @@ footerData.innerHTML = `
         </div>
     </div>
 </footer>
-`;
+`);
 
 class ETLApp {
     constructor() {
-        document.body.appendChild(bodyData.content.cloneNode(true));
-        document.body.appendChild(footerData.content.cloneNode(true));
+        document.body.appendChild(bodyData);
+        document.body.appendChild(footerData);
 
         window.addEventListener('hashchange', (e) => this.render(decodeURI(window.location.hash)));
+        document.addEventListener('login', () => {
+            console.log('login');
+            this.getModules();
+        });
+
+        document.addEventListener('logout', () => {
+            console.log('logout');
+            this.getModules();
+        });
 
         this.etlContext = {};
         this.modules = {};
+    }
+
+    getModules() {
+        this.readyForDisplay = false;
+        Request.send("api/modules", {
+            'success': (d) => {
+                this.modules = d;
+
+                document.querySelector('#nav').innerHTML = '';
+                Object.keys(this.modules).forEach((k) => {
+                    let value = this.modules[k];
+                    let nav = document.querySelector('#nav');
+
+                    let displayName = value.displayName;
+                    let displayImage = value.displayImage;
+
+                    if (displayName === undefined && displayImage === undefined)
+                        return;
+
+                    let li = htmlToElement('<li class="waves-effect waves-light"></li>');
+                    if (!!displayImage) {
+                        let img = htmlToElement(`<img src=${'assets/images/' + displayImage}>`);
+                        li.append(img);
+                    }
+
+                    if (!!displayName) {
+                        let name = htmlToElement(`<a>${displayName}</a>`);
+                        li.append(name);
+                    }
+
+                    li.addEventListener('click', () => window.location.hash = key);
+
+                    nav.prepend(li);                    
+                });
+
+                window.dispatchEvent(new HashChangeEvent('hashchange'));
+                this.readyForDisplay = true;
+            }
+        });        
     }
 
     init() {
@@ -96,7 +122,7 @@ class ETLApp {
         this.broadcast = new Broadcast();
         this.broadcast.connect("ws://" + window.location.host + "/api/broadcast");
 
-        this.auth = new Auth();
+        this.auth = new AuthModal(document.querySelector('nav .nav-wrapper #login-data'));
 
         Request.send('api/info', {
             'success': (d) => {
@@ -123,21 +149,7 @@ class ETLApp {
             'success': (d) => { this.etlContext.updates = d; }
         });
 
-        M.Modal.init(document.querySelector('.modal'), {
-            'onCloseStart': function () {
-                let pass = document.getElementById('pass');
-                pass.value = '';
-                pass.focus();
-                pass.blur();
-            }
-        });
-
-        Request.send("api/modules",{
-            'success': (d) => {
-                this.modules = d;
-                window.dispatchEvent(new HashChangeEvent('hashchange'));
-            }
-        });
+        this.getModules();
     }
 
     render(url) {
@@ -148,7 +160,11 @@ class ETLApp {
 
         // Execute the needed function depending on the url keyword (stored in temp).
         if (this.modules[temp]) {
-            //loadModule(modules[temp]);
+            import('../modules/Scenarios.js')
+                .then((module) => {
+                    console.log('scenarios loaded');
+                    this.module = new module.module();
+                });
         }
         // If the keyword isn't listed in the above - render the error page.
         else {
