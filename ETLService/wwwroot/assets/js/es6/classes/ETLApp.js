@@ -132,7 +132,7 @@ class ETLApp {
         });
         
         Request.send('api/pumps/statuses',{
-            'success': (d) => { this.etlContext.statuses = d; }
+            'success': (d) => { this.etlContext.statuses = d["data"]; }
         });
 
         Request.send('api/pumps/registry', {
