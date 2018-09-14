@@ -78,7 +78,6 @@ class ETLApp {
     }
 
     getModules() {
-        this.readyForDisplay = false;
         Request.send("api/modules", {
             'success': (d) => {
                 this.modules = d;
@@ -107,11 +106,10 @@ class ETLApp {
 
                     li.addEventListener('click', () => window.location.hash = key);
 
-                    nav.prepend(li);                    
+                    nav.prepend(li);
                 });
 
                 window.dispatchEvent(new HashChangeEvent('hashchange'));
-                this.readyForDisplay = true;
             }
         });        
     }
@@ -152,6 +150,22 @@ class ETLApp {
         this.getModules();
     }
 
+    loadPage(moduleName) {
+        this.readyForDisplay = false;
+
+        if (this.module != null)
+            if (module.destroy != null)
+                module.destroy();
+
+        import(`../modules/${moduleName}/${moduleName}.js`)
+            .then((module) => {
+                console.log('scenarios loaded');
+                this.module = new module.module(this, document.querySelector('.main-content'));
+
+                this.readyForDisplay = true;
+        });
+    }
+
     render(url) {
         console.log(url);
 
@@ -160,11 +174,7 @@ class ETLApp {
 
         // Execute the needed function depending on the url keyword (stored in temp).
         if (this.modules[temp]) {
-            import('../modules/Scenarios.js')
-                .then((module) => {
-                    console.log('scenarios loaded');
-                    this.module = new module.module();
-                });
+            this.loadPage('Scenarios');
         }
         // If the keyword isn't listed in the above - render the error page.
         else {
