@@ -1,27 +1,8 @@
 ﻿import { htmlToElement } from "../../classes/utils.js"
 import { PageCommon } from "../PageCommon.js";
+import { ParamsModal } from "./ParamsModal.js";
 
 const page = htmlToElement(`
-  <!-- Params modal -->
-  <div id="params-modal" class="modal">
-    <div class="modal-content">
-      <h4>Scenario name</h4>
-      <div class="row">
-        <h5>Parameters</h5>
-        <div class="col s3">
-          <div id="stages" class="collection">            
-          </div>
-        </div>
-        <div id="params" class="col s9">
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <a class="modal-close waves-effect waves-red btn-flat">Close</a>
-      <a id="runPump" class="modal-close waves-effect waves-green btn-flat">Run</a>
-    </div>
-  </div>
-
   <!-- Updates modal -->
   <div id="update-modal" class="modal">
     <div class="modal-content">
@@ -171,7 +152,7 @@ function updateRegistry(page) {
 
         let startBtn = body.querySelector('#buttons #start');
         startBtn.addEventListener('click', () => {
-            updatePumpModal(p);
+            page.paramsModal.open(p);
         });
 
         let item = collapsible.querySelector(`#${p.desc.supplierCode}`);
@@ -179,18 +160,15 @@ function updateRegistry(page) {
     });
 
     collapsible.querySelectorAll('li').forEach((n) => updateBadges(n));
-    /*
-    $.each(collapsibleItems, function (i, el) {
-        updateBadges(el);
-    });
-    */
-
     M.Collapsible.init(collapsible);
 }
 
 class Scenarios extends PageCommon {
     constructor(app, container) {
         super(app, container);
+
+        // Params
+        this.paramsModal = new ParamsModal(page);
 
         this.container.append(page);
 
