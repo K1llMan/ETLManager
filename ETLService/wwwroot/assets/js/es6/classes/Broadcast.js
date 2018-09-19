@@ -63,6 +63,12 @@ class Broadcast {
     static addHandlers(handlers) {
         socketHandlers.push(handlers);
     }
+
+    static removeHandlers(handlers) {
+        let index = socketHandlers.indexOf(handlers);
+        if (index != -1)
+            socketHandlers = socketHandlers.splice(index, 1);
+    }
 }
 
 export { Broadcast };

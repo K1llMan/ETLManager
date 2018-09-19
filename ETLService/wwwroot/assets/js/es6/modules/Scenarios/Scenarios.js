@@ -1,4 +1,5 @@
-﻿import { htmlToElement } from "../../classes/utils.js"
+﻿import { htmlToElement } from "../../classes/utils.js";
+import { Broadcast } from "../../classes/Broadcast.js";
 import { PageCommon } from "../PageCommon.js";
 import { ParamsModal } from "./ParamsModal.js";
 
@@ -48,9 +49,29 @@ function getCollapsibleItem(id) {
         </li>`);
 }
 
+const broadcastHandlers = {
+    'startPump': (data) => {
+        let icon = document.querySelector(`#${data.id} #info .material-icons`);
+        setStatus(icon, "Running");
+
+        updateBadges(icon.closest('li'));
+    },
+    'endPump': (data) => {
+        let icon = document.querySelector(`#${data.id} #info .material-icons`);
+        setStatus(icon, data.status);
+
+        updateBadges(icon.closest('li'));
+    },
+    'receiveUpdate': (data) => {
+    },
+    'update': (data) => {
+
+    }
+}
+
 function setStatus(icon, status) {
     // Remove colors
-    icon.className.replace(/[\s](.+)?-text/g, '');
+    icon.className = icon.className.replace(/[\s](.+)?-text/g, '');
 
     let iconStr = 'remove';
     let color = '';
@@ -101,11 +122,6 @@ function updateBadges(header) {
     let red = header.querySelector(".badge.red");
     red.classList.toggle('hide', errors < 1);
     red.innerHTML = errors;
-}
-
-function updatePumpModal(pump) {
-    let modal = document.querySelector('#params-modal');
-    M.Modal.getInstance(modal).open();
 }
 
 function getCollapsibleBody(pump, status) {
@@ -175,7 +191,14 @@ class Scenarios extends PageCommon {
         updateRegistry(this);
 
         document.dispatchEvent(new Event('resize'));
-        M.Modal.init(document.querySelector('.modal'));
+
+        Broadcast.addHandlers(broadcastHandlers);
+    }
+
+    destroy() {
+        super.destroy();
+
+        Broadcast.removeHandlers(broadcastHandlers);
     }
 }
 
