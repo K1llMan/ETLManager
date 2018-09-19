@@ -7,21 +7,21 @@ function setValue(input, obj, field) {
 
 function getHtml(params) {
     let element = htmlToElement(`
-        <div class="switch">
-          <label>
-            <input type="checkbox">
-              <span class="lever"></span>
-          </label>
-        </div>
+      <p>
+        <label>
+          <input type="checkbox" />
+          <span>${params.desc}</span>
+        </label>
+      </p>
     `);
 
-    if (params != null && params.id != null)
+    if (params.id != null)
         element.id = id;
 
     return element;
 }
 
-class Switch extends Component {
+class Checkbox extends Component {
     constructor(parent, params) {
         super(parent, params);
 
@@ -31,8 +31,8 @@ class Switch extends Component {
     bind(obj, field) {
         let input = this.element.querySelector('input');
         input.checked = obj[field];
-        input.addEventListener('input', () => setValue(input, obj, field));          
+        input.addEventListener('input', () => setValue(input, obj, field));
     }
 }
 
-export { Switch };
+export { Checkbox };

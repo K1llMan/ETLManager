@@ -1,4 +1,6 @@
 ﻿import { htmlToElement } from "../../classes/utils.js";
+import { Request } from "../../classes/Request.js";
+
 import * as components from "../../components/components.js";
 
 const modal = htmlToElement(`
@@ -37,6 +39,49 @@ function getStageItem(stage) {
     `);
 }
 
+function runPump(config) {
+    Request.send(`api/pumps/execute/${config.id}`, {
+        'info': {
+            'method': 'POST',
+            'headers': {
+                'Content-type': 'application/json; charset=utf-8'
+            },
+            'body': JSON.stringify(config)
+        }
+    });
+}
+
+function initParams(modal, paramGroups) {
+    let paramsPanel = modal.querySelector('#params');
+    paramsPanel.innerHTML = '';
+
+    if (Object.keys(paramGroups).length == 0)
+        return;
+
+    paramGroups.forEach((params) => {
+        let form = htmlToElement('<form class="row"></form>');
+        paramsPanel.appendChild(form);
+
+        Object.keys(params).forEach((key) => {
+            if (params[key].ui == undefined || params[key].ui == null)
+                return;
+
+            let component = null;
+            switch (params[key].ui.type) {
+                case 'check':
+                    component = new components.Checkbox(form, params[key].ui);
+                    break;
+                case 'radio':
+                    component = new components.Radio(form, params[key].ui);
+                    break;
+            }
+
+            if (component != null)
+                component.bind(params[key], 'value');
+        });
+    });
+}
+
 class ParamsModal {
     constructor(parent) {
         parent.appendChild(modal);
@@ -70,64 +115,31 @@ class ParamsModal {
         });
 
         stagesContainer.querySelectorAll('a').forEach((a) => {
-            let stageID = a.id;
+            let stageId = a.id;
             a.addEventListener('click', () => {
                 stagesContainer.querySelectorAll('a').forEach((s) => s.classList.remove('active'));
                 a.classList.add('active');
 
-                //initParams
-            });
-        });
-
-        M.Modal.getInstance(this.modal).open();
-
-        /*
-            $(Templater.useTemplate('stage-item',
-            Object.keys(config.stages).map(function (key) {
-                var stage = config.stages[key];
-                stage.id = key;
-                return stage;
-            })));
-        
-
-        stagesContainer.append(stagesList);
-        
-        // Switching between params lists
-        stagesContainer.find('a').each(function (i, a) {
-            var stageId = $(a).attr('id');
-
-            $(a).click(function () {
-                stagesContainer.find('a').removeClass('active');
-                $(a).addClass('active');
-                initParams(stageId == 'common'
+                initParams(this.modal, stageId == 'common'
                     ? config.commonParams
                     : config.stages[stageId].params);
             });
-
-            // Changing stage status
-            var sw = $(a).find('input');
-            if (sw.length == 0)
-                return;
-
-            bindValue(sw, config.stages[stageId], 'enabled');
         });
 
-        var clcFunc = function () {
+        let clcFunc = () => {
             runPump(config);
         }
-        var runBtn = modal.find('#runPump');
-        runBtn.click(clcFunc);
 
-        // Remove run handler
-        modal.modal({
-            'onCloseEnd': function () {
-                runBtn.off('click', clcFunc);
+        modal.querySelector('#runPump').addEventListener('click', clcFunc);
+
+        let instance = M.Modal.init(this.modal, {
+            'onCloseStart': function () {
+                modal.querySelector('#runPump').removeEventListener('click', clcFunc);
             }
         });
 
-        modal.modal('open');
-        stagesContainer.find('#common').click();  
-        */
+        instance.open();
+        stagesContainer.querySelector('#common').dispatchEvent(new Event('click'));
     }
 }
 
