@@ -24,8 +24,14 @@ const bodyData = htmlToElement(`
     </div>
     <div class="main container">
         <div class="main-content">
-        </div>    
+        </div>
     </div>
+
+  <div class="fixed-action-btn">
+    <a id="updatesBtn" class="btn-floating btn-large pulse hide">
+      <i class="large material-icons">autorenew</i>
+    </a>
+  </div>
 `);
 
 const footerData = htmlToElement(`
@@ -56,6 +62,20 @@ const footerData = htmlToElement(`
     </div>
 </footer>
 `);
+
+const broadcastHandlers = {
+    'receiveUpdate': (data) => {
+        if (document.app.etlContext.updates == null)
+            document.app.etlContext.updates = {};
+
+        document.app.etlContext.updates[data.programID] = data;
+        document.querySelector('#updatesBtn').classList.toggle('hide',
+            Object.keys(document.app.etlContext.updates).length == 0);
+    },
+    'update': (data) => {
+
+    }
+}
 
 class ETLApp {
     constructor() {
@@ -132,22 +152,27 @@ class ETLApp {
         });
         
         Request.send('api/pumps/statuses',{
-            'success': (d) => { this.etlContext.statuses = d["data"]; }
+            'success': (d) => { this.etlContext.statuses = d.data; }
         });
 
         Request.send('api/pumps/registry', {
             'success': (d) => {
-                this.etlContext.registry = d["data"].sort(function(a, b) {
+                this.etlContext.registry = d.data.sort(function(a, b) {
                     return parseInt(a.desc.dataCode) - parseInt(b.desc.dataCode);
                 });
+
+                this.getModules();
             }
         });
 
         Request.send('api/pumps/updates',{
-            'success': (d) => { this.etlContext.updates = d; }
+            'success': (d) => {
+                this.etlContext.updates = d.data;
+                document.querySelector('#updatesBtn').classList.toggle('hide', Object.keys(this.etlContext.updates).length == 0);
+            }
         });
 
-        this.getModules();
+        Broadcast.addHandlers(broadcastHandlers);
     }
 
     loadPage(moduleName) {

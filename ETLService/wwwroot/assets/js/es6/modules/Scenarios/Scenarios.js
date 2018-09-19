@@ -27,11 +27,7 @@ const page = htmlToElement(`
     <ul class="collapsible">
     </ul>    
   </div>
-  <div class="fixed-action-btn">
-    <a id="updatesBtn" class="btn-floating btn-large pulse <!--hide-->">
-      <i class="large material-icons">autorenew</i>
-    </a>
-  </div>`);
+`);
 
 function getCollapsibleItem(id) {
     return htmlToElement(`  
