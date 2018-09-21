@@ -34,7 +34,7 @@ class AuthModal {
 
         function addLogout(auth, nav) {
             var logout = htmlToElement(`<li id=\"login-info\"><a>${auth.user.Name} (Logout)</a></li>`);
-            logout.querySelector('#login-info').addEventListener('click', () => {
+            logout.addEventListener('click', () => {
                 auth.logout();
                 nav.querySelector('#login-info').remove();
                 document.dispatchEvent(new Event('logout'));

@@ -3,31 +3,33 @@ import { Broadcast } from "../../classes/Broadcast.js";
 import { PageCommon } from "../PageCommon.js";
 import { ParamsModal } from "./ParamsModal.js";
 
-const page = htmlToElement(`
-  <!-- Updates modal -->
-  <div id="update-modal" class="modal">
-    <div class="modal-content">
-      <h4>Updates list</h4>
-      <div class="row">
-        <ul class="collection">
-          <li class="collection-item">Alvin</li>
-          <li class="collection-item">Alvin</li>
-          <li class="collection-item">Alvin</li>
-          <li class="collection-item">Alvin</li>
-        </ul>
+function getPage() {
+    return htmlToElement(`
+      <!-- Updates modal -->
+      <div id="update-modal" class="modal">
+        <div class="modal-content">
+          <h4>Updates list</h4>
+          <div class="row">
+            <ul class="collection">
+              <li class="collection-item">Alvin</li>
+              <li class="collection-item">Alvin</li>
+              <li class="collection-item">Alvin</li>
+              <li class="collection-item">Alvin</li>
+            </ul>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a class="modal-close waves-effect waves-red btn-flat">Close</a>
+          <a id="runUpdate" class="modal-close waves-effect waves-green btn-flat">Update</a>
+        </div>
       </div>
-    </div>
-    <div class="modal-footer">
-      <a class="modal-close waves-effect waves-red btn-flat">Close</a>
-      <a id="runUpdate" class="modal-close waves-effect waves-green btn-flat">Update</a>
-    </div>
-  </div>
   
-  <div class="scenarios-page">
-    <ul class="collapsible">
-    </ul>    
-  </div>
-`);
+      <div class="scenarios-page">
+        <ul class="collapsible">
+        </ul>    
+      </div>
+    `)
+};
 
 function getCollapsibleItem(id) {
     return htmlToElement(`  
@@ -178,6 +180,8 @@ function updateRegistry(page) {
 class Scenarios extends PageCommon {
     constructor(app, container) {
         super(app, container);
+
+        let page = getPage();
 
         // Params
         this.paramsModal = new ParamsModal(page);

@@ -124,7 +124,7 @@ class ETLApp {
                         li.append(name);
                     }
 
-                    li.addEventListener('click', () => window.location.hash = key);
+                    li.addEventListener('click', () => window.location.hash = k);
 
                     nav.prepend(li);
                 });
@@ -179,12 +179,12 @@ class ETLApp {
         this.readyForDisplay = false;
 
         if (this.module != null)
-            if (module.destroy != null)
-                module.destroy();
+            if (this.module.destroy != null)
+                this.module.destroy();
 
         import(`../modules/${moduleName}/${moduleName}.js`)
             .then((module) => {
-                console.log('scenarios loaded');
+                console.log(`"${moduleName}" loaded.`);
                 this.module = new module.module(this, document.querySelector('.main-content'));
 
                 this.readyForDisplay = true;
@@ -199,7 +199,7 @@ class ETLApp {
 
         // Execute the needed function depending on the url keyword (stored in temp).
         if (this.modules[temp]) {
-            this.loadPage('Scenarios');
+            this.loadPage(this.modules[temp].script);
         }
         // If the keyword isn't listed in the above - render the error page.
         else {
