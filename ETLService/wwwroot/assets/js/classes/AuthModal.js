@@ -3,26 +3,26 @@
 import { Auth } from "./Auth.js";
 
 const modal = htmlToElement(`
-<!-- Modal Structure -->
-<div id="login-modal" class="modal">
-    <div class="modal-content">
-        <h4 class="center">Login form</h4>
-        <div class="row">
-            <div class="input-field col s6 offset-s3">
-                <input id="name" type="text" class="validate">
-                <label for="name">Login</label>
-            </div>
-            <div class="input-field col s6 offset-s3">
-                <input id="pass" type="password" class="validate">
-                <label for="pass">Password</label>
+    <!-- Modal Structure -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <h4 class="center">Login form</h4>
+            <div class="row">
+                <div class="input-field col s6 offset-s3">
+                    <input id="name" type="text" class="validate">
+                    <label for="name">Login</label>
+                </div>
+                <div class="input-field col s6 offset-s3">
+                    <input id="pass" type="password" class="validate">
+                    <label for="pass">Password</label>
+                </div>
             </div>
         </div>
+        <div class="modal-footer">
+            <a class="modal-close waves-effect waves-red btn-flat">Close</a>
+            <a id="login" class="modal-close waves-effect waves-green btn-flat">Login</a>
+        </div>
     </div>
-    <div class="modal-footer">
-        <a class="modal-close waves-effect waves-red btn-flat">Close</a>
-        <a id="login" class="modal-close waves-effect waves-green btn-flat">Login</a>
-    </div>
-</div>
 `);
 
 class AuthModal {

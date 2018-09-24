@@ -3,6 +3,7 @@
 import { Broadcast } from "./Broadcast.js";
 import { Request } from "./Request.js";
 import { AuthModal } from "./AuthModal.js";
+import { UpdatesModal } from "./UpdatesModal.js";
 
 const bodyData = htmlToElement(`
     <div class="loading-container">
@@ -141,6 +142,11 @@ class ETLApp {
         this.broadcast.connect("ws://" + window.location.host + "/api/broadcast");
 
         this.auth = new AuthModal(document.querySelector('nav .nav-wrapper #login-data'));
+        this.updates = new UpdatesModal(document.body);
+
+        document.querySelector('#updatesBtn').addEventListener('click', () => {
+            this.updates.open();
+        });
 
         Request.send('api/info', {
             'success': (d) => {
