@@ -7,12 +7,7 @@ function getHtml() {
             <div class="modal-content">
                 <h4>Updates list</h4>
                 <div class="row">
-                <ul class="collection">
-                    <li class="collection-item">Alvin</li>
-                    <li class="collection-item">Alvin</li>
-                    <li class="collection-item">Alvin</li>
-                    <li class="collection-item">Alvin</li>
-                </ul>
+                <ul class="collection"></ul>
                 </div>
             </div>
             <div class="modal-footer">
