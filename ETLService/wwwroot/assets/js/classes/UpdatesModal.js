@@ -23,6 +23,33 @@ function getHtml() {
     `);
 }
 
+function getChip(tag) {
+    return htmlToElement(`<div class="chip">${tag}</div>`);
+}
+
+function getUpdateRecord(update, config) {
+    let record = htmlToElement(`
+        <li class="collection-item flow-right update-record">
+            <label>
+                <input type="checkbox" />
+                <span></span>
+            </label>
+            <div>
+                <div>${config == null ? '0000' : config.desc.dataCode} ${config == null ? 'New pump' : config.desc.name}</div>
+                <div>
+                PumpIdentifier: ${update.programID}
+                </div>
+                <div class="chips-container"></div>
+            </div>
+        </li>
+    `);
+
+    ['new', 'module', 'config'].map((tag) => getChip(tag))
+        .forEach((t) => record.querySelector('.chips-container').appendChild(t));
+
+    return record;
+}
+
 class UpdatesModal {
     constructor(parent) {
         this.modal = getHtml();
@@ -31,7 +58,16 @@ class UpdatesModal {
         M.Modal.init(this.modal, { });
     }
 
-    open() {
+    open(context) {
+        let collection = this.modal.querySelector('.collection');
+        collection.innerHTML = '';
+
+        Object.keys(context.updates).forEach((key) => {
+            let update = context.updates[key];
+            let config = context.registry.find((c) => c.id == update.programID);
+            collection.appendChild(getUpdateRecord(update, config));
+        });
+
         M.Modal.getInstance(this.modal).open();
     }
 }

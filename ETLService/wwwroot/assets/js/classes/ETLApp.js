@@ -145,7 +145,7 @@ class ETLApp {
         this.updates = new UpdatesModal(document.body);
 
         document.querySelector('#updatesBtn').addEventListener('click', () => {
-            this.updates.open();
+            this.updates.open(this.etlContext);
         });
 
         Request.send('api/info', {
