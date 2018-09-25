@@ -23,7 +23,7 @@ namespace ETLCommon
     {
         #region Поля
 
-        private Database db;
+        private IDatabase db;
 
         #endregion Поля
 
@@ -112,7 +112,7 @@ namespace ETLCommon
             }
         }
 
-        public ETLHistory(Database db)
+        public ETLHistory(IDatabase db)
         {
             this.db = db;
         }

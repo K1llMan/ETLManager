@@ -15,7 +15,7 @@ namespace ETLCommon
 
         #region Свойства
 
-        public Database DB { get; }
+        public IDatabase DB { get; }
 
         public string Path { get; }
 
@@ -161,7 +161,7 @@ namespace ETLCommon
             return ApplyMigrations(new Version(num), "down");
         }
 
-        public Migrator(Database db, string path)
+        public Migrator(IDatabase db, string path)
         {
             DB = db;
             Path = path;

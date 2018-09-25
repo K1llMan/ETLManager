@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.OracleClient;
-using System.Data.SqlClient;
-using System.Linq;
 
 using Dapper;
-
-using Npgsql;
 
 namespace ETLCommon
 {
@@ -15,131 +10,44 @@ namespace ETLCommon
     {
         #region Поля
 
-        private string connectionStr;
-        private IDbConnection connection;
-        private IDbTransaction transaction;
+        protected string connectionStr;
+        protected IDbConnection connection;
+        protected IDbTransaction transaction;
 
         #endregion Поля
 
         #region Свойства
 
-        public DBTable this[string tableName]
+        /// <summary>
+        /// Индексатор по таблицам базы. Для каждой базы получение данных о таблице может отличаться
+        /// </summary>
+        public virtual DBTable this[string tableName]
         {
-            get
-            {
-                dynamic result = Query(
-                    "select exists (" +
-                    " select 1" +
-                    " from information_schema.tables" +
-                    $" where table_name = '{tableName}')")?.FirstOrDefault();
-
-                // Если не существует, то создаём новую
-                if (result == null || !result.exists)
-                    return null;
-
-                return new DBTable(this, tableName);
-            }
+            get { return null; }
         }
 
         /// <summary>
         /// Тип базы
         /// </summary>
-        public DBType DatabaseType { get; private set; }
+        public DBType DatabaseType { get; internal set; }
 
         #endregion Свойства
-
-        #region Вспомогательные функции
-
-        private string GetConnectionString(string parameters)
-        {
-            string[] properties = parameters.Split(';', StringSplitOptions.RemoveEmptyEntries);
-
-            Uri uri = new Uri(properties[0]);
-
-            string typeStr = uri.Scheme;
-
-            if (!Enum.TryParse(typeof(DBType), typeStr, true, out var type))
-                return string.Empty;
-
-            DatabaseType = (DBType)type;
-
-            Dictionary<string, string> paramDict = new Dictionary<string, string> {
-                { "User ID", uri.UserInfo.Split(':')[0] },
-                { "Password", uri.UserInfo.Split(':')[1] },
-            };
-
-            List<string> segments = uri.Segments.ToList();
-            segments.Remove("/");
-
-            // У Postgre другой набор параметров подключения
-            if (DatabaseType == DBType.PostgreSql)
-            {
-                paramDict.Add("Host", uri.Host);
-                paramDict.Add("Port", uri.Port.ToString());
-
-                if (segments.Count > 0 && !paramDict.ContainsKey("Database"))
-                    paramDict.Add("Database", segments.Last());
-            }
-            else
-                paramDict.Add("Data Source", DatabaseType == DBType.Oracle 
-                    ? uri.Host
-                    : uri.Host + "\\" + uri.Segments.Last());
-
-            foreach (string property in properties.Skip(1))
-            {
-                string key = property.GetMatches(@".+(?=\=)").First().Trim();
-                string value = property.GetMatches(@"(?<=\=).+").First().Trim();
-
-                if (string.IsNullOrEmpty(key) || paramDict.ContainsKey(key) )
-                    continue;
-
-                paramDict.Add(key, value);
-            }
-
-            return string.Join("; ", paramDict.Select(p => $"{p.Key}={p.Value}"));
-        }
-
-        #endregion Вспомогательные функции
 
         #region Основные функции
 
         public Database(string connection)
         {
             connectionStr = connection;
+            DatabaseType = DBType.Unknown;
         }
 
-        /// <summary>
-        /// Соединения с базой (формат [dbType]://[user]:[password]@[serverName[:portNumber][/instanceName]][;property=value[;property=value]])
-        /// postgresql://sysdba:masterkey@localhost:5432/db
-        /// </summary>
-        public void Connect()
+        public virtual void Connect()
         {
-            connection?.Close();
-            connection?.Dispose();
-
             if (string.IsNullOrEmpty(connectionStr))
                 return;
 
-            string connectionString = GetConnectionString(connectionStr);
-
-            switch (DatabaseType)
-            {
-                case DBType.PostgreSql:
-                    connection = new NpgsqlConnection(connectionString);
-                    break;
-
-                case DBType.SqlServer:
-                    connection = new SqlConnection(connectionString);
-                    break;
-
-                case DBType.Oracle:
-                    connection = new OracleConnection(connectionString);
-                    break;
-                default:
-                    return;
-            }
-
-            connection.Open();
+            connection?.Close();
+            connection?.Dispose();
         }
 
         /// <summary>
@@ -159,6 +67,22 @@ namespace ETLCommon
                 return;
 
             transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted);
+        }
+
+        /// <summary>
+        /// Фиксация транзакции
+        /// </summary>
+        public void Commit()
+        {
+            transaction?.Commit();
+        }
+
+        /// <summary>
+        /// Откат транзакции
+        /// </summary>
+        public void Rollback()
+        {
+            transaction?.Rollback();
         }
 
         /// <summary>
@@ -235,22 +159,6 @@ namespace ETLCommon
             }
 
             return "varchar";
-        }
-
-        /// <summary>
-        /// Фиксация транзакции
-        /// </summary>
-        public void Commit()
-        {
-            transaction?.Commit();
-        }
-
-        /// <summary>
-        /// Откат транзакции
-        /// </summary>
-        public void Rollback()
-        {
-            transaction?.Rollback();
         }
 
         #endregion Основные функции

@@ -9,7 +9,7 @@ namespace ETLCommon
     {
         #region Свойства
 
-        public Database DB { get; set; }
+        public IDatabase DB { get; set; }
 
         public ETLHistory History { get; private set; }
 
@@ -43,7 +43,7 @@ namespace ETLCommon
         {
             Settings = new ETLSettings(settings);
 
-            DB = new Database(Settings.ConnectString);
+            DB = DatabaseFactory.GetDatabase(Settings.ConnectString);
         }
 
         #endregion Основные функции
