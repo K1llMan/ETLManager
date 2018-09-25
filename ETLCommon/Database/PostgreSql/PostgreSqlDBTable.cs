@@ -4,38 +4,10 @@ using System.Linq;
 
 namespace ETLCommon
 {
-    public class DBAttribute
-    {
-        /// <summary>
-        /// Значение по умолчанию
-        /// </summary>
-        public object Default { get; internal set; }
-
-        /// <summary>
-        /// Имя атрибута
-        /// </summary>
-        public string Name { get; internal set; }
-
-        /// <summary>
-        /// Может ли принимать пустое значение
-        /// </summary>
-        public bool Nullable { get; internal set; }
-
-        /// <summary>
-        /// Размер поля
-        /// </summary>
-        public int Size { get; internal set; }
-
-        /// <summary>
-        /// Тип
-        /// </summary>
-        public Type Type { get; internal set; }
-    }
-
     /// <summary>
     /// Класс работы с таблицой в базе
     /// </summary>
-    public class DBTable
+    public class PostgreSqlDBTable: IDBTable
     {
         #region Свойства
 
@@ -44,7 +16,7 @@ namespace ETLCommon
         /// <summary>
         /// База
         /// </summary>
-        public Database DB { get; }
+        public IDatabase DB { get; }
 
         /// <summary>
         /// Имя таблицы в базе
@@ -61,28 +33,23 @@ namespace ETLCommon
             {
                 Attributes = new List<DBAttribute>();
 
-                switch (DB.DatabaseType)
+                dynamic result = DB.Query(
+                    "select (column_name) as Name, (data_type) as Type, (column_default) as DefaultValue, (is_nullable) as Nullable, (character_maximum_length) as Size" +
+                    " from information_schema.columns" +
+                    $" where table_name = '{Name}'");
+
+                foreach (dynamic field in result)
                 {
-                    case DBType.PostgreSql:
-                        dynamic result = DB.Query(
-                            "select (column_name) as Name, (data_type) as Type, (column_default) as DefaultValue, (is_nullable) as Nullable, (character_maximum_length) as Size" +
-                            " from information_schema.columns" +
-                            $" where table_name = '{Name}'");
+                    string name = field.name;
+                    string nullable = field.nullable;
 
-                        foreach (dynamic field in result)
-                        {
-                            string name = field.name;
-                            string nullable = field.nullable;
-
-                            Attributes.Add(new DBAttribute {
-                                Default = field.defaultvalue,
-                                Name = name,
-                                Nullable = nullable.IsMatch("yes"),
-                                Size = field.size == null ? 0 : field.size,
-                                Type = DB.FromDBType(field.type)
-                            });
-                        }
-                        break;
+                    Attributes.Add(new DBAttribute {
+                        Default = field.defaultvalue,
+                        Name = name,
+                        Nullable = nullable.IsMatch("yes"),
+                        Size = field.size == null ? 0 : field.size,
+                        Type = DB.FromDBType(field.type)
+                    });
                 }
             }
             catch (Exception ex)
@@ -102,12 +69,8 @@ namespace ETLCommon
         {
             try
             {
-                switch (DB.DatabaseType)
-                {
-                    case DBType.PostgreSql:
-                        // Автоматически сгенерированные последовательности имею имя <имя таблицы>_id_seq
-                        return DB.Query($"select NEXTVAL('{Name}_id_seq') as id").Single().id;
-                }
+                // Автоматически сгенерированные последовательности имеют имя <имя таблицы>_id_seq
+                return DB.Query($"select NEXTVAL('{Name}_id_seq') as id").Single().id;
             }
             catch (Exception ex)
             {
@@ -123,12 +86,8 @@ namespace ETLCommon
         {
             try
             {
-                switch (DB.DatabaseType)
-                {
-                    case DBType.PostgreSql:
-                        // Автоматически сгенерированные последовательности имею имя <имя таблицы>_id_seq
-                        return DB.Query($"select CURRVAL('{Name}_id_seq') as id").Single().id;
-                }
+                // Автоматически сгенерированные последовательности имеют имя <имя таблицы>_id_seq
+                return DB.Query($"select CURRVAL('{Name}_id_seq') as id").Single().id;
             }
             catch (Exception ex)
             {
@@ -184,7 +143,7 @@ namespace ETLCommon
 
         #endregion CRUD
 
-        internal DBTable(Database db, string name)
+        internal PostgreSqlDBTable(IDatabase db, string name)
         {
             DB = db;
             Name = name;

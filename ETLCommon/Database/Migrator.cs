@@ -55,18 +55,14 @@ namespace ETLCommon
         {
             try
             {
-                dynamic result = DB.Query(
-                    "select exists (" +
-                    " select 1" +
-                    " from information_schema.tables" +
-                    " where table_name = 'etl_params')").First();
+                IDBTable table = DB["etl_params"];
 
                 // При отсутствии таблицы мигрируем базу до нулевой версии
-                if (!result.exists)
+                if (table == null)
                     UpTo("0.0.0");
                 else
                 {
-                    result = DB.Query(
+                    dynamic result = DB.Query(
                         "select value " +
                         " from etl_params" +
                         " where name = 'Version'").Single();

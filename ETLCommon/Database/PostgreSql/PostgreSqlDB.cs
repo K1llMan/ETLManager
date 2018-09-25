@@ -8,7 +8,7 @@ namespace ETLCommon
     {
         #region Свойства
 
-        public override DBTable this[string tableName]
+        public override IDBTable this[string tableName]
         {
             get
             {
@@ -21,7 +21,7 @@ namespace ETLCommon
                 if (result == null || !result.exists)
                     return null;
 
-                return new DBTable(this, tableName);
+                return new PostgreSqlDBTable(this, tableName);
             }
         }
 

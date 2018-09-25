@@ -12,7 +12,7 @@ namespace ETLProgramCommon
     {
         #region Поля
 
-        private DBTable table;
+        private IDBTable table;
         private DataTable dt;
 
         #endregion Поля
@@ -42,7 +42,7 @@ namespace ETLProgramCommon
             }
         }
 
-        public Entity(DBTable dbTable)
+        public Entity(IDBTable dbTable)
         {
             table = dbTable;
             dt = new DataTable();

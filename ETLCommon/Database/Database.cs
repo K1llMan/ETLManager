@@ -21,7 +21,7 @@ namespace ETLCommon
         /// <summary>
         /// Индексатор по таблицам базы. Для каждой базы получение данных о таблице может отличаться
         /// </summary>
-        public virtual DBTable this[string tableName]
+        public virtual IDBTable this[string tableName]
         {
             get { return null; }
         }

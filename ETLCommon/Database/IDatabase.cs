@@ -14,7 +14,7 @@ namespace ETLCommon
         /// <summary>
         /// Индексатор по таблицам
         /// </summary>
-        DBTable this[string tableName] { get; }
+        IDBTable this[string tableName] { get; }
 
         /// <summary>
         /// Тип базы данных
