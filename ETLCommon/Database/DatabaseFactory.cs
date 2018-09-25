@@ -71,13 +71,13 @@ namespace ETLCommon
             switch (dbType)
             {
                 case DBType.PostgreSql:
-                    return new PostgreSql(connectionString);
+                    return new PostgreSqlDB(connectionString);
 
                 case DBType.Oracle:
-                    return new Oracle(connectionString);
+                    return new OracleDB(connectionString);
 
                 case DBType.SqlServer:
-                    return new SqlServer(connectionString);
+                    return new SqlServerDB(connectionString);
             }
 
             return null;

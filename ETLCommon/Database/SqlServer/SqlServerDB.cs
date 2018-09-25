@@ -1,20 +1,20 @@
-﻿using System.Data.OracleClient;
+﻿using System.Data.SqlClient;
 
 namespace ETLCommon
 {
-    public class Oracle: Database, IDatabase
+    public class SqlServerDB: Database, IDatabase
     {
         #region Основные функции
 
-        public Oracle(string connection) : base(connection)
+        public SqlServerDB(string connection) : base(connection)
         {
-            DatabaseType = DBType.Oracle;
+            DatabaseType = DBType.SqlServer;
         }
 
         public override void Connect()
         {
             base.Connect();
-            connection = new OracleConnection(connectionStr);
+            connection = new SqlConnection(connectionStr);
             connection.Open();
         }
 

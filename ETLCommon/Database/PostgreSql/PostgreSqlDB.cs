@@ -4,7 +4,7 @@ using Npgsql;
 
 namespace ETLCommon
 {
-    public class PostgreSql: Database, IDatabase
+    public class PostgreSqlDB: Database, IDatabase
     {
         #region Свойства
 
@@ -29,7 +29,7 @@ namespace ETLCommon
 
         #region Основные функции
 
-        public PostgreSql(string connection) : base(connection)
+        public PostgreSqlDB(string connection) : base(connection)
         {
             DatabaseType = DBType.PostgreSql;
         }
