@@ -362,6 +362,19 @@ footer.page-footer {
     overflow: hidden;
 }
 
+/*
+    Scenarios
+*/
+#params-modal {
+    overflow-y: unset;    
+}
+
+#stages-container, #params {
+    height: 400px;
+    overflow-y: auto;
+}
+
+
 /* Hiding video controls 
 * See: https://css-tricks.com/custom-controls-in-html5-video-full-screen/
 * --------------------------------------- */

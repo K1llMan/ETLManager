@@ -8,7 +8,7 @@ using ETLCommon;
 
 namespace ETLProgramCommon
 {
-    public class Entity
+    public class Entity: IEnumerable<DataRow>
     {
         #region Поля
 
@@ -19,11 +19,46 @@ namespace ETLProgramCommon
 
         #region Вспомогательные функции
 
+        private bool CheckRowAttributes(object[] mapping)
+        {
+            return true;
+        }
 
+        protected void CopyValuesToRow(object[] mapping, DataRow row)
+        {
+            
+        }
+
+        protected DataRow FormDataRow(object[] mapping, bool generateID)
+        {
+            if (mapping == null)
+                return null;
+
+            if (!CheckRowAttributes(mapping))
+            {
+                // Сообщение об ошибках
+                return null;
+            }
+
+            DataRow row = dt.NewRow();
+            if (generateID)
+                row["ID"] = table.GetNextVal();
+
+            CopyValuesToRow(mapping, row);
+
+            return row;
+        }
 
         #endregion Вспомогательные функции
 
         #region Основные функции
+
+        public Entity(IDBTable dbTable)
+        {
+            table = dbTable;
+            dt = new DataTable();
+            dt.Columns.AddRange(table.Attributes.Select(a => new DataColumn(a.Name, a.Type)).ToArray());
+        }
 
         public void Select(string constr = "")
         {
@@ -40,15 +75,34 @@ namespace ETLProgramCommon
 
                 dt.Rows.Add(newRow);
             }
+
+            dt.AcceptChanges();
         }
 
-        public Entity(IDBTable dbTable)
+        public void Update()
         {
-            table = dbTable;
-            dt = new DataTable();
-            dt.Columns.AddRange(table.Attributes.Select(a => new DataColumn(a.Name, a.Type)).ToArray());
+            
+        }
+
+        public virtual void PumpRow(object[] mapping)
+        {
+            DataRow row = FormDataRow(mapping, true);
         }
 
         #endregion Основные функции
+
+        #region IEnumerable
+
+        public IEnumerator<DataRow> GetEnumerator()
+        {
+            return (IEnumerator<DataRow>)dt.Rows.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        #endregion IEnumerable
     }
 }

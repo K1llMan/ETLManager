@@ -10,7 +10,7 @@ const modal = htmlToElement(`
         <h4>Scenario name</h4>
         <div class="row">
         <h5>Parameters</h5>
-        <div class="col s3">
+        <div id="stages-container" class="col s3">
             <div id="stages" class="collection">            
             </div>
         </div>
