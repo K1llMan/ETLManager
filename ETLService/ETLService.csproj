@@ -40,7 +40,7 @@
     <None Include="wwwroot\index.html" />
   </ItemGroup>
 
-  <Import Project="$(SolutionDir)\Config\General.xml" />
+  <Import Project="..\Config\General.xml" />
 
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions> 
 
