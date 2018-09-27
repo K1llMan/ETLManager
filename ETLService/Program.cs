@@ -28,10 +28,10 @@ namespace ETLService
             var configuration = new ConfigurationBuilder()
                 .AddCommandLine(args)
                 .Build();
-
+            /*
             var hostUrl = configuration["urls"];
             if (string.IsNullOrEmpty(hostUrl))
-                hostUrl = "http://localhost:50828";
+                hostUrl = "http://localhost:50828";*/
 
             return WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
@@ -39,7 +39,7 @@ namespace ETLService
                     options.Limits.MaxConcurrentConnections = 100;
                     options.Limits.MaxConcurrentUpgradedConnections = 100;
                 })
-                .UseUrls(hostUrl)
+                //.UseUrls(hostUrl)
                 // Установка папки с сайтом
                 //.UseWebRoot("static")
                 .Build();

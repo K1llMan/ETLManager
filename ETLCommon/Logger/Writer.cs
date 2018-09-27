@@ -131,7 +131,8 @@ namespace ETLCommon
                     sw = new StreamWriter(parameters["File"].ToString(), true, Encoding.UTF8);
                     break;
                 case WriterType.Console:
-                    sw = new StreamWriter(Console.OpenStandardOutput(), Encoding.GetEncoding(866));
+                    sw = new StreamWriter(Console.OpenStandardOutput(), Encoding.UTF8);
+                    Console.OutputEncoding = Encoding.UTF8;
                     Console.SetOut(sw);
                     break;
             }
