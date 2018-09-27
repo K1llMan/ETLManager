@@ -16,6 +16,7 @@ namespace ETLService.Manager
         #region Поля
 
         private ETLHistory history;
+        private Process prc;
 
         #endregion Поля
 
@@ -89,7 +90,7 @@ namespace ETLService.Manager
                 WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory
             };
 
-            Process prc = Process.Start(psi);
+            prc = Process.Start(psi);
             ProcessID = prc.Id;
             prc.EnableRaisingEvents = true;
 
@@ -110,6 +111,15 @@ namespace ETLService.Manager
                 OnStart?.GetInvocationList().ToList().ForEach(d => OnStart -= (StartEventHandler)d);
                 OnExit?.GetInvocationList().ToList().ForEach(d => OnExit -= (ExitEventHandler)d);
             };
+        }
+
+        /// <summary>
+        /// Аварийная остановка закачки
+        /// </summary>
+        public void Terminate()
+        {
+            if (!prc.HasExited)
+                prc.Kill();
         }
 
         public void Init(string fileName)

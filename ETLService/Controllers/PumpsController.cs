@@ -21,8 +21,16 @@ namespace ETLService.Controllers
             return WebAPI.Success(Program.Manager.Pumps.Select(p => p.ConfigData));
         }
 
-        // GET api/pumps/registry/{id}
-        [HttpGet("registry/{id}")]
+        // PUT api/pumps/registry
+        [HttpPut("registry")]
+        public object UpdateRegistry()
+        {
+            int count = Program.Manager.UpdateManager.Updates.Count;
+            return WebAPI.Success($"Применено {Program.Manager.ApplyUpdates()} из {count}");
+        }
+
+        // GET api/pumps/{id}/registry
+        [HttpGet("{id}/registry")]
         public object GetRegistry(string id)
         {
             ETLProcess prc = Program.Manager.Pumps.FirstOrDefault(p => p.ProgramID == id);
@@ -32,16 +40,8 @@ namespace ETLService.Controllers
             return WebAPI.Error("Отсутствует закачка с заданным идентификатором.");
         }
 
-        // PUT api/pumps/registry
-        [HttpPut("registry")]
-        public object UpdateRegistry()
-        {
-            int count = Program.Manager.UpdateManager.Updates.Count;
-            return WebAPI.Success($"Применено {Program.Manager.ApplyUpdates()} из {count}");
-        }
-
-        // POST api/pumps/execute/pump1
-        [HttpPost("execute/{id}")]
+        // POST api/pumps/pump1/execute
+        [HttpPost("{id}/execute")]
         public object Execute(string id, [FromBody]JObject data)
         {
             try
@@ -53,6 +53,19 @@ namespace ETLService.Controllers
             catch (Exception ex)
             {
                 return WebAPI.Error($"Ошибка при запуске закачки \"{id}\": {ex.Message}");
+            }
+        }
+
+        // POST api/pumps/pump1/terminate
+        [HttpGet("{id}/terminate")]
+        public void Terminate(string id)
+        {
+            try
+            {
+                Program.Manager.Terminate(id);
+            }
+            catch (Exception ex)
+            {
             }
         }
 

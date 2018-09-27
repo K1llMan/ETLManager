@@ -216,6 +216,15 @@ namespace ETLService.Manager
             return sessNo;
         }
 
+        /// <summary>
+        /// Аварийное завершение закачки
+        /// </summary>
+        public void Terminate(string id)
+        {
+            ETLProcess pump = Pumps.FirstOrDefault(p => p.IsExecuting && p.ProgramID == id);
+            pump?.Terminate();
+        }
+
         public List<ETLLogRecord> GetLog(decimal sessNo)
         {
             dynamic record = Context.History[sessNo];

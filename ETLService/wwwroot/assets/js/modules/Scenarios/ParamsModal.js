@@ -40,7 +40,7 @@ function getStageItem(stage) {
 }
 
 function runPump(config) {
-    Request.send(`api/pumps/execute/${config.id}`, {
+    Request.send(`api/pumps/${config.id}/execute`, {
         'info': {
             'method': 'POST',
             'headers': {

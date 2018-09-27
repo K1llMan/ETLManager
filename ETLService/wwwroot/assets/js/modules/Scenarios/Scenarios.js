@@ -160,7 +160,7 @@ function updateRegistry(page) {
 
 class Scenarios extends PageCommon {
     constructor(app, container) {
-        super(app, container);
+        super(app, container, 'Scenarios');
 
         let page = getPage();
 

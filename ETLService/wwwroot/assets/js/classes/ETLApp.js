@@ -127,7 +127,7 @@ class ETLApp {
 
                     li.addEventListener('click', () => window.location.hash = k);
 
-                    nav.prepend(li);
+                    nav.append(li);
                 });
 
                 window.dispatchEvent(new HashChangeEvent('hashchange'));
@@ -190,16 +190,17 @@ class ETLApp {
 
         import(`../modules/${moduleName}/${moduleName}.js`)
             .then((module) => {
-                console.log(`"${moduleName}" loaded.`);
                 this.module = new module.module(this, document.querySelector('.main-content'));
-
                 this.readyForDisplay = true;
-        });
+            });
+    }
+
+    renderErrorPage() {
+        document.querySelector('.main-content').innerHTML = '<h3>Sorry, something went wrong :(</h3>';
+        this.readyForDisplay = true;
     }
 
     render(url) {
-        console.log(url);
-
         // Get the keyword from the url.
         let temp = url.split('/')[0];
 
@@ -212,7 +213,7 @@ class ETLApp {
             if (document.querySelectorAll(`[href = "${temp}"]`).length === 0) {
                 //loadModule(modules[Object.keys(modules)[0]]);
             }
-            //renderErrorPage();
+            this.renderErrorPage();
         }
     }
 

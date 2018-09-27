@@ -29,6 +29,11 @@ namespace ETLService.Controllers
                         { "displayName", "Scenarios" },
                         { "script", "Scenarios" }
                     }
+                },
+                { "#history", new Dictionary<string, string> {
+                        { "displayName", "History" },
+                        { "script", "History" }
+                    }
                 }
             };
         }

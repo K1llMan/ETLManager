@@ -231,61 +231,6 @@ footer.page-footer {
     padding: 0px;
 }
 
-/*--------------------
-    .scenarios-page 
---------------------*/
-.scenarios-page {
-}
-
-.badges-container {
-    margin-left: auto;
-}
-
-.badges-container .badge {
-    margin-right: 5px;
-}
-
-.pumpRow {
-    display: flex;
-    align-items: center;
-}
-
-.pumpRow #buttons i {
-    font-size: 3.25rem;
-    cursor: pointer;
-}
-
-#info {
-    font-weight: bold;
-    line-height: 24px;
-    font-size: 18px;
-}
-
-#info div:not(.valign-wrapper) {
-    font-weight: normal;
-    font-size: 14px
-}
-
-#info span{
-    margin-right: 1rem;
-}
-
-#info i {
-    margin-right: 1rem;
-}
-
-#stages .collection-item {
-    display: flex;
-}
-
-#stages .switch {
-    margin-left: auto;
-}
-
-.update-record div {
-    margin-bottom: 2px;
-}
-
 .backgroundVideo {
     position: absolute;
     right: 0;
@@ -361,19 +306,6 @@ footer.page-footer {
 #section-intro{
     overflow: hidden;
 }
-
-/*
-    Scenarios
-*/
-#params-modal {
-    overflow-y: unset;    
-}
-
-#stages-container, #params {
-    height: 400px;
-    overflow-y: auto;
-}
-
 
 /* Hiding video controls 
 * See: https://css-tricks.com/custom-controls-in-html5-video-full-screen/
