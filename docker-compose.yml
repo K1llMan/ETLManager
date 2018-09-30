@@ -1,8 +1,17 @@
 version: '3.4'
 
 services:
+  postgres:
+    image: postgres
+    ports:
+      - "5432:5432"
+
   etlservice:
     image: ${DOCKER_REGISTRY}etlservice
     build:
       context: .
       dockerfile: ETLService/Dockerfile
+    links:
+      - "postgres"
+    ports:
+      - "35000:80"

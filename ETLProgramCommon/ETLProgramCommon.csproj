@@ -12,5 +12,5 @@
     <Folder Include="DataAccess\" />
   </ItemGroup>
 
-  <Import Project="$(SolutionDir)\Config\General.xml" /> 
+  <Import Project="..\Config\General.xml" /> 
 </Project>
