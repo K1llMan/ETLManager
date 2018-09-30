@@ -13,5 +13,7 @@ services:
       dockerfile: ETLService/Dockerfile
     links:
       - "postgres"
+    depends_on:
+      - "postgres"
     ports:
-      - "35000:80"
+      - "35000:80"  

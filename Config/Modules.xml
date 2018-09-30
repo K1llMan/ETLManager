@@ -9,6 +9,14 @@
     </AllowedReferenceRelatedFileExtensions>
   </PropertyGroup>
   
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>$(OutputPath)\Registry\Modules</OutputPath>
+    <AllowedReferenceRelatedFileExtensions Condition=" '$(AllowedReferenceRelatedFileExtensions)' == '' ">
+      .pdb;
+      .xml
+    </AllowedReferenceRelatedFileExtensions>
+  </PropertyGroup>  
+  
   <Target Name="ClearReferenceCopyLocalPaths" AfterTargets="ResolveAssemblyReferences">
     <Message Importance="High" Text="Cleaning references..." />
     <ItemGroup>
