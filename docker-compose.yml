@@ -16,4 +16,9 @@ services:
     depends_on:
       - "postgres"
     ports:
-      - "35000:80"  
+      - "35000:80"
+    # Registry
+    volumes:
+       - registry-data:/app/Registry
+volumes:
+  - registry-data:

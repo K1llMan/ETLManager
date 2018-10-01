@@ -2,28 +2,38 @@ FROM microsoft/aspnetcore:2.0 AS base
 WORKDIR /app
 
 FROM microsoft/aspnetcore-build:2.0 AS build
+ARG Configuration=Release
 WORKDIR /src
-COPY Config/General.xml Config/
+# Copy configs
+COPY Config/*.xml Config/
+# Copy projects
 COPY ETLService/ETLService.csproj ETLService/
-COPY ETLService/ETLSettings.docker.json ETLService/ETLSettings.json
 COPY ETLCommon/ETLCommon.csproj ETLCommon/
-RUN dotnet restore ETLService/ETLService.csproj
-COPY . .
-WORKDIR /src/ETLService
-RUN dotnet build ETLService.csproj -c Release -o /app
 
-WORKDIR /src
 COPY ETLApp/ETLApp.csproj ETLApp/
 COPY ETLProgram/ETLProgram.csproj ETLProgram/
 COPY ETLProgramCommon/ETLProgramCommon.csproj ETLProgramCommon/
-RUN dotnet restore ETLApp/ETLApp.csproj
-COPY . .
-WORKDIR /src/ETLApp
-RUN dotnet build ETLApp.csproj -c Release -o /app
 
+# Copy ETL config
+COPY ETLService/ETLSettings.docker.json ETLService/ETLSettings.json
+
+# Restore dependencies
+RUN dotnet restore ETLService/ETLService.csproj
+RUN dotnet restore ETLApp/ETLApp.csproj
+
+# Build projects
+COPY . .
 WORKDIR /src/ETLService
+RUN dotnet build ETLService.csproj -c $Configuration -o /app
+WORKDIR /src/ETLApp
+RUN dotnet build ETLApp.csproj -c $Configuration -o /app
+
+WORKDIR /src
 FROM build AS publish
-RUN dotnet publish ETLService.csproj -c Release -o /app
+ARG Configuration=Release
+# Publish
+RUN dotnet publish /ETLService/ETLService.csproj -c $Configuration -o /app
+RUN dotnet publish /ETLApp/ETLApp.csproj -c $Configuration -o /app
 
 #FROM microsoft/aspnetcore-build:2.0 AS publish
 #COPY Release/ app/
