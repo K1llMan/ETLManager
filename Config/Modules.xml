@@ -1,5 +1,5 @@
 <Project> 
-  <Import Project="$(SolutionDir)\Config\General.xml" />
+  <Import Project="General.xml" />
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>$(OutputPath)\Registry\Modules</OutputPath>

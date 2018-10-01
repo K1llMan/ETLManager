@@ -15,5 +15,5 @@
     <ProjectReference Include="..\ETLProgram\ETLProgram.csproj" />
   </ItemGroup>
 
-  <Import Project="$(SolutionDir)\Config\Modules.xml" /> 
+  <Import Project="..\Config\Modules.xml" /> 
 </Project>
