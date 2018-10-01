@@ -22,5 +22,5 @@ services:
        - registry-data:/app/Registry
        - config-data:/app/Config
 volumes:
-  - registry-data:
-  - config-data:
+  registry-data: 
+  config-data: 

@@ -15,7 +15,7 @@ COPY ETLProgram/ETLProgram.csproj ETLProgram/
 COPY ETLProgramCommon/ETLProgramCommon.csproj ETLProgramCommon/
 
 # Copy ETL config
-COPY ETLService/ETLSettings.docker.json ETLService/ETLSettings.json
+COPY ETLService/Config/ETLSettings.docker.json ETLService/Config/ETLSettings.json
 
 # Restore dependencies
 RUN dotnet restore ETLService/ETLService.csproj
@@ -28,16 +28,12 @@ RUN dotnet build ETLService.csproj -c $Configuration -o /app
 WORKDIR /src/ETLApp
 RUN dotnet build ETLApp.csproj -c $Configuration -o /app
 
-WORKDIR /src
 FROM build AS publish
 ARG Configuration=Release
+WORKDIR /src
 # Publish
-RUN dotnet publish /ETLService/ETLService.csproj -c $Configuration -o /app
-RUN dotnet publish /ETLApp/ETLApp.csproj -c $Configuration -o /app
-
-#FROM microsoft/aspnetcore-build:2.0 AS publish
-#COPY Release/ app/
-#RUN dotnet restore
+RUN dotnet publish ETLService/ETLService.csproj -c $Configuration -o /app
+RUN dotnet publish ETLApp/ETLApp.csproj -c $Configuration -o /app
 
 FROM base AS final
 WORKDIR /app

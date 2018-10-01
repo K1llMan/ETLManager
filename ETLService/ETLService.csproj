@@ -44,12 +44,6 @@
   </ItemGroup>
   
   <Import Project="..\Config\General.xml" />
-  
-  <Target Name="wwwCopy" AfterTargets="AfterBuild" Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-     <Message Importance="High" Text="Copying site..." />
-    <Copy SourceFiles="@(SiteItems)" DestinationFolder="$(OutputPath)\wwwroot\%(RecursiveDir)" />
-  </Target>   
-  
 
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions> 
 
