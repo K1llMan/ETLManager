@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="ETLSettings.json">
+    <Content Update="Config\ETLSettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="Registry\Migrations\Migration0.json">

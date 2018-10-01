@@ -72,7 +72,7 @@ namespace ETLApp
         {
             try
             {
-                context = new ETLContext(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ETLSettings.json"));
+                context = new ETLContext(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config", "ETLSettings.json"));
                 context.Initialize();
 
                 decimal sessNo = Convert.ToDecimal(args[0]);

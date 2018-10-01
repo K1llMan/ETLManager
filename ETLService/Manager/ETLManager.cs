@@ -241,7 +241,7 @@ namespace ETLService.Manager
         public ELTManager()
         {
             string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            Context = new ETLContext(Path.Combine(baseDir, "ETLSettings.json"));
+            Context = new ETLContext(Path.Combine(baseDir, "Config", "ETLSettings.json"));
 
             // Соединение с базой
             try
