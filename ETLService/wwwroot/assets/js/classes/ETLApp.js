@@ -81,7 +81,16 @@ const broadcastHandlers = {
         delete document.app.etlContext.updates[programID];
 
         let config = registry.find((c) => c.programID = programID);
-        registry[registry.indexOf(config)] = data.config;
+        if (config != null)
+            registry[registry.indexOf(config)] = data.config;
+        else {
+            registry.push(data.config);
+
+            // Sort data after adding new records
+            document.app.etlContext.registry = registry.sort(function (a, b) {
+                return parseInt(a.desc.dataCode) - parseInt(b.desc.dataCode);
+            });
+        }
 
         document.querySelector('#updatesBtn').classList.toggle('hide',
             Object.keys(document.app.etlContext.updates).length == 0);
