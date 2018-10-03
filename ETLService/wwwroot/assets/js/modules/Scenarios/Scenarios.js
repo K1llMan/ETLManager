@@ -30,12 +30,16 @@ function getCollapsibleItem(id) {
 
 const broadcastHandlers = {
     'startPump': (data) => {
+        document.app.etlContext.statuses[data.id] = 'Running';
+
         let icon = document.querySelector(`#${data.id} #info .material-icons`);
-        setStatus(icon, "Running");
+        setStatus(icon, 'Running');
 
         updateBadges(icon.closest('li'));
     },
     'endPump': (data) => {
+        document.app.etlContext.statuses[data.id] = data.status;
+
         let icon = document.querySelector(`#${data.id} #info .material-icons`);
         setStatus(icon, data.status);
 

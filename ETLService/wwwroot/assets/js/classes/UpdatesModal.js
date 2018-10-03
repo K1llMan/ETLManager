@@ -24,10 +24,12 @@ function getChip(tag) {
 }
 
 function getUpdateRecord(update, config) {
+    let status = document.app.etlContext.statuses[update.programID];
+
     let record = htmlToElement(`
         <li id="${update.programID}" class="collection-item flow-right update-record">
             <label>
-                <input type="checkbox" />
+                <input type="checkbox" ${status == 'Running' ? 'disabled = "disabled"' : '' } />
                 <span></span>
             </label>
             <div>
