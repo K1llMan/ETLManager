@@ -85,6 +85,8 @@ const broadcastHandlers = {
 
         document.querySelector('#updatesBtn').classList.toggle('hide',
             Object.keys(document.app.etlContext.updates).length == 0);
+
+        M.toast({ html: `"${programID}" updated!` });
     }
 }
 
