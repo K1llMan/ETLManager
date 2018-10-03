@@ -1,4 +1,5 @@
 ﻿import { htmlToElement } from "./utils.js";
+import { Request } from "./Request.js"
 
 function getHtml() {
     return htmlToElement(`
@@ -24,7 +25,7 @@ function getChip(tag) {
 
 function getUpdateRecord(update, config) {
     let record = htmlToElement(`
-        <li class="collection-item flow-right update-record">
+        <li id="${update.programID}" class="collection-item flow-right update-record">
             <label>
                 <input type="checkbox" />
                 <span></span>
@@ -45,10 +46,32 @@ function getUpdateRecord(update, config) {
     return record;
 }
 
+function applyUpdates(modal) {
+    let checked = [...modal.querySelectorAll('li')]
+        .filter((li) => li.querySelector('input:checked') != null)
+        .map((li) => li.id);
+
+    if (checked == null || checked.length == 0)
+        return;
+
+    Request.send('api/updates', {
+        'info': {
+            'method': 'PUT',
+            'headers': {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            'body': JSON.stringify(checked)
+        }
+    });
+}
+
 class UpdatesModal {
     constructor(parent) {
         this.modal = getHtml();
         parent.appendChild(this.modal);
+
+        this.modal.querySelector('#runUpdate').addEventListener('click', () => applyUpdates(this.modal));
 
         M.Modal.init(this.modal, { });
     }

@@ -74,7 +74,17 @@ const broadcastHandlers = {
             Object.keys(document.app.etlContext.updates).length == 0);
     },
     'update': (data) => {
+        let registry = document.app.etlContext.registry;
+        let programID = data.info.programID;
 
+        // Remove update record
+        delete document.app.etlContext.updates[programID];
+
+        let config = registry.find((c) => c.programID = programID);
+        registry[registry.indexOf(config)] = data.config;
+
+        document.querySelector('#updatesBtn').classList.toggle('hide',
+            Object.keys(document.app.etlContext.updates).length == 0);
     }
 }
 
@@ -171,7 +181,7 @@ class ETLApp {
             }
         });
 
-        Request.send('api/pumps/updates',{
+        Request.send('api/updates',{
             'success': (d) => {
                 this.etlContext.updates = d.data;
                 document.querySelector('#updatesBtn').classList.toggle('hide', Object.keys(this.etlContext.updates).length == 0);

@@ -44,7 +44,8 @@ const broadcastHandlers = {
     'receiveUpdate': (data) => {
     },
     'update': (data) => {
-
+        // Update pumps list
+        updateRegistry(document.app.module);
     }
 }
 

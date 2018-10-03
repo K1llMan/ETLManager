@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
 
+using ETLService.Manager;
+
 using Microsoft.AspNetCore.Mvc;
+
+using Newtonsoft.Json.Linq;
 
 namespace ETLService.Controllers
 {
@@ -38,6 +42,7 @@ namespace ETLService.Controllers
             };
         }
 
+        // GET api/info
         [HttpGet("info")]
         public object GetVersion()
         {
@@ -45,5 +50,21 @@ namespace ETLService.Controllers
                 { "version", Program.Manager.Context.Version }
             };
         }
+
+        // GET api/updates
+        [HttpGet("updates")]
+        public object GetUpdates()
+        {
+            return WebAPI.Success(Program.Manager.UpdateManager.Updates);
+        }
+
+        // PUT api/updates
+        [HttpPut("updates")]
+        public object UpdateRegistry([FromBody]string[] updates)
+        {
+            int count = Program.Manager.UpdateManager.Updates.Count;
+            return WebAPI.Success($"Применено {Program.Manager.ApplyUpdates(updates)} из {count}");
+        }
+
     }
 }

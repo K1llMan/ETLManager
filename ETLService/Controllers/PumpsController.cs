@@ -21,14 +21,6 @@ namespace ETLService.Controllers
             return WebAPI.Success(Program.Manager.Pumps.Select(p => p.ConfigData));
         }
 
-        // PUT api/pumps/registry
-        [HttpPut("registry")]
-        public object UpdateRegistry()
-        {
-            int count = Program.Manager.UpdateManager.Updates.Count;
-            return WebAPI.Success($"Применено {Program.Manager.ApplyUpdates()} из {count}");
-        }
-
         // GET api/pumps/{id}/registry
         [HttpGet("{id}/registry")]
         public object GetRegistry(string id)
@@ -85,13 +77,6 @@ namespace ETLService.Controllers
                 p => p.IsExecuting 
                     ? "Running" 
                     :  p.LastStatus.ToString()));
-        }
-
-        // GET api/pumps/updates
-        [HttpGet("updates")]
-        public object GetUpdates()
-        {
-            return WebAPI.Success(Program.Manager.UpdateManager.Updates);
         }
     }
 }
