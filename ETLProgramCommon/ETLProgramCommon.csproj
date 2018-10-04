@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentFTP" Version="19.2.2" />
     <PackageReference Include="SharpCompress" Version="0.22.0" />
   </ItemGroup>
 
