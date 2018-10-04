@@ -11,9 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ETLProgramCommon\ETLProgramCommon.csproj" />
-    <ProjectReference Include="..\ETLProgram\ETLProgram.csproj" />
+    <ProjectReference Include="..\..\ETLProgramCommon\ETLProgramCommon.csproj" />
+    <ProjectReference Include="..\..\ETLProgram\ETLProgram.csproj" />
   </ItemGroup>
 
-  <Import Project="..\Config\Modules.xml" /> 
+  <Import Project="..\..\Config\Modules.xml" /> 
 </Project>

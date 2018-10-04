@@ -4,7 +4,7 @@ using System.Threading;
 using ETLApp;
 using ETLCommon;
 
-using ETLProgramCommon;
+using ETLProgramCommon.DataAccess;
 
 namespace TestPump
 {
@@ -16,8 +16,10 @@ namespace TestPump
             Logger.WriteToTrace("Тестирование метода закачки 1");
             Logger.WriteToTrace(RootInDir.ToString());
 
-            Entity ent = new Entity(Context.DB["etl_params"]);
-            ent.Select();
+            Archivator.ExtractAll(RootInDir, RootOutDir);
+
+            //Entity ent = new Entity(Context.DB["etl_params"]);
+            //ent.Select();
 
             if (Convert.ToBoolean(UserParams["deleteData"]))
                 Logger.WriteToTrace(UserParams["deleteData"].ToString());
