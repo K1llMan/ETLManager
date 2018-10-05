@@ -25,11 +25,7 @@ namespace TestPump
             FtpConnector connector = new FtpConnector(new FtpParams {
                 Host = "host",
                 Credentials = new NetworkCredential("name", "pass"),
-                Proxy = new ProxyInfo {
-                    Host = "proxy",
-                    Port = 8800,
-                    Credentials = new NetworkCredential("name", "pass")
-                }
+                Proxy = Context.Settings.Proxy.As<ProxyInfo>()
             });
 
             connector.Connect();

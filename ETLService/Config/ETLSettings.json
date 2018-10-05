@@ -1,6 +1,14 @@
 ﻿{
   "RegistryPath": "",
-  "Proxy": {},
+  "Proxy": {
+    "Enabled":  true, 
+    "Host": "host",
+    "Port": 1023,
+    "Credential": {
+      "UserName": "user",
+      "Password": "pass"
+    }
+  },
   "Database": "postgresql://dv41pg:dv@fm-pg1:5432/dv41pg", //"postgresql://postgres:@localhost:5432/postgres",
   "JWTKey": "s0f34m0wjm439gjs9g[43fgse45"
   //"Database": "sqlserver://sysdba:masterkey@localhost/mssql2005;Persist Security Info=True;"

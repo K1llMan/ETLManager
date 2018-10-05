@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace ETLCommon
@@ -80,6 +81,9 @@ namespace ETLCommon
 
         public string ConnectString { get; }
 
+        public ETLProxy Proxy { get; }
+
+
         #endregion Свойства
 
         #region Основные функции
@@ -95,6 +99,7 @@ namespace ETLCommon
             Registry = new ETLRegistrySettings(path);
             JWTKey = data["JWTKey"].ToString();
             ConnectString = data["Database"].ToString();
+            Proxy = JsonConvert.DeserializeObject<ETLProxy>(data["Proxy"].ToString());
         }
 
         #endregion Основные функции
