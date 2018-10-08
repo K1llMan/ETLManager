@@ -34,6 +34,12 @@ namespace TestPump
             connector.GetFiles(RootOutDir.FullName);
         }
 
+        private void ServiceTest()
+        {
+            TestWebService service = new TestWebService("http://url.com/api/", Context.Settings.Proxy.As<IWebProxy>());
+            string data = service.GetData();
+        }
+
         #endregion Тесты
 
 
@@ -45,6 +51,7 @@ namespace TestPump
 
             //ArchivesTest();
             //FtpTest();
+            //ServiceTest();
 
             if (Convert.ToBoolean(UserParams["deleteData"]))
                 Logger.WriteToTrace(UserParams["deleteData"].ToString());
