@@ -7,4 +7,16 @@
         : template.content.firstElementChild;
 }
 
-export { htmlToElement };
+function addLink(path) {
+    let link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = path;
+    link.media = 'screen,projection';
+
+    document.head.appendChild(link);
+
+    return link;
+}
+
+export { htmlToElement, addLink };

@@ -42,6 +42,12 @@
   <ItemGroup>
     <SiteItems Include="wwwroot\**\*.*" />
   </ItemGroup>
+  <ItemGroup>
+    <SiteItems Remove="wwwroot\assets\js\components\Select.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\assets\css\components\" />
+  </ItemGroup>
   
   <Import Project="..\Config\General.xml" />
 

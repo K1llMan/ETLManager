@@ -16,7 +16,7 @@ function getHtml(params) {
     `);
 
     if (params.id != null)
-        element.id = id;
+        element.id = params.id;
 
     return element;
 }
@@ -32,6 +32,14 @@ class Checkbox extends Component {
         let input = this.element.querySelector('input');
         input.checked = obj[field];
         input.addEventListener('input', () => setValue(input, obj, field));
+    }
+
+    get checked() {
+        return this.element.querySelector('input').checked;
+    }
+
+    set checked(value) {
+        this.element.querySelector('input').checked = value;
     }
 }
 

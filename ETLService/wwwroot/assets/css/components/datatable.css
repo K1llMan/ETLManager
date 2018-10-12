@@ -1,0 +1,118 @@
+.datatable {
+    background-color: #ffffff;
+    font-family: Roboto;
+    color: rgba(0, 0, 0, 0.7);
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+.datatable a {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.datatable .header, .datatable .footer {
+    padding: 20px 0;
+    height: 64px;
+}
+
+.datatable .header.hide,
+.datatable .footer.hide {
+    visibility: collapse;
+}
+
+.datatable .header {
+    font-size: 20px;
+    padding-left: 30px;
+}
+
+.datatable .data {
+    overflow-x: auto;
+}
+
+.datatable table {
+    //white-space: nowrap;
+}
+
+.datatable td:not(.select), th:not(.select) {
+    padding: 15px 20px 15px 60px;
+    height: 48px;
+    font-weight: bold;
+
+    max-width: 500px;
+    min-width: 200px;
+}
+
+.datatable td.select, th.select {
+    padding: 12px 0 12px 30px;
+    width: 36px;
+}
+
+.datatable th {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.38);
+}
+
+.datatable td {
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.datatable tr:hover {
+    background-color: #eeeeee;
+}
+
+.datatable td.editable, td.clickable {
+    cursor: pointer;
+}
+
+.datatable .footer {
+    display: flex;
+    line-height: 1.5em;
+}
+
+.datatable .footer label {
+    padding: 0 10px;
+}
+
+.datatable .footer a {
+    color: rgba(0, 0, 0, 0.6);
+    padding: 12px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.datatable .footer a i {
+    width: 24px;    
+}
+
+.datatable .footer a:hover i {
+    background-color: #eeeeee;
+}
+
+.datatable .footer a.disabled {
+    color: rgba(0, 0, 0, 0.25);
+}
+
+.datatable .pagination {
+    width: 120px;    
+}
+
+.datatable select.browser-default {
+    width: 50px;
+    height: 24px;
+    font-size: 12px;
+    padding: 0;
+    margin: 0 15px;
+}
+
+.datatable #editDialog {
+    z-index: 5000;
+    background-color: #ffffff;
+    padding: 16px;
+
+    width: 300px;
+
+    position: absolute;
+    top: 50px;
+    left: 600px;
+}
