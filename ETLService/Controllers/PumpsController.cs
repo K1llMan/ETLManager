@@ -78,5 +78,13 @@ namespace ETLService.Controllers
                     ? "Running" 
                     :  p.LastStatus.ToString()));
         }
+
+        // GET api/pumps/history
+        [HttpGet("history")]
+        public object GetHistory([FromBody]JObject filter)
+        {
+            return null;
+            //return Program.Manager.Context.History.
+        }
     }
 }

@@ -79,148 +79,7 @@ import * as components from "./components.js";
 */
 /*
 (function ($) {
-    var datatable;
-    var opt = {
-        'tableHeader': '',
-        'fields': {
-        },
-        'data': {
-            'total': 100,
-            'page': 1,
-            'pageSize': 10,
-            'pageCount': 1,
-            'rows': [],            
-        },
-        'hideHeader': false,
-        'hideFooter': false,
-        'hideSelection': false,
-        'getData': function(page, pageSize, sort, sortDir, updateData) {
-
-        },
-        'beforeDelete': function(rows) {
-            
-        }
-    };
-
     function getTable() {
-        var table = $('<div class="data"><table><thead><tr></tr></thead><tbody></tbody></table></div>');
-        table.setHeaders = function() {
-            var head = this.find('thead tr');
-            head.append(addHeaderCheckBox());
-            $.each(Object.keys(opt.fields), function (i, el) {
-                var cell = $('<th></th>');
-                cell.attr('id', el);
-                cell.html(opt.fields[el].header);
-
-                head.append(cell);
-            });
-        }
-
-        table.setRows = function() {
-            var body = this.find('tbody');
-            body.html('');
-            for (var i = 0; i < opt.data.pageSize; i++) {
-                var tableRow = $('<tr></tr>');
-                tableRow.attr('num', i);
-                tableRow.append(addCheckBox('check_' + i));
-
-                $.each(Object.keys(opt.fields), function (i, key) {
-                    var cell = $('<td></td>');
-                    cell.attr('id', key);
-                    cell.html();
-
-                    var field = opt.fields[key];
-
-                    if (field && field.editable) {
-                        cell.toggleClass('editable');
-
-                        cell.click(function() {
-                            var dialog = datatable.editDialog;
-                            // Set position and header
-                            dialog.find('label').html(field.header);
-                            dialog.css(cell.offset());
-
-                            // Init input area
-                            var area = dialog.find('#editArea');
-                            area.val(cell.html());
-                            area.trigger('autoresize');
-
-                            // Init character counter, size must be always set
-                            area.attr('length', field.size);
-                            area.characterCounter();
-
-                            dialog.show();
-                            area.focus();
-
-                            // Set save handler
-                            var btnSave = dialog.find('#btnSave');
-                            btnSave.off('click');
-                            btnSave.click(function () {
-                                var value = area.val();
-                                if (value.length > field.size) {
-                                    Materialize.toast('Value is too long', 3000);
-                                    return;
-                                }
-
-                                var rowNum = parseInt(cell.closest('tr').attr('num'), 10);
-                                var rowData = opt.data.rows[rowNum];
-                                rowData[key] = area.val();
-                                cell.html(rowData[key]);
-
-                                if (field.afterEdit)
-                                    field.afterEdit(rowData);
-
-                                dialog.hide();
-                            });
-                        });
-                    }
-
-                    tableRow.append(cell);
-                });
-
-                body.append(tableRow);
-            }
-
-            table.hideColumns();
-            table.hideSelection();
-        }
-
-        table.updateData = function (data) {
-            opt.data = data;
-
-            // Update counters
-            datatable.footer.counter.update();
-
-            datatable.footer.find("#page-left").toggleClass('disabled', opt.data.page == 1);
-            datatable.footer.find("#page-right").toggleClass('disabled', opt.data.page == opt.data.pageCount);
-
-            // Fill rows set
-            table.setRows();
-
-            // Fill rows
-            var body = table.find('tbody');
-            $.each(opt.data.rows, function (i, row) {
-                var tableRow = body.find('tr:nth-child(' + (i + 1) + ')');
-                if (tableRow.length == 0)
-                    return;
-
-                tableRow.css({ 'borderBottom': '' });
-                tableRow.show();
-
-                $.each(Object.keys(opt.fields), function (i, key) {
-                    var field = opt.fields[key];
-                    var cell = tableRow.find('#' + key);
-                    if (field.init && !field.editable)
-                        opt.fields[key].init(cell, row);
-                    else
-                        cell.html(row[key]);
-                });
-            });
-
-            //body.find('tr:nth-child(' + (opt.data.rows.length) + ')').css({ 'borderBottom': 'none' });
-            body.find('tr:nth-child(n+' + (opt.data.rows.length + 1) + ')').hide();
-        }
-
         table.getSelected = function() {
             return this.find('tbody tr:visible').has('input:checked');
         }
@@ -243,114 +102,9 @@ import * as components from "./components.js";
             this.getData();
         }
 
-        table.getData = function() {
-            if (!opt.getData)
-                return;
-
-            opt.getData(opt.data.page, opt.data.pageSize, null, 'asc', table.updateData);
-        }
-
-        table.hideColumns = function() {
-            // Show all columns
-            this.find('th:not(.select),td:not(.select)').show();
-
-            // Hide selected
-            $.each(Object.keys(opt.fields), function (i, key) {
-                if (!opt.fields[key].hidden)
-                    return;
-
-                var cols = datatable.find('table #' + key);
-                cols.hide();
-            });            
-        }
-
-        table.hideSelection = function() {
-            var column = this.find('table .select');
-            if (opt.hideSelection)
-                column.hide();
-            else
-                column.show();            
-        }
-
         datatable.append(table);
         datatable.table = table;        
     }
-
-    function getFooter() {
-        var footer = $('<div class="footer"><label style="margin-left: auto;">Rows per page:</label></div>');
-
-        var pageSizeControl = $('<select class="browser-default">' +
-                '<option value="10" selected>10</option>' + 
-                '<option value="25">25</option>' + 
-                '<option value="50">50</option>' + 
-            '</select>');
-        footer.append(pageSizeControl);
-        footer.find('select').change(function() {
-            opt.data.pageSize = parseInt(this.value, 10);
-            datatable.table.getData();
-        });
-
-        var counter = $('<label></label>');
-        counter.update = function () {
-            var end = (opt.data.page - 1) * opt.data.pageSize + opt.data.rows.length;
-            var start = end - opt.data.rows.length + (opt.data.rows.length > 0 ? 1 : 0);
-
-            counter.html(start + '-' + end + ' of ' + opt.data.total);
-        };
-
-        footer.append(counter);
-        footer.counter = counter;
-
-        var pageControl = $('<div class="pagination"></div>');
-        var left = $('<a id="page-left" class="disabled"><i class="material-icons waves-effect">chevron_left</i></a>');
-        left.click(function () {
-            if (opt.data.page > 1) {
-                opt.data.page--;
-                datatable.table.getData();
-            }
-        });
-
-        var right = $('<a id="page-right" class="disabled"><i class="material-icons waves-effect">chevron_rights</i></a>');
-        right.click(function () {
-            if (opt.data.page < opt.data.pageCount) {
-                opt.data.page++;
-                datatable.table.getData();
-            }
-        });
-
-        pageControl.append(left, right);
-        footer.append(pageControl);
-
-        footer.hide = function(hide) {
-            this.toggleClass('hide', hide);
-        }
-
-        datatable.append(footer);
-        datatable.footer = footer;
-    }
-
-    function init() {
-        getTable();
-        getFooter();
-    }
-
-    $.fn.datatable = function (options) {
-        datatable = this;
-
-        init();
-
-        datatable.table.setHeaders();
-        datatable.table.hideColumns();
-
-        datatable.table.hideSelection();
-
-        datatable.footer.hide(opt.hideFooter);
-
-        datatable.table.getData();
-
-        return datatable;
-    };
-})(jQuery);
 */
 
 function getDialog() {
@@ -377,6 +131,8 @@ function getDialog() {
         dialog.hide(true);
     });
 
+    dialog.hide(true);
+
     return dialog;
 }
 
@@ -391,23 +147,16 @@ function getHtml(params) {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td class="select">
-                            <label>
-                                <input type="checkbox" />
-                                <span></span>
-                            </label>
-                        </td>                        
-                        <td>data 1</td>
-                        <td>data 2</td>
-                        <td>data 3</td>
-                        <td>data 4 hjg h gyyf fg lfuyf gfkuyf uyfyufuyr6r hgftk eydtd te tkfuf 6r uf tukrf</td>
-                    </tr>
                 </tbody>
             </table>
         </div>
         <div class="footer">
-          <label style="margin-left: auto;">Rows per page:</label>
+            <label style="margin-left: auto;">Rows per page:</label>
+            <label class="counter"></label>
+            <div class="pagination">
+                <a id="page-left" class="disabled"><i class="material-icons waves-effect">chevron_left</i></a>
+                <a id="page-right" class="disabled"><i class="material-icons waves-effect">chevron_rights</i></a>
+            </div>
         </div>
     </div>
     `);
@@ -433,7 +182,7 @@ function getOptions(options) {
         'hideHeader': false,
         'hideFooter': false,
         'hideSelection': false,
-        'getData': function (page, pageSize, sort, sortDir, updateData) {
+        'getData': function (page, pageSize, sort, sortDir) {
 
         },
         'beforeDelete': function (rows) {
@@ -510,6 +259,7 @@ function initTable(element) {
         body.innerHTML = '';
         for (let i = 0; i < opt.data.pageSize; i++) {
             let tableRow = document.createElement('tr');
+            tableRow.classList.toggle('hide', true);
             tableRow.setAttribute('num', i);
             tableRow.appendChild(addCheckBox(`check_${i}`, table));
 
@@ -573,6 +323,50 @@ function initTable(element) {
 
             body.appendChild(tableRow);
         }
+
+        table.hideSelection(opt.hideSelection);
+        table.hideColumns(Object.keys(opt.fields).filter(key => opt.fields[key].hidden));
+    }
+
+    table.fill = (data) => {
+        let opt = element.options;
+        opt.data = data;
+
+        let body = table.querySelector('tbody');
+        opt.data.rows.forEach((row, i) => {
+            let tableRow = body.querySelector(`tr:nth-child(${i + 1})`);
+            if (tableRow == null)
+                return;
+
+            tableRow.style.borderBottom = '';
+            tableRow.classList.toggle('hide', false);
+
+            Object.keys(opt.fields).forEach((key) => {
+                let cell = tableRow.querySelector(`#${key}`);
+                let field = opt.fields[key];
+                if (field.init && !field.editable)
+                    opt.fields[key].init(cell, row);
+                else
+                    if (row[key])
+                        cell.innerHTML = row[key];
+            });
+        });
+        
+    }
+
+    table.hideSelection = (hide) => {
+        [...table.querySelectorAll('.select')]
+            .forEach((s) => s.classList.toggle('hide', hide));
+    };
+
+    table.hideColumns = (columns) => {
+        [...table.querySelectorAll('th:not(.select),td:not(.select)')]
+            .forEach((c) => c.classList.toggle('hide', false));
+
+        columns.forEach((key) => {
+            [...table.querySelectorAll(`#${key}`)]
+                .forEach((c) => c.classList.toggle('hide', true));
+        });
     }
 
     element.table = table;
@@ -580,7 +374,7 @@ function initTable(element) {
 
 function initFooter(element) {
     let footer = element.querySelector('.footer');
-    let select = new components.Select(footer,{
+    let select = new components.Select(footer, {
         'options': [
             {
                 'value': 10,
@@ -599,11 +393,57 @@ function initFooter(element) {
 
     select.bind(element.options.data, 'pageSize');
     select.addEventListener('change', () => element.update());
+
+    footer.insertBefore(footer.querySelector('select'), footer.querySelector('label.counter'));
+
+    // Counter
+    let counter = footer.querySelector('label.counter');
+    counter.update = (data) => {
+        let end = (data.page - 1) * data.pageSize + data.rows.length;
+        let start = end - data.rows.length + (data.rows.length > 0 ? 1 : 0);
+
+        counter.innerHTML = `${start}-${end} of ${data.total}`;
+    }
+
+    footer.counter = counter;
+
+    // Navigation
+    footer.querySelector('#page-left').addEventListener('click', () => {
+        if (element.options.data.page > 1) {
+            element.options.data.page--;
+            element.update();
+        }
+    });
+
+    footer.querySelector('#page-right').addEventListener('click', () => {
+        if (element.options.data.page < element.options.data.pageCount) {
+            element.options.data.page++;
+            element.update();
+        }
+    });
+
+    footer.hide = (hide) => footer.classList.toggle('hide', hide);
+
+    element.footer = footer;
 }
 
 
 function update(element) {
+    let opt = element.options;
+
+    // Fill rows set
     element.table.setRows();
+
+    if (opt.getData)
+        opt.getData(opt.data.page, opt.data.pageSize)
+            .then((data) => {
+                element.table.fill(data);
+                element.footer.counter.update(data);
+
+                element.footer.querySelector('#page-left').classList.toggle('disabled', data.page == 1);
+                element.footer.querySelector('#page-right').classList.toggle('disabled', data.page == data.pageCount);
+                element.table.querySelector(`tr:nth-child(n+${data.rows.length})`).style.borderBottom = 'none';
+            });
 }
 
 class Datatable extends Comment {
@@ -623,6 +463,8 @@ class Datatable extends Comment {
         this.element.header.hide(this.element.options.hideHeader);
 
         this.element.table.setHeaders();
+
+        this.element.footer.hide(this.element.options.hideFooter);
 
         this.element.update();
     }

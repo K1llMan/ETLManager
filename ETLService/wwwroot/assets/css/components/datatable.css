@@ -4,6 +4,8 @@
     color: rgba(0, 0, 0, 0.7);
     font-weight: bold;
     border-radius: 5px;
+
+    margin: 0.5em;
 }
 
 .datatable a {

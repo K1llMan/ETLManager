@@ -7,43 +7,43 @@ namespace ETLCommon
     /// <summary>
     /// Класс работы с таблицой в базе
     /// </summary>
-    public class PostgreSqlDBTable: DBTable
+    public class DBTable: IDBTable
     {
         #region Свойства
+
+        public List<DBAttribute> Attributes { get; protected set; }
+
+        /// <summary>
+        /// База
+        /// </summary>
+        public IDatabase DB { get; }
+
+        /// <summary>
+        /// Имя таблицы в базе
+        /// </summary>
+        public string Name { get; }
+
+        /// <summary>
+        /// Количество записей
+        /// </summary>
+        public decimal Count {
+            get
+            {
+                return GetCount();
+            } 
+        }
 
         #endregion Свойства
 
         #region Вспомогательные функции
 
-        protected override void GetAttrList()
+        protected virtual void GetAttrList()
         {
-            try
-            {
-                Attributes = new List<DBAttribute>();
+        }
 
-                dynamic result = DB.Query(
-                    "select (column_name) as Name, (data_type) as Type, (column_default) as DefaultValue, (is_nullable) as Nullable, (character_maximum_length) as Size" +
-                    " from information_schema.columns" +
-                    $" where table_name = '{Name}'");
-
-                foreach (dynamic field in result)
-                {
-                    string name = field.name;
-                    string nullable = field.nullable;
-
-                    Attributes.Add(new DBAttribute {
-                        Default = field.defaultvalue,
-                        Name = name,
-                        Nullable = nullable.IsMatch("yes"),
-                        Size = field.size == null ? 0 : field.size,
-                        Type = DB.FromDBType(field.type)
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Ошибка формирования атрибутов.", ex);
-            }
+        protected virtual decimal GetCount()
+        {
+            return Convert.ToDecimal(DB.ExecuteScalar($"select count(*) from {Name}"));
         }
 
         #endregion Вспомогательные функции
@@ -131,9 +131,12 @@ namespace ETLCommon
 
         #endregion CRUD
 
-        internal PostgreSqlDBTable(IDatabase db, string name): base(db, name)
+        internal DBTable(IDatabase db, string name)
         {
-            //GetAttrList();
+            DB = db;
+            Name = name;
+
+            GetAttrList();
         }
 
         #endregion Основные функции

@@ -260,7 +260,7 @@ namespace ETLService.Manager
             {
                 Logger.WriteToTrace($"Ошибка при подключении к базе: {ex}", TraceMessageKind.Error);
             }
-           
+
             InitPumpsList();
 
             InitJWT();

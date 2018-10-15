@@ -23,24 +23,24 @@ class Auth {
 
     login(user, pass, success) {
         Request.send('api/token', {
-           'info': {
-               'method': 'POST', 
-               'headers': {
-                   'Accept': 'application/json',
-                   'Content-Type': 'application/json'
-               },
-               'body': JSON.stringify({ username: user, password: pass })
-            },
-           'success': (d) => {
-               //save the token in local storage
-               localStorage.setItem("token", d);
+               'info': {
+                   'method': 'POST', 
+                   'headers': {
+                       'Accept': 'application/json',
+                       'Content-Type': 'application/json'
+                   },
+                   'body': JSON.stringify({ username: user, password: pass })
+                }
+            })
+            .then((d) => {
+                // Save the token in local storage
+                localStorage.setItem("token", d);
 
-               this.payload = JSON.parse(window.atob(d.split('.')[1]));
+                this.payload = JSON.parse(window.atob(d.split('.')[1]));
 
-               if (success != null)
-                   success(d);
-           }
-        });
+                if (success != null)
+                    success(d);
+            });
     }
 
     logout() {

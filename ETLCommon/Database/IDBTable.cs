@@ -18,6 +18,11 @@ namespace ETLCommon
         /// </summary>
         string Name { get; }
 
+        /// <summary>
+        /// Количество записей
+        /// </summary>
+        decimal Count { get; }
+
         #endregion Свойства
 
         #region Методы

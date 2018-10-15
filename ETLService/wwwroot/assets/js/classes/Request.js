@@ -7,23 +7,15 @@ class Request {
             'headers': {}
         };
 
-        if (data.info != null)
+        if (data != null && data.info != null)
             Object.keys(data.info).forEach((k) => {
                 curInfo[k] = data.info[k];
             });
 
         handlers.forEach((h) => h(curInfo));
 
-        fetch(url, curInfo)
-            .then((response) => response.json())
-            .then((d) => {
-                if (data.success != null)
-                    data.success(d);
-            })
-            .catch((d) => {
-                if (data.error != null)
-                    data.error(d);
-            });
+        return fetch(url, curInfo)
+            .then((response) => response.json());
     }
 
     static addInfoHandler(f) {
