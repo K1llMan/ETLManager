@@ -5,6 +5,32 @@ import { PageCommon } from "../PageCommon.js";
 
 import * as components from "../../components/components.js";
 
+function getDuration(startData, endDate) {
+    let start = new Date(startData);
+    let end = new Date(endDate);
+    let duration = end - start;
+
+    var milliseconds = parseInt((duration % 1000) / 100),
+        seconds = ('' + parseInt((duration / 1000) % 60)).padStart(2, '0'),
+        minutes = ('' + parseInt((duration / (1000 * 60)) % 60)).padStart(2, '0'),
+        hours = ('' + parseInt((duration / (1000 * 60 * 60)) % 24)).padStart(2, '0');
+
+    return [hours, minutes, seconds].join(':') + '.' + milliseconds;
+}
+
+function formatDate(date) {
+    let d = new Date(date);
+    let month = ('' + (d.getMonth() + 1)).padStart(2, '0');
+    let day = ('' + d.getDate()).padStart(2, '0');
+    let year = d.getFullYear();
+
+    let hours = ('' + d.getHours()).padStart(2, '0');
+    let minutes = ('' + d.getMinutes()).padStart(2, '0');
+    let second = ('' + d.getSeconds()).padStart(2, '0');
+
+    return [year, month, day].join('-') + ' ' + [hours, minutes, second].join(':');
+}
+
 function getPage() {
     return utils.htmlToElement(`
       <div class="history-page">
@@ -20,6 +46,7 @@ const broadcastHandlers = {
 
     },
     'receiveUpdate': (data) => {
+
     },
     'update': (data) => {
 
@@ -43,6 +70,33 @@ class History extends PageCommon {
                         'editable': false,
                         'init': function (cell, data) {
 
+                            let iconStr = 'remove';
+                            let color = '';
+                            switch (data.status) {
+                            case "Running":
+                                iconStr = 'trending_flat';
+                                break;
+                            case 'Successful':
+                                iconStr = 'check';
+                                color = 'green-text';
+                                break;
+                            case 'Warnings':
+                                iconStr = 'error_outline';
+                                color = 'orange-text';
+                                break;
+                            case 'Errors':
+                                iconStr = 'error';
+                                color = 'red-text';
+                                break;
+                            case "Terminated":
+                                iconStr = 'clear';
+                                break;
+                            case 'None':
+                                iconStr = 'remove';
+                                break;
+                            }
+
+                            cell.innerHTML = `<i class="material-icons ${color}">${iconStr}</i>`;
                         }
                     },
                     'id': {
@@ -55,7 +109,12 @@ class History extends PageCommon {
                         'header': 'Scenario Name',
                         'tooltip': 'Scenario Name',
                         'hidden': false,
-                        'editable': false
+                        'editable': false,
+                        'init': function (cell, data) {
+                            let pump = document.app.etlContext.registry.find((p) => p.id == data.programid);
+
+                            cell.innerHTML = `${pump.desc.name}`;
+                        }
                     },
                     'programversion': {
                         'header': 'Version',
@@ -73,13 +132,19 @@ class History extends PageCommon {
                         'header': 'Started at',
                         'tooltip': 'Started at',
                         'hidden': false,
-                        'editable': false
+                        'editable': false,
+                        'init': function (cell, data) {
+                            cell.innerHTML = formatDate(data.pumpstartdate);
+                        }
                     },
                     'pumpfinishdate': {
                         'header': 'Ended at',
                         'tooltip': 'Ended at',
                         'hidden': false,
-                        'editable': false
+                        'editable': false,
+                        'init': function (cell, data) {
+                            cell.innerHTML = formatDate(data.pumpfinishdate);
+                        }
                     },
                     'duration': {
                         'header': 'Duration',
@@ -87,12 +152,12 @@ class History extends PageCommon {
                         'hidden': false,
                         'editable': false,
                         'init': function (cell, data) {
-
+                            cell.innerHTML = getDuration(data.pumpstartdate, data.pumpfinishdate);
                         }
                     },
-                    'col4': {
-                        'header': 'Column 4',
-                        'tooltip': 'Column 4',
+                    'operations': {
+                        'header': 'Operations',
+                        'tooltip': 'Operations',
                         'hidden': false,
                         'editable': true,
                         'size': 1000,
@@ -106,35 +171,24 @@ class History extends PageCommon {
                     'page': 1,
                     'pageSize': 10,
                     'pageCount': 1,
+                    'orderBy': 'id',
+                    'orderDir': 'desc',
                     'rows': [],
                 },
                 'hideHeader': false,
                 'hideFooter': false,
                 'hideSelection': true,
-                'getData': function (page, pageSize, sort, sortDir) {
+                'getData': function (pageInfo) {
                     return Request.send('api/pumps/history', {
                         'info': {
-                            'method': 'POST'
+                            'method': 'POST',
+                            'headers': {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                            'body': JSON.stringify(pageInfo)
                         }
                     });
-
-                    var response = {
-                        'total': 100,
-                        'page': page,
-                        'pageSize': pageSize,
-                        'pageCount': 10,
-                        'rows': [
-                            { 'col1': 'data41', 'col2': 'data41', 'col3': 'data41', 'col4': 'data51', 'col5': 'ololo', 'col6': '434525', 'col7': 'Column 7', 'col8': 'Column 8', 'col9': 'Column 9', 'col10': 'Column 10 dfgsdg sdg sdg  sdgsdgwegsd segsd gsdg serg sdgwsegsdfg sergsdg segsdfgdLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.' },
-                            { 'col1': 'data1', 'col2': 'data2', 'col3': 'data3' },
-                            { 'col1': 'data41', 'col2': 'data41', 'col3': 'data41' },
-                            { 'col1': 'data11', 'col2': 'data21', 'col3': 'data31' },
-                            { 'col1': 'data41', 'col2': 'data41', 'col3': 'data41' },
-                            { 'col1': 'data12', 'col2': 'data22', 'col3': 'data32' },
-                            { 'col1': 'data41', 'col2': 'data41', 'col3': 'data41' }
-                        ]
-                    }
-
-                    return response;
                 },
                 'beforeDelete': function (rows) {
 
@@ -144,7 +198,11 @@ class History extends PageCommon {
 
         document.dispatchEvent(new Event('resize'));
 
-        Broadcast.addHandlers(broadcastHandlers);
+        Broadcast.addHandlers({
+            'endPump': (data) => {
+                this.datatable.update();
+            }
+        });
     }
 
     destroy() {

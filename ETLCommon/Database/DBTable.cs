@@ -53,40 +53,27 @@ namespace ETLCommon
         /// <summary>
         /// Возвращает следующее значение ключа
         /// </summary>
-        public decimal GetNextVal()
+        public virtual decimal GetNextVal()
         {
-            try
-            {
-                // Автоматически сгенерированные последовательности имеют имя <имя таблицы>_id_seq
-                return DB.Query($"select NEXTVAL('{Name}_id_seq') as id").Single().id;
-            }
-            catch (Exception ex)
-            {
-            }
-
             return -1;
         }
 
         /// <summary>
         /// Возвращает текущее значение
         /// </summary>
-        public decimal GetCurVal()
+        public virtual decimal GetCurVal()
         {
-            try
-            {
-                // Автоматически сгенерированные последовательности имеют имя <имя таблицы>_id_seq
-                return DB.Query($"select CURRVAL('{Name}_id_seq') as id").Single().id;
-            }
-            catch (Exception ex)
-            {
-            }
-
             return -1;
+        }
+
+        public virtual DBTablePage GetPage(DBTablePage page)
+        {
+            return null;
         }
 
         #region CRUD
 
-        public dynamic Select(string[] fields, string constr = "")
+        public virtual dynamic Select(string[] fields, string constr = "")
         {
             try {
                 // Выбираются только существующие атрибуты
@@ -114,17 +101,17 @@ namespace ETLCommon
             return Select(new string[] { "*" }, constr);
         }
 
-        public int Insert(params dynamic[] rows)
+        public virtual int Insert(params dynamic[] rows)
         {
             return 0;
         }
 
-        public int Update(params dynamic[] rows)
+        public virtual int Update(params dynamic[] rows)
         {
             return 0;
         }
 
-        public int Delete(string constr = "")
+        public virtual int Delete(string constr = "")
         {
             return 0;
         }

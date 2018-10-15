@@ -31,8 +31,17 @@
     overflow-x: auto;
 }
 
+.datatable .progress {
+    background-color: rgba(0, 0, 0, 0.12);
+}
+
+.datatable .progress .indeterminate {
+    background-color: #78909c;
+}
+
 .datatable table {
-    //white-space: nowrap;
+    white-space: nowrap;
+    table-layout: auto;
 }
 
 .datatable td:not(.select), th:not(.select) {
@@ -41,7 +50,7 @@
     font-weight: bold;
 
     max-width: 500px;
-    min-width: 200px;
+    //min-width: 200px;
 }
 
 .datatable td.select, th.select {

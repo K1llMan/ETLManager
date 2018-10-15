@@ -2,6 +2,8 @@
 using System.IO;
 using System.Linq;
 
+using ETLCommon;
+
 using Microsoft.AspNetCore.Mvc;
 
 using ETLService.Manager;
@@ -79,12 +81,11 @@ namespace ETLService.Controllers
                     :  p.LastStatus.ToString()));
         }
 
-        // GET api/pumps/history
-        [HttpGet("history")]
-        public object GetHistory([FromBody]JObject filter)
+        // POST api/pumps/history
+        [HttpPost("history")]
+        public object GetHistory([FromBody]DBTablePage page)
         {
-            return null;
-            //return Program.Manager.Context.History.
+            return Program.Manager.Context.DB["etl_history"].GetPage(page);
         }
     }
 }

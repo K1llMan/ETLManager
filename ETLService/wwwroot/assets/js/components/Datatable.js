@@ -48,17 +48,21 @@ import * as components from "./components.js";
             'page': 1,
             'pageSize': 10,
             'pageCount': 1,
+            'orderBy': 'id',
+            'orderDir': 'desc',
             'rows': [],
         },
         'hideHeader': false,
         'hideFooter': false,
         'hideSelection': false,
-        'getData': function(page, pageSize, sort, sortDir, updateData) {
+        'getData': function(pageInfo) {
             var response = {
                 'total': 100,
                 'page': page,
                 'pageSize': pageSize,
                 'pageCount': 10,
+                'orderBy': 'id',
+                'orderDir': 'desc',
                 'rows': [
                     { 'col1': 'data41', 'col2': 'data41', 'col3': 'data41', 'col4': 'data51', 'col5': 'ololo', 'col6': '434525', 'col7': 'Column 7', 'col8': 'Column 8', 'col9': 'Column 9', 'col10': 'Column 10 dfgsdg sdg sdg  sdgsdgwegsd segsd gsdg serg sdgwsegsdfg sergsdg segsdfgdLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.' },
                     { 'col1': 'data1', 'col2': 'data2', 'col3': 'data3' },
@@ -69,8 +73,6 @@ import * as components from "./components.js";
                     { 'col1': 'data41', 'col2': 'data41', 'col3': 'data41' }
                 ]
             }
-
-            updateData(response);
         },
         'beforeDelete': function(rows) {
 
@@ -140,6 +142,9 @@ function getHtml(params) {
     let element = htmlToElement(`
     <div class="datatable z-depth-1">
         <div class="header"></div>
+        <div class="progress hide">
+            <div class="indeterminate"></div>
+        </div>
         <div class="data">
             <table>
                 <thead>
@@ -182,7 +187,7 @@ function getOptions(options) {
         'hideHeader': false,
         'hideFooter': false,
         'hideSelection': false,
-        'getData': function (page, pageSize, sort, sortDir) {
+        'getData': function (pageInfo) {
 
         },
         'beforeDelete': function (rows) {
@@ -206,6 +211,13 @@ function initHeader(element) {
     header.hide = (hide) => header.classList.toggle('hide', hide);
 
     element.header = header;
+}
+
+function initProgress(element) {
+    let progress = element.querySelector('.progress');
+
+    progress.hide = (hide) => progress.classList.toggle('hide', hide);
+    element.progress = progress;
 }
 
 function addCheckBox(id, table) {
@@ -434,8 +446,12 @@ function update(element) {
     // Fill rows set
     element.table.setRows();
 
-    if (opt.getData)
-        opt.getData(opt.data.page, opt.data.pageSize)
+    if (opt.getData) {
+        element.progress.hide(false);
+
+        // Clear rows data before request new
+        opt.data.rows = [];
+        opt.getData(opt.data)
             .then((data) => {
                 element.table.fill(data);
                 element.footer.counter.update(data);
@@ -443,7 +459,10 @@ function update(element) {
                 element.footer.querySelector('#page-left').classList.toggle('disabled', data.page == 1);
                 element.footer.querySelector('#page-right').classList.toggle('disabled', data.page == data.pageCount);
                 element.table.querySelector(`tr:nth-child(n+${data.rows.length})`).style.borderBottom = 'none';
+
+                element.progress.hide(true);
             });
+    }
 }
 
 class Datatable extends Comment {
@@ -470,18 +489,14 @@ class Datatable extends Comment {
     }
 
     init() {
-        // Clear html struct
         initHeader(this.element);
+        initProgress(this.element);
         initTable(this.element);
         initFooter(this.element);
+    }
 
-        /*
-        datatable.html('');
-        getHeader();
-        getTable();
-        getFooter();
-        getEditDialog();
-        */
+    update() {
+        this.element.update();
     }
 }
 

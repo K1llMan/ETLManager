@@ -53,7 +53,7 @@ namespace ETLCommon
         /// <summary>
         /// Возвращает следующее значение ключа
         /// </summary>
-        public decimal GetNextVal()
+        public override decimal GetNextVal()
         {
             try
             {
@@ -70,7 +70,7 @@ namespace ETLCommon
         /// <summary>
         /// Возвращает текущее значение
         /// </summary>
-        public decimal GetCurVal()
+        public override decimal GetCurVal()
         {
             try
             {
@@ -84,50 +84,29 @@ namespace ETLCommon
             return -1;
         }
 
+        public override DBTablePage GetPage(DBTablePage page)
+        {
+            dynamic rows = DB.Query(
+                "select *" + 
+                $" from {Name}" + 
+                (string.IsNullOrEmpty(page.OrderBy) 
+                    ? string.Empty 
+                    : $" order by {page.OrderBy} { (string.IsNullOrEmpty(page.OrderDir) ? "asc" : page.OrderDir) }") +
+                $" limit {page.PageSize} offset {(page.Page - 1) * page.PageSize}");
+
+            decimal count = Count;
+            return new DBTablePage {
+                Total = count,
+                Page = page.Page,
+                PageSize = page.PageSize,
+                PageCount = (int)(count / page.PageSize) + 1,
+                OrderBy = page.OrderBy,
+                OrderDir = page.OrderDir,
+                Rows = rows
+            };
+        }
+
         #region CRUD
-
-        public dynamic Select(string[] fields, string constr = "")
-        {
-            try {
-                // Выбираются только существующие атрибуты
-                string[] corrFields = fields.Contains("*") 
-                    ? new string[] { "*" }
-                    : fields.Intersect(Attributes.Select(a => a.Name)).ToArray();
-
-                string query = 
-                    $"select {string.Join(", ", corrFields)}" + 
-                    $" from {Name}" + 
-                    (string.IsNullOrEmpty(constr) 
-                        ? string.Empty
-                        : $" where {constr}");
-
-                return DB.Query(query);
-            }
-            catch (Exception ex) {
-            }
-
-            return null;
-        }
-
-        public dynamic Select(string constr = "")
-        {
-            return Select(new string[] { "*" }, constr);
-        }
-
-        public int Insert(params dynamic[] rows)
-        {
-            return 0;
-        }
-
-        public int Update(params dynamic[] rows)
-        {
-            return 0;
-        }
-
-        public int Delete(string constr = "")
-        {
-            return 0;
-        }
 
         #endregion CRUD
 

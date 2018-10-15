@@ -37,6 +37,11 @@ namespace ETLCommon
         /// </summary>
         decimal GetCurVal();
 
+        /// <summary>
+        /// Получение данных страницы
+        /// </summary>
+        DBTablePage GetPage(DBTablePage page);
+
         #region CRUD
 
         dynamic Select(string constr = "");
