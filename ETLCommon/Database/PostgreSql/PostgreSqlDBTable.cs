@@ -99,7 +99,7 @@ namespace ETLCommon
                 Total = count,
                 Page = page.Page,
                 PageSize = page.PageSize,
-                PageCount = (int)(count / page.PageSize) + 1,
+                PageCount = (int)Math.Ceiling(count / page.PageSize),
                 OrderBy = page.OrderBy,
                 OrderDir = page.OrderDir,
                 Rows = rows
