@@ -5,6 +5,8 @@ import { PageCommon } from "../PageCommon.js";
 
 import * as components from "../../components/components.js";
 
+let broadcastHandlers = {};
+
 function getDuration(startData, endDate) {
     let start = new Date(startData);
     let end = new Date(endDate);
@@ -38,21 +40,6 @@ function getPage() {
     `);
 };
 
-const broadcastHandlers = {
-    'startPump': (data) => {
-
-    },
-    'endPump': (data) => {
-
-    },
-    'receiveUpdate': (data) => {
-
-    },
-    'update': (data) => {
-
-    }
-}
-
 class History extends PageCommon {
     constructor(app, container) {
         super(app, container, 'History');
@@ -68,6 +55,7 @@ class History extends PageCommon {
                         'tooltip': 'Status',
                         'hidden': false,
                         'editable': false,
+                        'sortable': true,
                         'init': function (cell, data) {
 
                             let iconStr = 'remove';
@@ -103,13 +91,15 @@ class History extends PageCommon {
                         'header': 'SessionID',
                         'tooltip': 'SessionID',
                         'hidden': false,
-                        'editable': false
+                        'editable': false,
+                        'sortable': true
                     },
                     'programid': {
                         'header': 'Scenario Name',
                         'tooltip': 'Scenario Name',
                         'hidden': false,
                         'editable': false,
+                        'sortable': true,
                         'init': function (cell, data) {
                             let pump = document.app.etlContext.registry.find((p) => p.id == data.programid);
 
@@ -120,19 +110,22 @@ class History extends PageCommon {
                         'header': 'Version',
                         'tooltip': 'Version',
                         'hidden': false,
-                        'editable': false
+                        'editable': false,
+                        'sortable': true
                     },
                     'username': {
                         'header': 'Executed by',
                         'tooltip': 'Executed by',
                         'hidden': false,
-                        'editable': false
+                        'editable': false,
+                        'sortable': true
                     },
                     'pumpstartdate': {
                         'header': 'Started at',
                         'tooltip': 'Started at',
                         'hidden': false,
                         'editable': false,
+                        'sortable': true,
                         'init': function (cell, data) {
                             cell.innerHTML = formatDate(data.pumpstartdate);
                         }
@@ -142,6 +135,7 @@ class History extends PageCommon {
                         'tooltip': 'Ended at',
                         'hidden': false,
                         'editable': false,
+                        'sortable': true,
                         'init': function (cell, data) {
                             cell.innerHTML = formatDate(data.pumpfinishdate);
                         }
@@ -151,6 +145,7 @@ class History extends PageCommon {
                         'tooltip': 'Duration',
                         'hidden': false,
                         'editable': false,
+                        'sortable': false,
                         'init': function (cell, data) {
                             cell.innerHTML = getDuration(data.pumpstartdate, data.pumpfinishdate);
                         }
@@ -160,6 +155,7 @@ class History extends PageCommon {
                         'tooltip': 'Operations',
                         'hidden': false,
                         'editable': true,
+                        'sortable': false,
                         'size': 1000,
                         'afterEdit': function (row) {
                             alert(row);
@@ -198,11 +194,13 @@ class History extends PageCommon {
 
         document.dispatchEvent(new Event('resize'));
 
-        Broadcast.addHandlers({
-            'endPump': (data) => {
+        broadcastHandlers = {
+            'endPump': () => {
                 this.datatable.update();
             }
-        });
+        };
+
+        Broadcast.addHandlers(broadcastHandlers);
     }
 
     destroy() {

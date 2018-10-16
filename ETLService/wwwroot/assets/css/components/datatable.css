@@ -53,6 +53,14 @@
     //min-width: 200px;
 }
 
+.datatable th:not(.select) {
+    padding: 15px 20px 15px 40px; 
+}
+
+.datatable th:not(.select) i {
+    width: 20px;
+}
+
 .datatable td.select, th.select {
     padding: 12px 0 12px 30px;
     width: 36px;

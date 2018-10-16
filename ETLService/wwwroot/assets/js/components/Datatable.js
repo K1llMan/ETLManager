@@ -242,6 +242,57 @@ function addCheckBox(id, table) {
     return td;
 }
 
+function getColumnHeader(id, field) {
+    let cell = htmlToElement(`
+        <th id="${id}" ${field.sortable ? 'class="clickable"' : ''}>
+            <div class="valign-wrapper"><i class="material-icons tiny"></i>${field.header}</div>
+        </th>`);
+
+    return cell;
+}
+
+function setHeaderSorting(header, dir) {
+    if (header == null)
+        return;
+
+    switch (dir) {
+        case 'asc':
+            header.innerHTML = 'arrow_downward';
+            break;
+        case 'desc':
+            header.innerHTML = 'arrow_upward';
+            break;
+        default:
+            header.innerHTML = '';
+            break;
+    }    
+}
+
+function updateHeader(head, key, data) {
+    let orderBy = key;
+
+    if (orderBy != data.orderBy) {
+        [...head.querySelectorAll('i')].forEach((i) => setHeaderSorting(i, ''));
+        setHeaderSorting(head.querySelector(`#${key} i`), 'asc');
+
+        data.orderBy = orderBy;
+        data.orderDir = 'asc';
+    }
+    else{
+        switch (data.orderDir) {
+            case 'asc':
+                data.orderDir = 'desc';
+                break;
+            case 'desc':
+                data.orderBy = '';
+                data.orderDir = '';
+                break;
+        }
+
+        setHeaderSorting(head.querySelector(`#${key} i`), data.orderDir);
+    }
+}
+
 function initTable(element) {
     let table = element.querySelector('.data');
     table.setHeaders = () => {
@@ -256,12 +307,22 @@ function initTable(element) {
         });
 
         Object.keys(element.options.fields).forEach((key) => {
-            let cell = document.createElement('th');
-            cell.id = key;
-            cell.innerHTML = element.options.fields[key].header;
-
+            let field = element.options.fields[key];
+            let cell = getColumnHeader(key, field);
             head.appendChild(cell);
+
+            if (!field.sortable)
+                return;
+
+            cell.addEventListener('click', () => {
+                updateHeader(head, key, element.options.data);
+
+                element.update();
+            });
         });
+
+        if (element.options.data.orderBy != '')
+            setHeaderSorting(head.querySelector(`#${element.options.data.orderBy} i`), element.options.data.orderDir);
     }
 
     table.setRows = () => {
