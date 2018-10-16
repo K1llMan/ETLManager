@@ -41,13 +41,21 @@ namespace ETLCommon
             DatabaseType = DBType.Unknown;
         }
 
-        public virtual void Connect()
+        public virtual IDbConnection GetConnection()
+        {
+            return null;
+        }
+
+        public void Connect()
         {
             if (string.IsNullOrEmpty(connectionStr))
                 return;
 
             connection?.Close();
             connection?.Dispose();
+
+            connection = GetConnection();
+            connection.Open();
         }
 
         /// <summary>
@@ -90,10 +98,17 @@ namespace ETLCommon
         /// </summary>
         public object Execute(string query, object param = null, CommandType? type = null)
         {
-            if (connection?.State == ConnectionState.Closed)
-                return -1;
-            
-            return connection.Execute(query, param, commandType: type, transaction: transaction);
+            if (transaction != null)
+                return connection.Execute(query, param, commandType: type, transaction: transaction);
+
+            using (IDbConnection conn = GetConnection())
+            {
+                conn.Open();
+                object result = conn.Execute(query, param, commandType: type);
+                conn.Close();
+
+                return result;
+            }
         }
 
         /// <summary>
@@ -101,9 +116,17 @@ namespace ETLCommon
         /// </summary>
         public object ExecuteScalar(string query, object param = null, CommandType? type = null)
         {
-            return connection?.State == ConnectionState.Closed 
-                ? null 
-                : connection?.ExecuteScalar(query, param, commandType: type, transaction: transaction);
+            if (transaction != null)
+                return connection.ExecuteScalar(query, param, commandType: type, transaction: transaction);
+
+            using (IDbConnection conn = GetConnection())
+            {
+                conn.Open();
+                object result = conn.ExecuteScalar(query, param, commandType: type);
+                conn.Close();
+
+                return result;
+            }
         }
 
         /// <summary>
@@ -111,9 +134,17 @@ namespace ETLCommon
         /// </summary>
         public IEnumerable<dynamic> Query(string query, object param = null, CommandType? type = null)
         {
-            return connection?.State == ConnectionState.Closed 
-                ? null 
-                : connection?.Query<dynamic>(query, param, commandType: type, transaction: transaction);
+            if (transaction != null)
+                return connection.Query<dynamic>(query, param, commandType: type, transaction: transaction);
+
+            using (IDbConnection conn = GetConnection())
+            {
+                conn.Open();
+                IEnumerable<dynamic> result = conn.Query<dynamic>(query, param, commandType: type);
+                conn.Close();
+
+                return result;
+            }
         }
 
         /// <summary>

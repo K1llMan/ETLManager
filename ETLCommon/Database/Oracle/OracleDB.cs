@@ -1,4 +1,5 @@
-﻿using System.Data.OracleClient;
+﻿using System.Data;
+using System.Data.OracleClient;
 
 namespace ETLCommon
 {
@@ -11,11 +12,9 @@ namespace ETLCommon
             DatabaseType = DBType.Oracle;
         }
 
-        public override void Connect()
+        public override IDbConnection GetConnection()
         {
-            base.Connect();
-            connection = new OracleConnection(connectionStr);
-            connection.Open();
+            return new OracleConnection(connectionStr);
         }
 
         #endregion Основные функции

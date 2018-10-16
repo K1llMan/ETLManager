@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Data;
+using System.Linq;
 
 using Npgsql;
 
@@ -34,11 +35,9 @@ namespace ETLCommon
             DatabaseType = DBType.PostgreSql;
         }
 
-        public override void Connect()
+        public override IDbConnection GetConnection()
         {
-            base.Connect();
-            connection = new NpgsqlConnection(connectionStr);
-            connection.Open();
+            return new NpgsqlConnection(connectionStr);
         }
 
         #endregion Основные функции
