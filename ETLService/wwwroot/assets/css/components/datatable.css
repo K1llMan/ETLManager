@@ -1,10 +1,13 @@
 .datatable {
+    border-top: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+
     background-color: #ffffff;
     font-family: Roboto;
     color: rgba(0, 0, 0, 0.7);
     font-weight: bold;
     border-radius: 5px;
-
     margin: 0.5em;
 }
 

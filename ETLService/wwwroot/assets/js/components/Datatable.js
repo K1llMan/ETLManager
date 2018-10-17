@@ -403,7 +403,7 @@ function initTable(element) {
 
     table.fill = (data) => {
         let opt = element.options;
-        opt.data = data;
+        opt.data.rows = data.rows;
 
         let body = table.querySelector('tbody');
         opt.data.rows.forEach((row, i) => {
