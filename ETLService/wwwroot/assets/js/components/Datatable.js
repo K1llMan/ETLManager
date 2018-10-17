@@ -403,7 +403,10 @@ function initTable(element) {
 
     table.fill = (data) => {
         let opt = element.options;
-        opt.data.rows = data.rows;
+
+        Object.keys(opt.data).forEach((key) => {
+            opt.data[key] = data[key];
+        });
 
         let body = table.querySelector('tbody');
         opt.data.rows.forEach((row, i) => {
@@ -522,7 +525,8 @@ function update(element) {
                 element.table.querySelector(`tr:nth-child(n+${data.rows.length})`).style.borderBottom = 'none';
 
                 element.progress.hide(true);
-            });
+            })
+            .catch((ex) => element.progress.hide(true));
     }
 }
 
