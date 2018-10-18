@@ -7,32 +7,6 @@ import * as components from "../../components/components.js";
 
 let broadcastHandlers = {};
 
-function getDuration(startData, endDate) {
-    let start = new Date(startData);
-    let end = new Date(endDate);
-    let duration = end - start;
-
-    var milliseconds = parseInt((duration % 1000) / 100),
-        seconds = ('' + parseInt((duration / 1000) % 60)).padStart(2, '0'),
-        minutes = ('' + parseInt((duration / (1000 * 60)) % 60)).padStart(2, '0'),
-        hours = ('' + parseInt((duration / (1000 * 60 * 60)) % 24)).padStart(2, '0');
-
-    return [hours, minutes, seconds].join(':') + '.' + milliseconds;
-}
-
-function formatDate(date) {
-    let d = new Date(date);
-    let month = ('' + (d.getMonth() + 1)).padStart(2, '0');
-    let day = ('' + d.getDate()).padStart(2, '0');
-    let year = d.getFullYear();
-
-    let hours = ('' + d.getHours()).padStart(2, '0');
-    let minutes = ('' + d.getMinutes()).padStart(2, '0');
-    let second = ('' + d.getSeconds()).padStart(2, '0');
-
-    return [year, month, day].join('-') + ' ' + [hours, minutes, second].join(':');
-}
-
 function getPage() {
     return utils.htmlToElement(`
       <div class="history-page">
@@ -127,7 +101,7 @@ class History extends PageCommon {
                         'editable': false,
                         'sortable': true,
                         'init': function (cell, data) {
-                            cell.innerHTML = formatDate(data.pumpstartdate);
+                            cell.innerHTML = utils.formatDate(data.pumpstartdate);
                         }
                     },
                     'pumpfinishdate': {
@@ -137,7 +111,7 @@ class History extends PageCommon {
                         'editable': false,
                         'sortable': true,
                         'init': function (cell, data) {
-                            cell.innerHTML = formatDate(data.pumpfinishdate);
+                            cell.innerHTML = utils.formatDate(data.pumpfinishdate);
                         }
                     },
                     'duration': {
@@ -147,7 +121,7 @@ class History extends PageCommon {
                         'editable': false,
                         'sortable': false,
                         'init': function (cell, data) {
-                            cell.innerHTML = getDuration(data.pumpstartdate, data.pumpfinishdate);
+                            cell.innerHTML = utils.getDuration(data.pumpstartdate, data.pumpfinishdate);
                         }
                     },
                     'operations': {

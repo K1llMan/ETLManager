@@ -94,6 +94,11 @@ namespace ETLService.Controllers
                         { "displayName", "History" },
                         { "script", "History" }
                     }
+                },
+                { "#test", new Dictionary<string, string> {
+                        { "displayName", "Test" },
+                        { "script", "Test" }
+                    }
                 }
             };
         }

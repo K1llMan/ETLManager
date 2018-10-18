@@ -37,16 +37,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\assets\js\modules\Test\LogTable.js" />
     <None Include="wwwroot\index.html" />
   </ItemGroup>
   <ItemGroup>
     <SiteItems Include="wwwroot\**\*.*" />
   </ItemGroup>
   <ItemGroup>
+    <SiteItems Remove="wwwroot\assets\css\components\log.css" />
     <SiteItems Remove="wwwroot\assets\js\components\Select.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="wwwroot\assets\css\components\" />
+    <SiteItems Remove="wwwroot\assets\js\modules\Test\LogTable.js" />
+    <SiteItems Remove="wwwroot\assets\js\modules\Test\Test.js" />
   </ItemGroup>
   
   <Import Project="..\Config\General.xml" />
