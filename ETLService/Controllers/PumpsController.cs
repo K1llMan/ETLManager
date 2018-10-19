@@ -49,6 +49,25 @@ namespace ETLService.Controllers
             }
         }
 
+        // GET api/pumps/pump1/restart/21
+        [HttpGet("{id}/restart/{sessNo}")]
+        public object Execute(string id, decimal sessNo)
+        {
+            try
+            {
+                dynamic record = Program.Manager.Context.History[sessNo];
+                if (record == null)
+                    return WebAPI.Error($"Отсуствует запись истории с идентификатором \"{sessNo}\"");
+
+                string config = record.config;
+                return WebAPI.Success(Program.Manager.Execute(id, config));
+            }
+            catch (Exception ex)
+            {
+                return WebAPI.Error($"Ошибка при запуске закачки \"{id}\": {ex.Message}");
+            }
+        }
+
         // POST api/pumps/pump1/terminate
         [HttpGet("{id}/terminate")]
         public void Terminate(string id)
@@ -62,7 +81,7 @@ namespace ETLService.Controllers
             }
         }
 
-        // GET api/pumps/log
+        // GET api/pumps/log/21
         [HttpGet("log/{sessNo}")]
         public object GetLog(decimal sessNo)
         {

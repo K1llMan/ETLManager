@@ -128,11 +128,19 @@ class History extends PageCommon {
                         'header': 'Operations',
                         'tooltip': 'Operations',
                         'hidden': false,
-                        'editable': true,
+                        'editable': false,
                         'sortable': false,
-                        'size': 1000,
-                        'afterEdit': function (row) {
-                            alert(row);
+                        'init': function (cell, data) {
+                            cell.innerHTML =`
+                                <div>
+                                    <i id="history" class="clickable material-icons">view_headline</i>
+                                    <i id="restart" class="clickable material-icons green-text">replay</i>
+                                </div>
+                            `;
+
+                            cell.querySelector('#restart').addEventListener('click', () => {
+                                Request.send(`api/pumps/${data.programid}/restart/${data.id}`);
+                            });
                         }
                     }
                 },

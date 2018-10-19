@@ -159,8 +159,10 @@ function getHtml(params) {
             <label style="margin-left: auto;">Rows per page:</label>
             <label class="counter"></label>
             <div class="pagination">
+                <a id="page-first" class="disabled"><i class="material-icons waves-effect">first_page</i></a>
                 <a id="page-left" class="disabled"><i class="material-icons waves-effect">chevron_left</i></a>
                 <a id="page-right" class="disabled"><i class="material-icons waves-effect">chevron_rights</i></a>
+                <a id="page-last" class="disabled"><i class="material-icons waves-effect">last_page</i></a>
             </div>
         </div>
     </div>
@@ -484,6 +486,13 @@ function initFooter(element) {
     footer.counter = counter;
 
     // Navigation
+    footer.querySelector('#page-first').addEventListener('click', () => {
+        if (element.options.data.page != 1) {
+            element.options.data.page = 1;
+            element.update();
+        }
+    });
+
     footer.querySelector('#page-left').addEventListener('click', () => {
         if (element.options.data.page > 1) {
             element.options.data.page--;
@@ -494,6 +503,13 @@ function initFooter(element) {
     footer.querySelector('#page-right').addEventListener('click', () => {
         if (element.options.data.page < element.options.data.pageCount) {
             element.options.data.page++;
+            element.update();
+        }
+    });
+
+    footer.querySelector('#page-last').addEventListener('click', () => {
+        if (element.options.data.page != element.options.data.pageCount) {
+            element.options.data.page = element.options.data.pageCount;
             element.update();
         }
     });
@@ -520,8 +536,10 @@ function update(element) {
                 element.table.fill(data);
                 element.footer.counter.update(data);
 
+                element.footer.querySelector('#page-first').classList.toggle('disabled', data.page == 1);
                 element.footer.querySelector('#page-left').classList.toggle('disabled', data.page == 1);
                 element.footer.querySelector('#page-right').classList.toggle('disabled', data.page == data.pageCount);
+                element.footer.querySelector('#page-last').classList.toggle('disabled', data.page == data.pageCount);
                 element.table.querySelector(`tr:nth-child(n+${data.rows.length})`).style.borderBottom = 'none';
 
                 element.progress.hide(true);
