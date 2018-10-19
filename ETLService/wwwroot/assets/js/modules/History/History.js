@@ -134,7 +134,7 @@ class History extends PageCommon {
                             cell.innerHTML =`
                                 <div>
                                     <i id="history" class="clickable material-icons">view_headline</i>
-                                    <i id="restart" class="clickable material-icons green-text">replay</i>
+                                    <i id="restart" class="clickable material-icons green-text">refresh</i>
                                 </div>
                             `;
 

@@ -142,7 +142,7 @@ namespace ETLApp
                     Logger.Unindent();
                 }
 
-                Logger.WriteToTrace($"Результат выполнения этапов: \n\t{ string.Join("\n\t", Stages.Select(s => $"{s.Name}: {s.Status.GetDescription()}")) }", 
+                Logger.WriteToTrace($"Результат выполнения этапов: \n\t{ string.Join("\n\t", Stages.Where(s => s.Enabled).Select(s => $"{s.Name}: {s.Status.GetDescription()}")) }", 
                     TraceMessageKind.Information);
             }
             catch (Exception ex)

@@ -23,7 +23,7 @@ class Test extends PageCommon {
         this.container.append(page);
 
         this.table = new LogTable(page);
-        this.table.getLog("20");
+        this.table.getLog("24");
 
         broadcastHandlers = {
         };
