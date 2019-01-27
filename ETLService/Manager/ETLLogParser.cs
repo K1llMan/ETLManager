@@ -28,7 +28,14 @@ namespace ETLService.Manager
             Start = DateTime.ParseExact(date, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture);
             Kind = message.GetMatches(@"(?<=[\d] )[\w]+?(?=: )").FirstOrDefault();
 
-            foreach (string s in new string[] { Module + ":", date, Kind + ":" })
+            List<string> replacements = new List<string> {
+                Module + ":", date
+            };
+
+            if (!string.IsNullOrEmpty(Kind))
+                replacements.Add(Kind + ":");
+
+            foreach (string s in replacements)
                 message = message.Replace(s, string.Empty).Trim();
 
             Message = message;

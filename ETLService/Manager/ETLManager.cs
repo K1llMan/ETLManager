@@ -139,10 +139,18 @@ namespace ETLService.Manager
             };
 
             UpdateManager.OnUpdate += async (s, a) => {
+                // Обновлённая закачка
+                ETLProcess prc = Pumps.FirstOrDefault(p => p.ProgramID == a.UpdateInfo.ProgramID);
+                if (prc == null)
+                    return;
+
                 await Broadcast.Send(new ETLBroadcastAction
                 {
                     Action = "update",
-                    Data = a.UpdateInfo
+                    Data = new Dictionary<string, object>{
+                        { "Info", a.UpdateInfo },
+                        { "Config", prc.ConfigData }
+                    }
                 });
             };
         }
@@ -153,11 +161,11 @@ namespace ETLService.Manager
 
         #region Основные функции
 
-        public int ApplyUpdates()
+        public int ApplyUpdates(string[] updates)
         {
             int count = UpdateManager.Updates.Count;
 
-            foreach (ETLUpdateRecord rec in UpdateManager.Updates.Values)
+            foreach (ETLUpdateRecord rec in updates.Select(u => UpdateManager.Updates[u]))
             {
                 // Обновление невозможно применить при запущенном процессе закачки
                 ETLProcess prc = Pumps.FirstOrDefault(p => p.ProgramID == rec.ProgramID);
@@ -252,7 +260,7 @@ namespace ETLService.Manager
             {
                 Logger.WriteToTrace($"Ошибка при подключении к базе: {ex}", TraceMessageKind.Error);
             }
-           
+
             InitPumpsList();
 
             InitJWT();

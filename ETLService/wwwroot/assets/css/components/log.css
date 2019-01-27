@@ -1,0 +1,97 @@
+.log {
+    border-top: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+
+    background-color: #ffffff;
+    font-family: Roboto;
+    color: rgba(0, 0, 0, 0.7);
+    font-weight: bold;
+    border-radius: 5px;
+    margin: 0.5em;
+}
+
+.log a {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.log .header, .log .footer {
+    padding: 20px 0;
+    height: 64px;
+}
+
+.log .header.hide,
+.log .footer.hide {
+    visibility: collapse;
+}
+
+.log .header {
+    font-size: 20px;
+    padding-left: 30px;
+}
+
+.log .data {
+    overflow-x: auto;
+}
+
+.log .progress {
+    background-color: rgba(0, 0, 0, 0.12);
+}
+
+.log .progress .indeterminate {
+    background-color: #78909c;
+}
+
+.log table {
+    white-space: nowrap;
+    table-layout: auto;
+}
+
+.log pre {
+    font-family: Roboto;
+}
+
+.log td:not(.arrow), th {
+    padding: 5px 20px 5px 20px;
+    font-weight: bold;
+
+    max-width: 500px;
+    overflow-x: auto;
+}
+
+.log td.arrow {
+    padding: 0;
+    width: 24px;
+    line-height: 0;
+    text-align: center;
+}
+
+.log td.kind {
+    text-align: center;
+}
+
+.log th {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.38);
+}
+
+.log td {
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.log tr:hover {
+    background-color: #eeeeee;
+}
+
+.log td.editable, td.clickable {
+    cursor: pointer;
+}
+
+.log select.browser-default {
+    width: 50px;
+    height: 24px;
+    font-size: 12px;
+    padding: 0;
+    margin: 0 15px;
+}

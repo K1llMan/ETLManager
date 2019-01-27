@@ -1,6 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
+
+using ETLCommon;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,14 +20,6 @@ namespace ETLService.Controllers
         public object GetRegistry()
         {
             return WebAPI.Success(Program.Manager.Pumps.Select(p => p.ConfigData));
-        }
-
-        // PUT api/pumps/registry
-        [HttpPut("registry")]
-        public object UpdateRegistry()
-        {
-            int count = Program.Manager.UpdateManager.Updates.Count;
-            return WebAPI.Success($"Применено {Program.Manager.ApplyUpdates()} из {count}");
         }
 
         // GET api/pumps/{id}/registry
@@ -56,6 +49,25 @@ namespace ETLService.Controllers
             }
         }
 
+        // GET api/pumps/pump1/restart/21
+        [HttpGet("{id}/restart/{sessNo}")]
+        public object Execute(string id, decimal sessNo)
+        {
+            try
+            {
+                dynamic record = Program.Manager.Context.History[sessNo];
+                if (record == null)
+                    return WebAPI.Error($"Отсуствует запись истории с идентификатором \"{sessNo}\"");
+
+                string config = record.config;
+                return WebAPI.Success(Program.Manager.Execute(id, config));
+            }
+            catch (Exception ex)
+            {
+                return WebAPI.Error($"Ошибка при запуске закачки \"{id}\": {ex.Message}");
+            }
+        }
+
         // POST api/pumps/pump1/terminate
         [HttpGet("{id}/terminate")]
         public void Terminate(string id)
@@ -69,7 +81,7 @@ namespace ETLService.Controllers
             }
         }
 
-        // GET api/pumps/log
+        // GET api/pumps/log/21
         [HttpGet("log/{sessNo}")]
         public object GetLog(decimal sessNo)
         {
@@ -87,11 +99,11 @@ namespace ETLService.Controllers
                     :  p.LastStatus.ToString()));
         }
 
-        // GET api/pumps/updates
-        [HttpGet("updates")]
-        public object GetUpdates()
+        // POST api/pumps/history
+        [HttpPost("history")]
+        public object GetHistory([FromBody]DBTablePage page)
         {
-            return WebAPI.Success(Program.Manager.UpdateManager.Updates);
+            return Program.Manager.Context.DB["etl_history"].GetPage(page);
         }
     }
 }

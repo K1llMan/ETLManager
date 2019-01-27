@@ -8,19 +8,19 @@
     margin-left: auto;
 }
 
-    .badges-container .badge {
-        margin-right: 5px;
-    }
+.badges-container .badge {
+    margin-right: 5px;
+}
 
 .pumpRow {
     display: flex;
     align-items: center;
 }
 
-    .pumpRow #buttons i {
-        font-size: 3.25rem;
-        cursor: pointer;
-    }
+.pumpRow #buttons i {
+    font-size: 3.25rem;
+    cursor: pointer;
+}
 
 #info {
     font-weight: bold;
@@ -28,18 +28,18 @@
     font-size: 18px;
 }
 
-    #info div:not(.valign-wrapper) {
-        font-weight: normal;
-        font-size: 14px
-    }
+#info div:not(.valign-wrapper) {
+    font-weight: normal;
+    font-size: 14px
+}
 
-    #info span {
-        margin-right: 1rem;
-    }
+#info span {
+    margin-right: 1rem;
+}
 
-    #info i {
-        margin-right: 1rem;
-    }
+#info i {
+    margin-right: 1rem;
+}
 
 #stages .collection-item {
     display: flex;

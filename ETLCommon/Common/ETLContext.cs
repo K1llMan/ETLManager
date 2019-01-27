@@ -34,7 +34,7 @@ namespace ETLCommon
         /// </summary>
         public void Initialize()
         {
-            DB.Connect();
+            //DB.Connect();
             History = new ETLHistory(DB);
             Migrator = new Migrator(DB, Settings.Registry.MigrationsPath);
         }

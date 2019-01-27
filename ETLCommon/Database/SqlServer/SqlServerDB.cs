@@ -1,4 +1,5 @@
-﻿using System.Data.SqlClient;
+﻿using System.Data;
+using System.Data.SqlClient;
 
 namespace ETLCommon
 {
@@ -11,11 +12,9 @@ namespace ETLCommon
             DatabaseType = DBType.SqlServer;
         }
 
-        public override void Connect()
+        public override IDbConnection GetConnection()
         {
-            base.Connect();
-            connection = new SqlConnection(connectionStr);
-            connection.Open();
+            return new SqlConnection(connectionStr);
         }
 
         #endregion Основные функции

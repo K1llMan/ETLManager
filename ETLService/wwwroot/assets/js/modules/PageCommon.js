@@ -1,4 +1,6 @@
-﻿class PageCommon {
+﻿import { addLink } from "../classes/utils.js"
+
+class PageCommon {
     constructor(app, container, name) {
         console.log(`Module "${name}" loaded.`);
 
@@ -13,13 +15,7 @@
 
         this.name = name;
 
-        this.cssLink = document.createElement('link');
-        this.cssLink.rel = 'stylesheet';
-        this.cssLink.type = 'text/css';
-        this.cssLink.href = `assets/css/modules/${this.name}.css`;
-        this.cssLink.media = 'screen,projection';
-
-        document.head.appendChild(this.cssLink);
+        this.cssLink = addLink(`assets/css/modules/${this.name}.css`);
     }
 
     destroy() {

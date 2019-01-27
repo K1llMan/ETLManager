@@ -74,7 +74,28 @@ const broadcastHandlers = {
             Object.keys(document.app.etlContext.updates).length == 0);
     },
     'update': (data) => {
+        let registry = document.app.etlContext.registry;
+        let programID = data.info.programID;
 
+        // Remove update record
+        delete document.app.etlContext.updates[programID];
+
+        let config = registry.find((c) => c.programID = programID);
+        if (config != null)
+            registry[registry.indexOf(config)] = data.config;
+        else {
+            registry.push(data.config);
+
+            // Sort data after adding new records
+            document.app.etlContext.registry = registry.sort(function (a, b) {
+                return parseInt(a.desc.dataCode) - parseInt(b.desc.dataCode);
+            });
+        }
+
+        document.querySelector('#updatesBtn').classList.toggle('hide',
+            Object.keys(document.app.etlContext.updates).length == 0);
+
+        M.toast({ html: `"${programID}" updated!` });
     }
 }
 
@@ -99,8 +120,8 @@ class ETLApp {
     }
 
     getModules() {
-        Request.send("api/modules", {
-            'success': (d) => {
+        Request.send("api/modules")
+            .then((d) => {
                 this.modules = d;
 
                 document.querySelector('#nav').innerHTML = '';
@@ -131,8 +152,7 @@ class ETLApp {
                 });
 
                 window.dispatchEvent(new HashChangeEvent('hashchange'));
-            }
-        });        
+            });
     }
 
     init() {
@@ -148,35 +168,31 @@ class ETLApp {
             this.updates.open(this.etlContext);
         });
 
-        Request.send('api/info', {
-            'success': (d) => {
+        Request.send('api/info')
+            .then((d) => {
                 this.etlContext.info = d;
                 let version = this.etlContext.info.version;
                 document.querySelector('footer #version').innerHTML =
                     [version.major, version.minor, version.build].join('.');
-            }
-        });
+            });
         
-        Request.send('api/pumps/statuses',{
-            'success': (d) => { this.etlContext.statuses = d.data; }
-        });
+        Request.send('api/pumps/statuses')
+            .then((d) => this.etlContext.statuses = d.data );
 
-        Request.send('api/pumps/registry', {
-            'success': (d) => {
+        Request.send('api/pumps/registry')
+            .then((d) => {
                 this.etlContext.registry = d.data.sort(function(a, b) {
                     return parseInt(a.desc.dataCode) - parseInt(b.desc.dataCode);
                 });
 
                 this.getModules();
-            }
-        });
+            });
 
-        Request.send('api/pumps/updates',{
-            'success': (d) => {
+        Request.send('api/updates')
+            .then((d) => {
                 this.etlContext.updates = d.data;
                 document.querySelector('#updatesBtn').classList.toggle('hide', Object.keys(this.etlContext.updates).length == 0);
-            }
-        });
+            });
 
         Broadcast.addHandlers(broadcastHandlers);
     }

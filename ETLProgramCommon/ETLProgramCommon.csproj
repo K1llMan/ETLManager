@@ -5,11 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ETLCommon\ETLCommon.csproj" />
+    <PackageReference Include="FluentFTP" Version="19.2.2" />
+    <PackageReference Include="SharpCompress" Version="0.22.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DataAccess\" />
+    <ProjectReference Include="..\ETLCommon\ETLCommon.csproj" />
   </ItemGroup>
 
   <Import Project="..\Config\General.xml" /> 

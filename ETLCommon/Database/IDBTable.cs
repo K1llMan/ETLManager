@@ -18,6 +18,11 @@ namespace ETLCommon
         /// </summary>
         string Name { get; }
 
+        /// <summary>
+        /// Количество записей
+        /// </summary>
+        decimal Count { get; }
+
         #endregion Свойства
 
         #region Методы
@@ -31,6 +36,11 @@ namespace ETLCommon
         /// Возвращает текущее значение
         /// </summary>
         decimal GetCurVal();
+
+        /// <summary>
+        /// Получение данных страницы
+        /// </summary>
+        DBTablePage GetPage(DBTablePage page);
 
         #region CRUD
 

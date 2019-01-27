@@ -74,6 +74,7 @@ namespace ETLApp
             {
                 context = new ETLContext(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config", "ETLSettings.json"));
                 context.Initialize();
+                context.DB.Connect();
 
                 decimal sessNo = Convert.ToDecimal(args[0]);
                 historyRecord = context.History[sessNo];
