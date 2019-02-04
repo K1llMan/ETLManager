@@ -192,7 +192,7 @@ namespace ETLCommon
 
             // Загружаем данные конфига логгеров
             string[] configData = null;
-            string configPath = baseDir + "\\logger.cfg";
+            string configPath = Path.Combine(baseDir, "logger.cfg");
             if (File.Exists(configPath)) {
                 FileStream fs = new FileStream(configPath, FileMode.Open);
                 StreamReader sr = null;
